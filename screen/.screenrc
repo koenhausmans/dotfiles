@@ -1,0 +1,138 @@
+######################################################
+######################################################
+# 
+# Screen Configuration   
+# Version: 0.6
+#
+# by Koen Hausmans (KH) (koen@hausmans.nl)
+#
+######################################################
+# 
+# Changelog
+# =========
+# 2014-10-10 KH : Initial version 0.2
+# 2016-02-15 KH : Changed default shell to zsh and integrated
+#                 .screenrc options from ASML .screenrc file
+# 2016-02-22 KH : Added keyboard shortcuts to this header
+# 2016-03-19 KH : Added multi user description to the header
+# 2016-06-14 KH : Re-enabled the region resize bindings
+#
+######################################################
+#
+# Overview of keyboard shortcuts
+# ==============================
+#
+# Global Shortcuts:
+# -----------------
+# Ctrl+a                Detach from screen window
+# Ctrl+a :sessionname   Changes name of screen session
+#
+# Navigation:
+# -----------
+# Ctrl+a n          Next Window
+# Ctrl+a p          Previous Window
+# Ctrl+a Ctrl+a     Switch between current and previous window
+# Ctrl+a '          Select window by number
+# Ctrl+a "          Select window from a list
+# Ctrl+a tab        Next region
+# Ctrl+a Ctrl+I     Next region
+#
+# Window management:
+# ------------------
+# Ctrl+a c          Create window
+# Ctrl+a k          Kill window
+# Ctrl+a :number *  Changes window to have index *
+# Ctrl+a A          Renames window title
+# 
+# Region management:
+# ------------------
+# Ctrl+a s          New region by splitting horizontal          
+# Ctrl+a |          New region by splitting vertical
+# Ctrl+a :resize    Resizes region by specified value
+# Ctrl+a :fit       Changes region to fit the terminal
+# Ctrl+a F          Changes region to fit the terminal
+# Ctrl+a :remove    Removes region
+# Ctrl+a X          Removes region
+# Ctrl+a Q          Removes all region but the current region
+#
+# Buffer management:
+# ------------------
+# Ctrl+a [          Enter Scrollback/Copy mode
+# Ctrl+a ]          Pastes copied buffer
+# Ctrl+a >          Writes buffer to file
+# Ctrl+a <          Reads buffer from file
+#
+# Multi user:
+# -----------
+# Ctrl+a :multiuser on	    Enables multi user support
+# Ctrl+a :acladd *user*	    Allows *user* to connect to the shared screen 
+# 
+######################################################
+######################################################
+
+
+# Disable the flashing of the csreen instead of a audio bell
+vbell off
+vbell_msg ""
+
+# Don't display the copyright page
+startup_message off
+
+# Make the shell in every window a zsh shell
+shell zsh
+
+# Keep 1000 scrollback lines
+defscrollback 1000
+
+# Enable support for the "alternate screen" capability in all windows
+altscreen on
+
+################
+#
+# Custom Keybindings
+#
+# Remove some stupid / dangerous key bindings
+#bind ^k
+#bind ^\
+# Make them better
+bind \\ quit
+bind K kill
+bind I login on
+bind O login off
+bind } history
+
+# Faster switching of tabs
+#bindkey "^[[D" prev
+#bindkey "^[[1;2D" prev
+#bindkey "^[[1;2C" next
+#bindkey "^[[C" next
+
+#bindkey "^[0d" prev #ctrl-left
+#bindkey "^[0c" next #ctrl-right
+
+# Resize vertical / horizontal views
+bind = resize =
+bind + resize +1
+bind - resize -1
+bind _ resize max
+
+################
+#
+# Change the status line
+#
+hardstatus alwaysignore
+caption always '%{= Kw}%-w%{= gk}%n %t%{-}%+w %-= %c' 
+
+################
+# Default working directory
+#
+
+# $HOME
+chdir
+
+################
+#
+# Default windows
+#
+screen -t zsh 0
+
