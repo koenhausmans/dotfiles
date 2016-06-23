@@ -11,11 +11,18 @@
 
 source scripts/print.sh
 
-if ! `hash curl 2>/dev/null` ; then
-	fail "Cannot find curl binary"
+if ! `hash vim 2>/dev/null` ; then
+    info "Installing vim"
+    sudo apt-get -y install vim
 fi
 
-#curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-#    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+if ! `hash curl 2>/dev/null` ; then
+    info "Installing curl"
+    sudo apt-get -y install curl
+
+    if ! `hash curl 2>/dev/null` ; then
+        fail "Cannot find curl binary"
+    fi
+fi
 
 
