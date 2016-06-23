@@ -136,6 +136,8 @@ set tm=500
 " Enable syntax highlighting
 syntax enable
 set t_Co=256
+set rtp+=/usr/local/lib/python2.7/dist-packages/powerline/bindings/vim/
+
 "colorscheme molokai
 
 " Set utf8 as standard encoding and en_US as the standard language
@@ -472,11 +474,14 @@ let g:ctrlp_match_window = 'max:1000'
 """ Airline
 """
 " Set the airline theme to zenburn
-let g:airline_theme='zenburn'
+"let g:airline_theme='zenburn'
+"let g:airline_theme='molokai'
+let g:airline_theme='powerlineish'
 " The angle bracket defaults look fugly, don't show them
-let g:airline_left_sep=' '
-let g:airline_right_sep=' '
-let g:airline_powerline_fonts=0
+"let g:airline_left_sep=' '
+"let g:airline_right_sep=' '
+"let g:airline_powerline_fonts=0
+let g:airline_powerline_fonts=1
 
 
 """

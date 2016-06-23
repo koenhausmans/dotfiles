@@ -115,5 +115,8 @@ if ! shopt -oq posix; then
   fi
 fi
 
+
+export TERM="screen-256color"
+
 export PATH=~/bin:~/.dotfiles/bin:$PATH
 
