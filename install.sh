@@ -14,7 +14,7 @@ do_stow () {
 	if [ $SIMULATE == true ] ; then
 		STOW_ARGUMENTS="$STOW_ARGUMENTS -v -n"
 	fi
-	stow --ignore='.*\.swp' --ignore='.*\.sh' $STOW_ARGUMENTS ${@:1}
+	stow --ignore='.*\.swp' --ignore='.*\.md' --ignore='.*\.sh' $STOW_ARGUMENTS ${@:1}
 }
 
 is_a_valid_package () {
