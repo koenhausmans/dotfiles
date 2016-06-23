@@ -1,21 +1,19 @@
 Vim Scripts - Keyboard shortcuts:
 =================================
 
-    \<leader\> key has been defined as ,
+`<leader>` key has been defined as `,`
 
 File open/close:
 ----------------
-    \<leader\>w: Saves a file
-    \<leader\>W: Saves a file with sudo rights
+`<leader>w`: Saves a file<br/>
+`<leader>W`: Saves a file with sudo rights<br/>
 
 
 Spell checking:
 ---------------
 
-    <\<leader\>ss>: Toggle spell checking
-    <\<leader\>sn>: Move to the next misspelled word
-    <\<leader\>sp>: Move to the previous misspelled word
-    <\<leader\>sa>: Add word under cursor as a good word
-    <\<leader\>s?>: Suggest correctly spelled word
-
-
+`<leader>ss`: Toggle spell checking<br/>
+`<leader>sn`: Move to the next misspelled word<br/>
+`<leader>sp`: Move to the previous misspelled word<br/>
+`<leader>sa`: Add word under cursor as a good word<br/>
+`<leader>s?`: Suggest correctly spelled word<br/>
