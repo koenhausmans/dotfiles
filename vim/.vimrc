@@ -1,13 +1,13 @@
 "#####################################################
 "#####################################################
-" 
-" Vimrc Configurationn   
+"
+" Vimrc Configurationn
 " Version: 0.1
 "
 " by Koen Hausmans (KH) (koen@hausmans.nl)
 "
 "#####################################################
-" 
+"
 " Changelog
 " =========
 " 2016-06-22 KH : Initial version
@@ -31,12 +31,72 @@ endif
 call plug#begin('~/.vim/plugged')
 " Make sure you use single quotes
 
-" Load the NERDTree plugin
-Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+"""
+""" Colorschemes: Additional colorschemes that can be used
+"""
+Plug 'captbaritone/molokai'
 
-" Load the vim-tmux-navigator plugin. It will allow keyboard shortcuts within
-" vim to be used
+"""
+""" Syntax: Additional syntaxes that can be used
+"""
+Plug 'tpope/vim-git', { 'for': 'git' }
+Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
+Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
+
+
+" Make % match xml tags
+"Plug 'edsono/vim-matchit', { 'for': ['html', 'xml'] }
+
+" Make tab handle all completions
+"Plug 'ervandew/supertab'
+
+" Syntastic: Code linting errors
+"Plug 'scrooloose/syntastic', { 'for': ['php', 'python', 'javascript', 'css', 'cpp', 'c'] }
+
+" Load the NERDTree plugin
+"Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+
+" Change brackets and quotes
+"Plug 'tpope/vim-surround'
+" Make vim-surround repeatable with .
+"Plug 'tpope/vim-repeat'
+
+"""
+""" Airline: Fancy statusline
+"""
+Plug 'bling/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+
+"""
+""" CtrlP: Fuzzy file openener
+"""
+Plug 'ctrlpvim/ctrlp.vim'
+
+"""
+""" Tmux: Loads the vim-tmux-navigator to allow tmux keyboard shortcuts to be used within vim
+"""
 Plug 'christoomey/vim-tmux-navigator'
+
+"""
+""" Git: Plugins for git usage
+""'
+" Fugitive: Git from within Vim
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+
+"""
+""" Goyo: Distraction free writing
+"""
+Plug 'junegunn/goyo.vim'
+
+"""
+""" Commenting: Commenting plugins
+"""
+" Load the NERDCommenter plugin
+Plug 'scrooloose/nerdcommenter'
+" Make commenting easier
+"Plug 'tpope/vim-commentary'
+
 
 " Add plugins to &runtimepath
 call plug#end()
@@ -59,12 +119,6 @@ set autoread
 " like <leader>w saves the current file
 let mapleader = ","
 let g:mapleader = ","
-
-" No welcome screen
-set shortmess += I
-
-" Disable .swp warning
-set shortmess += A
 
 " Don't allow buffers to exist in the background
 set nohidden
@@ -132,10 +186,10 @@ set hlsearch
 set magic
 
 " Use regex for searches
-nnoremap / /\v
-vnoremap / /\v
-nnoremap ? ?\v
-vnoremap ? ?\v
+"nnoremap / /\v
+"vnoremap / /\v
+"nnoremap ? ?\v
+"vnoremap ? ?\v
 
 " Ignore case when searching
 set ignorecase
@@ -150,7 +204,7 @@ set showmatch
 set mat=2
 
 " Disable highlight when <leader><cr> or <leader><space> is pressed
-map <silent> <leader><cr> :noh<cr>
+map <silent> <leader><cr> :nohlsearch<cr>
 map <silent> <leader><space> :nohlsearch<cr>
 
 
@@ -166,7 +220,7 @@ map k gk
 " => Visual settings / VIM user interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set 7 lines to the cursor - when moving vertically using j/k
-set so=7
+set scrolloff=7
 
 " Turn on the WiLd menu
 set wildmenu
@@ -186,15 +240,20 @@ endif
 "Always show current position
 set ruler
 
-"set laststatus=2            " The last window will have a status line always
-"set noshowmode              " Don't show the mode in the last line of the screen, vim-airline takes care of it
+" The last window will have a status line always
+set laststatus=2
 
+" Format the status line
+"set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l
+
+" Don't show the mode in the last line of the screen, vim-airline takes care of it
+"set noshowmode
 
 " Height of the command bar
 "set cmdheight=2
 
 " Configure backspace so it acts as it should act
-set backspace=eol,start,indent
+se backspace=eol,start,indent
 set whichwrap+=<,>,h,l
 
 " Don't redraw while executing macros (good performance config)
@@ -205,7 +264,6 @@ set cursorline
 
 " Show line numbers
 set number
-
 
 " Highlight tabs and trailing spaces
 set listchars=tab:▸\ ,trail:•
@@ -232,6 +290,15 @@ set foldopen=block,hor,mark,percent,quickfix,search,tag,undo,jump
 set splitbelow " Open new splits below
 set splitright " Open new vertical splits to the right
 
+" Returns true if paste mode is enabled
+function! HasPaste()
+    if &paste
+        return 'PASTE MODE  '
+    en
+    return ''
+endfunction
+
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Editing mappings
@@ -239,7 +306,7 @@ set splitright " Open new vertical splits to the right
 " Remap VIM 0 to first non-blank character
 map 0 ^
 
-" Move a line of text using ALT+[jk] or Comamnd+[jk] on mac
+" Move a line of text using ALT+[jk] or Command+[jk] on mac
 nmap <M-j> mz:m+<cr>`z
 nmap <M-k> mz:m-2<cr>`z
 vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
@@ -247,7 +314,6 @@ vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
 
 " Escape from Insert/Visual mode by using jk key combination
 map! jk <esc>
-
 
 " Reselect visual block after indent/outdent: http://vimbits.com/bits/20
 vnoremap < <gv
@@ -270,7 +336,7 @@ autocmd BufWrite *.py :call StripTrailingWhitespaces()
 autocmd BufWrite *.coffee :call StripTrailingWhitespaces()
 
 " Trim trailing white space
-nmap <silent> <Leader>t :call StripTrailingWhitespaces()<CR>
+nmap <silent> <leader>t :call StripTrailingWhitespaces()<CR>
 
 """
 """ Format Options
@@ -288,14 +354,49 @@ set formatoptions=cqrn1
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Files, backups and undo
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Turn backup off, since most stuff is in SVN, git etc. anyway...
+"set nobackup
+"set nowb
+"set noswapfile
+
+" Don't leave .swp files everywhere. Put them in a central place
+"set directory=$HOME/.vim/swapdir//
+"set backupdir=$HOME/.vim/backupdir//
+"if exists('+undodir')
+"    set undodir=$HOME/.vim/undodir
+"    set undofile
+"endif
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Custom Filetypes
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+autocmd BufRead,BufNewFile *.md,*.markdown set filetype=markdown
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Custom mapping
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Fast saving
-nmap <leader>w :w!<cr>
-noremap <Leader>W :w !sudo tee % > /dev/null
+nmap    <silent> <leader>w :w!<cr>
+noremap <silent> <leader>W :w !sudo tee % > /dev/null<cr> " Saves the file with sudo rights
 
-cmap w
+" Quit vim
+nmap    <silent> <leader>q :quit<cr>
 
+" Repurpose arrow keys to navigating windows
+nnoremap <left> <C-w>h
+nnoremap <right> <C-w>l
+nnoremap <up> <C-w>k
+nnoremap <down> <C-w>j
+inoremap <up> <nop>
+inoremap <down> <nop>
+inoremap <left> <nop>
+inoremap <right> <nop>
+
+" Make Y consistent with D
+"nnoremap Y y$
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -305,38 +406,87 @@ map <leader>ss :setlocal spell!<cr>
 set spelllang=en_us
 
 " Shortcuts using <leader>
-map <leader>sn ]s
-map <leader>sp [s
-map <leader>sa zg
-map <leader>s? z=
+map <leader>sn ]s   " Move to the next misspelled word
+map <leader>sp [s   " Move to the previous misspelled word
+map <leader>sa zg   " Add word under cursor as a good word
+map <leader>s? z=   " Suggest correctly spelled word
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Machine local vim file
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if filereadable(glob("$HOME/.vimrc.local"))
+    source $HOME/.vimrc.local
+endif
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Plugin Setup
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-"" CTRL-P
-"let g:ctrlp_working_path_mode = 0
-"
-"let g:ctrlp_map = '<c-f>'
-"map <leader>j :CtrlP<cr>
-"map <c-b> :CtrlPBuffer<cr>
-"
-"let g:ctrlp_max_height = 18
-"
-"" NERDTree
+"""
+""" CtrlP
+"""
+let g:ctrlp_working_path_mode = 'rw'
+map <leader>j :CtrlP<cr>
+"let g:ctrlp_custom_ignore = {
+"    \ 'dir':  '\v[\/]\.(git|hg|svn|sass-cache|pip_download_cache|wheel_cache)$',
+"    \ 'file': '\v\.(png|jpg|jpeg|gif|DS_Store|pyc)$',
+"    \ 'link': '',
+"    \ }
+let g:ctrlp_show_hidden = 1
+let g:ctrlp_clear_cache_on_exit = 0
+" Wait to update results (This should fix the fact that backspace is so slow)
+let g:ctrlp_lazy_update = 1
+" Show as many results as our screen will allow
+let g:ctrlp_match_window = 'max:1000'
+
+"  let g:ctrlp_abbrev = {
+"    \ 'gmode': 'i',
+"    \ 'abbrevs': [
+"      \ {
+"        \ 'pattern': '^shj',
+"        \ 'expanded': 'fanmgmt/static/js/workflow',
+"        \ 'mode': 'pfrz',
+"      \ },
+"      \ {
+"        \ 'pattern': '^shh',
+"        \ 'expanded': 'fanmgmt/templates/workflow/compliance_review/jst',
+"        \ 'mode': 'pfrz',
+"      \ }
+"      \ ]
+"    \ }
+
+"""
+""" NerdTree
+"""
 "let g:NERDTreeWinPos = "right"
 "let NERDTreeShowHidden = 0
 "let g:NERDTreeWinSize = 35
 "map <leader>nn :NERDTreeToggle<cr>
 "map <leader>nb :NERDTreeFromBookmark
 "map <leader>nf :NERDTreeFind<cr>
-"
-"" Goyo
-"" let g:goyo_width = 100
-"let g:goyo_margin_top = 2
-"let g:goyo_margin_bottom = 2
-"map <silent> <leader>z :Goyo<cr>
+
+
+"""
+""" Airline
+"""
+" Set the airline theme to zenburn
+let g:airline_theme='zenburn'
+" The angle bracket defaults look fugly, don't show them
+let g:airline_left_sep=' '
+let g:airline_right_sep=' '
+let g:airline_powerline_fonts=0
+
+
+"""
+""" Goyo
+"""
+"let g:goyo_width = 100
+let g:goyo_margin_top = 2
+let g:goyo_margin_bottom = 2
+map <silent> <leader>z :Goyo<cr>
+
 "
 "" Syntastic
 ""set statusline+=%#warningmsg#
