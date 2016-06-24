@@ -1,4 +1,5 @@
-#export DOTFILES="$HOME/.dotfiles"
+# Set the DOTFILES path
+export DOTFILES="$HOME/.dotfiles"
 
 # Path to your oh-my-zsh installation.
 export ZSH=/home/koen/.oh-my-zsh
@@ -38,7 +39,7 @@ plugins=(git)
 ###########################################################################
 
 # Set the PATH environment variable
-export PATH="~/bin:~/.dotfiles/bin:$PATH"
+export PATH="~/bin:$DOTFILES/bin:$PATH"
 
 # Save lots of history
 SAVEHIST=1000
@@ -66,7 +67,7 @@ source $ZSH/oh-my-zsh.sh
 #source $HOME/.dotfiles/*/.zshrc
 
 # Customize to your needs...
-#if [ -f $HOME/.zshrc.local ]; then
-    #source $HOME/.zshrc.local
-#fi
+if [ -f $HOME/.zshrc.local ]; then
+    source $HOME/.zshrc.local
+fi
 
