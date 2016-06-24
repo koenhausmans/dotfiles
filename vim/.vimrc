@@ -388,14 +388,21 @@ noremap <silent> <leader>W :w !sudo tee % > /dev/null<cr> " Saves the file with 
 nmap    <silent> <leader>q :quit<cr>
 
 " Repurpose arrow keys to navigating windows
-nnoremap <left> <C-w>h
-nnoremap <right> <C-w>l
-nnoremap <up> <C-w>k
-nnoremap <down> <C-w>j
-inoremap <up> <nop>
-inoremap <down> <nop>
-inoremap <left> <nop>
-inoremap <right> <nop>
+"nnoremap <left> <C-w>h
+"nnoremap <right> <C-w>l
+"nnoremap <up> <C-w>k
+"nnoremap <down> <C-w>j
+"inoremap <up> <nop>
+"inoremap <down> <nop>
+"inoremap <left> <nop>
+"inoremap <right> <nop>
+
+" Navigate the vim splits with shortcuts
+nnoremap <c-j> <c-w>j
+nnoremap <c-k> <c-w>k
+nnoremap <c-h> <c-w>h
+nnoremap <c-l> <c-w>l
+
 
 " Make Y consistent with D
 "nnoremap Y y$
