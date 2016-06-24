@@ -53,8 +53,8 @@ Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 " Syntastic: Code linting errors
 "Plug 'scrooloose/syntastic', { 'for': ['php', 'python', 'javascript', 'css', 'cpp', 'c'] }
 
-" Load the NERDTree plugin
-"Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+" Load the NERDTred plugin
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 
 " Change brackets and quotes
 "Plug 'tpope/vim-surround'
@@ -469,12 +469,17 @@ let g:ctrlp_match_window = 'max:1000'
 """
 """ NerdTree
 """
-"let g:NERDTreeWinPos = "right"
-"let NERDTreeShowHidden = 0
-"let g:NERDTreeWinSize = 35
-"map <leader>nn :NERDTreeToggle<cr>
+let g:NERDTreeWinPos = "right"
+let NERDTreeShowHidden = 1
+let NERDTreeMinimalUI = 1
+let NERDTreeDirArrows = 1
+let g:NERDTreeWinSize = 35
+map <leader>nn :NERDTreeToggle<cr>
 "map <leader>nb :NERDTreeFromBookmark
-"map <leader>nf :NERDTreeFind<cr>
+map <leader>nf :NERDTreeFind<cr>
+
+" Automatically close NERDTree if it is the only window remaining
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 
 """
