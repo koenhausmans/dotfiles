@@ -71,3 +71,11 @@ if [ -f $HOME/.zshrc.local ]; then
     source $HOME/.zshrc.local
 fi
 
+
+###########################################################################
+#                         Environment variables                           #
+###########################################################################
+if [[ $TERM == xterm ]] ; then
+    TERM=xterm-256color
+fi
+
