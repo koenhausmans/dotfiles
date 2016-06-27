@@ -1,8 +1,8 @@
 === Dotfiles ===
 
 To install the dotfiles, execute:
- > install.sh
+ > ./install
 
 To uninstall the dotfiles, execute:
- > install.sh uninstall
+ > ./uninstall
 

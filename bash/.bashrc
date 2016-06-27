@@ -116,7 +116,9 @@ if ! shopt -oq posix; then
 fi
 
 
-export TERM="screen-256color"
+#export TERM="screen-256color"
+# Set the terminal s.t. tmux and vim show the proper colors
+export TERM="xterm-256color"
 
 export PATH=~/bin:~/.dotfiles/bin:$PATH
 
