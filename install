@@ -5,6 +5,10 @@ IGNORE_FOLDERS=( \
     scripts
 )
 
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+pushd $SCRIPT_DIR
+
 source scripts/print.sh
 
 SIMULATE=false
@@ -88,4 +92,6 @@ esac
 done
 
 do_install
+
+popd
 
