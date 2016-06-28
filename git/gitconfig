@@ -1,0 +1,16 @@
+[user]
+    email = koen@hausmans.nl
+    name = Koen Hausmans
+
+[core]
+    excludesfile = ~/.gitignore_global
+
+[color]
+    ui = true
+
+[credential]
+    helper = cache --timeout=3600
+
+# Allow local customizations in the .gitconfig.local file
+[include]
+    path = ~/.gitconfig.local

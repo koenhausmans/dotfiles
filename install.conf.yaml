@@ -1,0 +1,27 @@
+- defaults:
+    link:
+      relink: true
+
+- clean: ['~']
+
+- link:
+    ~/.dotfiles         : ''
+    ~/.bashrc           : bash/bashrc
+    ~/.bash_aliases     : bash/bash_aliases
+    ~/.gitconfig        : git/gitconfig
+    ~/.gitignore_global : git/gitignore
+    ~/.screenrc         : screen/screenrc
+    ~/.tmux.conf        : tmux/tmux.conf
+    ~/.vimrc            : vim/vimrc
+    ~/.oh-my-zsh        : oh-my-zsh
+    ~/.zshrc            : zsh/zshrc
+    ~/.fzf              : fzf
+
+- shell:
+  - [git submodule update --init --recursive, Installing submodules]
+  - [sudo apt-get update, Updating packages]
+  -
+    msg: Installing necessary packages
+    command: sudo apt-get -y install vim vim-nox zsh tmux git < /dev/null
+    stdout: true
+    stderr: true
