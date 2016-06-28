@@ -19,9 +19,10 @@
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
+  - [~/.fzf/install --bin, Installing fzf binary]
   - [sudo apt-get update, Updating packages]
   -
     msg: Installing necessary packages
-    command: sudo apt-get -y install vim vim-nox zsh tmux git < /dev/null
+    command: sudo apt-get -qq -y install vim vim-nox zsh tmux git < /dev/null
     stdout: true
     stderr: true
