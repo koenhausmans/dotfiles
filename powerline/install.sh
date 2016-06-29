@@ -1,15 +1,23 @@
+#!/bin/bash
 
-pushd ~/.dotfiles/powerline/powerline
+BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+pushd "$BASEDIR/powerline"
+
+font_dir="$HOME/.local/share/fonts"
+mkdir -p $font_dir
 
 python setup.py build
 powerline-daemon --replace
 
-mkdir -p ~/.fonts/
-mv PowerlineSymbols.otf ~/.fonts/
-fc-cache -vf ~/.fonts/
+cp font/PowerlineSymbols.otf $font_dir
+fc-cache -vf $font_dir
 
-mkdir -p ~/.config/fontconfig/conf.d/
-mv 10-powerline-symbols.conf ~/.config/fontconfig/conf.d/
+mkdir -p $HOME/.config/fontconfig/conf.d/
+cp font/10-powerline-symbols.conf $HOME/.config/fontconfig/conf.d/
 
 popd
+
+# Install the powerline fonts
+$BASEDIR/fonts/install.sh
 
