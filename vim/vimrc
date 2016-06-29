@@ -35,6 +35,7 @@ call plug#begin('~/.vim/plugged')
 """ Colorschemes: Additional colorschemes that can be used
 """
 Plug 'captbaritone/molokai'
+Plug 'morhetz/gruvbox'
 
 """
 """ Syntax: Additional syntaxes that can be used
@@ -143,6 +144,8 @@ set t_Co=256
 set rtp+=/usr/local/lib/python2.7/dist-packages/powerline/bindings/vim/
 
 "colorscheme molokai
+colorscheme gruvbox
+set background=dark
 
 " Set utf8 as standard encoding and en_US as the standard language
 set encoding=utf8
@@ -515,6 +518,7 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 "let g:airline_theme='zenburn'
 "let g:airline_theme='molokai'
 let g:airline_theme='powerlineish'
+let g:airline_theme='gruvbox'
 " The angle bracket defaults look fugly, don't show them
 "let g:airline_left_sep=' '
 "let g:airline_right_sep=' '
