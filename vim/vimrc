@@ -53,8 +53,8 @@ Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 " Syntastic: Code linting errors
 "Plug 'scrooloose/syntastic', { 'for': ['php', 'python', 'javascript', 'css', 'cpp', 'c'] }
 
-" Load the NERDTred plugin
-Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+" Load the NERDTree plugin
+Plug 'scrooloose/nerdtree', { 'on':  ['NERDTreeToggle', 'NERDTreeFind']  }
 
 " Change brackets and quotes
 "Plug 'tpope/vim-surround'
