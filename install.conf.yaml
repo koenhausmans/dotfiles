@@ -23,7 +23,7 @@
   - [sudo apt-get update, Updating packages]
   -
     msg: Installing necessary packages
-    command: sudo apt-get -qq -y install python vim vim-nox zsh tmux git < /dev/null
+    command: sudo apt-get -qq -y install python vim vim-nox zsh tmux git exuberant-ctags < /dev/null
     stdout: true
     stderr: true
   - [~/.dotfiles/powerline/install.sh,Installing powerline and fonts]
