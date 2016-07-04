@@ -1,3 +1,8 @@
+[alias]
+    lg = log --graph --pretty=format:'%C(yellow)%h%Creset -%Cred%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+    changes = status --short --branch
+    dt = diff-tree --no-commit-id --name-only -r
+
 [user]
     email = koen@hausmans.nl
     name = Koen Hausmans
