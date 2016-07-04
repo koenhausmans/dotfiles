@@ -102,6 +102,18 @@ Plug 'scrooloose/nerdcommenter'
 " Make commenting easier
 "Plug 'tpope/vim-commentary'
 
+"""
+""" Easytags: Automatically updates the ctags file
+"""
+Plug 'xolox/vim-misc'
+Plug 'xolox/vim-easytags'
+
+"""
+""" Tagbar: Shows a list of tags that are available
+"""
+Plug 'majutsushi/tagbar'
+
+
 
 " Add plugins to &runtimepath
 call plug#end()
@@ -141,7 +153,6 @@ set tm=500
 " Enable syntax highlighting
 syntax enable
 set t_Co=256
-set rtp+=/usr/local/lib/python2.7/dist-packages/powerline/bindings/vim/
 
 "colorscheme molokai
 colorscheme gruvbox
@@ -445,21 +456,25 @@ endif
 """
 set rtp+=~/.fzf/
 
-nnoremap <c-p> :FZF<cr>
+nnoremap <c-p> :FZF -m<cr>
 
 fun! s:fzf_root()
     let path = finddir(".git", expand("%:p:h").";")
     return fnamemodify(substitute(path, ".git", "", ""), ":p:h")
 endfun
 
-nnoremap <silent> <Leader>ff :exe 'Files ' . <SID>fzf_root()<CR>
-nnoremap <silent> <Leader>fh :History<CR>
-nnoremap <silent> <Leader>bb :Buffers<CR>
-nnoremap <silent> <Leader>ll :Lines<CR>
+nnoremap <silent> <leader>ff :exe 'Files ' . <SID>fzf_root()<CR>
+nnoremap <silent> <leader>fh :History<CR>
+nnoremap <silent> <leader>bb :Buffers<CR>
+nnoremap <silent> <leader>ll :Lines<CR>
+nnoremap <silent> <leader>tt :Tags<CR>
+nnoremap <silent> <leader>bt :BTags<CR>
 "nnoremap <silent> <Leader>fc :Colors<CR>
 "nnoremap <silent> <Leader>; :Commands<CR>
 "nnoremap <silent> <Leader>h :Helptags<CR>
 "nnoremap <silent> <Leader>lb :BLines<CR>
+
+
 
 
 """"
@@ -514,11 +529,12 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 """
 """ Airline
 """
+set rtp+=/usr/local/lib/python2.7/dist-packages/powerline/bindings/vim/
 " Set the airline theme to zenburn
 "let g:airline_theme='zenburn'
 "let g:airline_theme='molokai'
-let g:airline_theme='powerlineish'
 let g:airline_theme='gruvbox'
+"let g:airline_theme='powerlineish'
 " The angle bracket defaults look fugly, don't show them
 "let g:airline_left_sep=' '
 "let g:airline_right_sep=' '
@@ -547,3 +563,19 @@ map <silent> <leader>z :Goyo<cr>
 "
 "" Tagbar
 "nmap <F8> :TagbarToggle<CR>
+nnoremap <silent> <leader>b :TagbarToggle<CR>
+
+"""
+""" Easytags
+"""
+set tags=./.tags;
+let g:easytags_async = 1
+let g:easytags_dynamic_files = 2
+set cpoptions+=d
+
+nmap <silent> <leader>ut :UpdateTags -R ./<CR>
+nmap <silent> <leader>ht :HighlightTags<CR>
+
+map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
+map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+
