@@ -2,6 +2,8 @@
     lg = log --graph --pretty=format:'%C(yellow)%h%Creset -%Cred%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
     changes = status --short --branch
     dt = diff-tree --no-commit-id --name-only -r
+    pl = pull --rebase
+    ps = push
 
 [user]
     email = koen@hausmans.nl
@@ -15,6 +17,12 @@
 
 [credential]
     helper = cache --timeout=3600
+
+[diff]
+    tool = vimdiff
+
+[difftool]
+    prompt = false
 
 # Allow local customizations in the .gitconfig.local file
 [include]
