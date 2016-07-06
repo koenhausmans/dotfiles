@@ -54,7 +54,7 @@ Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 "Plug 'scrooloose/syntastic', { 'for': ['php', 'python', 'javascript', 'css', 'cpp', 'c'] }
 
 " Load the NERDTree plugin
-Plug 'scrooloose/nerdtree', { 'on':  ['NERDTreeToggle', 'NERDTreeFind']  }
+Plug 'scrooloose/nerdtree', { 'on':  ['NERDTreeToggle', 'NERDTreeFind'] }
 
 " Change brackets and quotes
 "Plug 'tpope/vim-surround'
@@ -111,7 +111,9 @@ Plug 'xolox/vim-easytags'
 """
 """ Tagbar: Shows a list of tags that are available
 """
-Plug 'majutsushi/tagbar'
+", { 'on':  ['TagbarToggle'] }
+"Plug 'majutsushi/tagbar'
+
 
 
 
@@ -311,12 +313,12 @@ set splitbelow " Open new splits below
 set splitright " Open new vertical splits to the right
 
 " Returns true if paste mode is enabled
-function! HasPaste()
-    if &paste
-        return 'PASTE MODE  '
-    en
-    return ''
-endfunction
+"function! HasPaste()
+    "if &paste
+        "return 'PASTE MODE  '
+    "en
+    "return ''
+"endfunction
 
 
 
@@ -403,7 +405,10 @@ nmap    <silent> <leader>w :w!<cr>
 noremap <silent> <leader>W :w !sudo tee % > /dev/null<cr> " Saves the file with sudo rights
 
 " Quit vim
-nmap    <silent> <leader>q :quit<cr>
+nmap <silent> <leader>q :quit<cr>
+
+" Combined saving and quitting
+nmap <silent> <leader>wq :w!<cr>:quit<cr>
 
 " Repurpose arrow keys to navigating windows
 "nnoremap <left> <C-w>h
@@ -563,7 +568,7 @@ map <silent> <leader>z :Goyo<cr>
 "
 "" Tagbar
 "nmap <F8> :TagbarToggle<CR>
-nnoremap <silent> <leader>b :TagbarToggle<CR>
+"nnoremap <silent> <leader>b :TagbarToggle<CR>
 
 """
 """ Easytags
@@ -571,6 +576,7 @@ nnoremap <silent> <leader>b :TagbarToggle<CR>
 set tags=./.tags;
 let g:easytags_async = 1
 let g:easytags_dynamic_files = 2
+let g:easytags_auto_highlight = 0
 set cpoptions+=d
 
 nmap <silent> <leader>ut :UpdateTags -R ./<CR>
