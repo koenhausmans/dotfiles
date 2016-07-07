@@ -237,6 +237,35 @@ map <silent> <leader><space> :nohlsearch<cr>
 map j gj
 map k gk
 
+" Close the current buffer
+map <leader>bd :Bclose<cr>
+
+" Close all the buffers
+map <leader>ba :1,1000 bd!<cr>
+
+" Useful mappings for managing tabs
+map <leader>tn :tabnew<cr>
+map <leader>to :tabonly<cr>
+map <leader>tc :tabclose<cr>
+map <leader>tl :tabn<cr>
+map <leader>th :tabp<cr>
+map <leader>tm :tabmove
+
+" Shortcut to list all buffers and allow quickly to select a buffer
+map <leader>b :ls<cr>:b<space>
+
+" Opens a new tab with the current buffer's path
+" Super useful when editing files in the same directory
+map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
+
+" Return to last edit position when opening files (You want this!)
+autocmd BufReadPost *
+     \ if line("'\"") > 0 && line("'\"") <= line("$") |
+     \   exe "normal! g`\"" |
+     \ endif
+
+" Remember info about open buffers on close
+set viminfo^=%
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Visual settings / VIM user interface
@@ -421,10 +450,10 @@ nmap <silent> <leader>wq :w!<cr>:quit<cr>
 "inoremap <right> <nop>
 
 " Navigate the vim splits with shortcuts
-nnoremap <c-j> <c-w>j
-nnoremap <c-k> <c-w>k
-nnoremap <c-h> <c-w>h
-nnoremap <c-l> <c-w>l
+"nnoremap <c-j> <c-w>j
+"nnoremap <c-k> <c-w>k
+"nnoremap <c-h> <c-w>h
+"nnoremap <c-l> <c-w>l
 
 
 " Make Y consistent with D
@@ -472,12 +501,11 @@ nnoremap <silent> <leader>ff :exe 'Files ' . <SID>fzf_root()<CR>
 nnoremap <silent> <leader>fh :History<CR>
 nnoremap <silent> <leader>bb :Buffers<CR>
 nnoremap <silent> <leader>ll :Lines<CR>
+nnoremap <silent> <Leader>lb :BLines<CR>
 nnoremap <silent> <leader>tt :Tags<CR>
 nnoremap <silent> <leader>bt :BTags<CR>
-"nnoremap <silent> <Leader>fc :Colors<CR>
-"nnoremap <silent> <Leader>; :Commands<CR>
-"nnoremap <silent> <Leader>h :Helptags<CR>
-"nnoremap <silent> <Leader>lb :BLines<CR>
+nnoremap <silent> <leader>mm :Marks<CR>
+nnoremap <silent> <leader>ch :History:<CR>
 
 
 
@@ -580,8 +608,8 @@ let g:easytags_auto_highlight = 0
 set cpoptions+=d
 
 nmap <silent> <leader>ut :UpdateTags -R ./<CR>
-nmap <silent> <leader>ht :HighlightTags<CR>
+"nmap <silent> <leader>ht :HighlightTags<CR>
 
-map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
-map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+"map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
+"map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
