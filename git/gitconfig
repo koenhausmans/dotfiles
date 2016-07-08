@@ -5,10 +5,6 @@
     pl = pull --rebase
     ps = push
 
-[user]
-    email = koen@hausmans.nl
-    name = Koen Hausmans
-
 [core]
     excludesfile = ~/.gitignore_global
 
@@ -24,6 +20,14 @@
 [difftool]
     prompt = false
 
+[help]
+    autocorrect = 1
+
 # Allow local customizations in the .gitconfig.local file
 [include]
     path = ~/.gitconfig.local
+
+[user]
+    email = koen@hausmans.nl
+    name = Koen Hausmans
+
