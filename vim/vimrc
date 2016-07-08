@@ -387,7 +387,7 @@ autocmd BufWrite *.py :call StripTrailingWhitespaces()
 autocmd BufWrite *.coffee :call StripTrailingWhitespaces()
 
 " Trim trailing white space
-nmap <silent> <leader>t :call StripTrailingWhitespaces()<CR>
+nmap <silent> <leader>t :call StripTrailingWhitespaces()<CR>:retab<CR>
 
 """
 """ Format Options
@@ -573,6 +573,7 @@ let g:airline_theme='gruvbox'
 "let g:airline_right_sep=' '
 "let g:airline_powerline_fonts=0
 let g:airline_powerline_fonts=1
+let g:airline#extensions#branch#displayed_head_limit=15
 
 
 """
