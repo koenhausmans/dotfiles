@@ -13,6 +13,6 @@ Fzf:
 `fo`: fuzzy open file in a editor<br/>
 
 ### Shortcuts
-`Ctrl+T`: paste selected file into command line
-`Alt+C`: fuzzy navigation to selected directory
-`Ctrl+R`: fuzzy search the command history
+`Ctrl+T`: paste selected file into command line<br/>
+`Alt+C`: fuzzy navigation to selected directory<br/>
+`Ctrl+R`: fuzzy search the command history<br/>
