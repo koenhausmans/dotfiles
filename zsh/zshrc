@@ -24,6 +24,14 @@ ENABLE_CORRECTION="true"
 # Uncomment the following line to display red dots whilst waiting for completion.
 COMPLETION_WAITING_DOTS="true"
 
+# Uncomment the following line to disable auto-setting terminal title.
+DISABLE_AUTO_TITLE="true"
+
+# Uncomment the following line if you want to change the command execution time
+# stamp shown in the history command output.
+# The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+HIST_STAMPS="yyyy-mm-dd"
+
 # Don't fill in autocomplete if there is ambiguity
 setopt no_auto_menu # Currently clobbered by oh my zsh!
 
@@ -31,7 +39,7 @@ setopt no_auto_menu # Currently clobbered by oh my zsh!
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(extract colored-man ssh-agent)
+plugins=(extract ssh-agent dircycle)
 #plugins=(git github git-extras dircycle tmux colored-man extract web-search)
 
 ###########################################################################
