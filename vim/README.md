@@ -24,15 +24,22 @@ NERDTree: Tree File Explorer:
 -----------------------------
 
 `<leader>nn`: Open NERDTree<br/>
-`<leader>nf`: Open NERDTree and find the currently opened file in the tre<br/>
+`<leader>nf`: Open NERDTree and find the currently opened file in the tree<br/>
 
 [https://www.cheatography.com/stepk/cheat-sheets/vim-nerdtree/]
 
 TODO: Add additional shortcuts for NERDTree
 
-Easytags: Tag generation:
--------------------------
+Ctags: Tag support in vim:
+--------------------------
+
+### Easytags: Tag generation:
 To recursively generate tags from the CWD down, press `<leader>ut`.
+
+### CTags Shortcuts:
+
+`<C-]>`: Jump to the tag underneath the cursor<br/>
+`<C-t>`: Jump back up in the tag stack<br/>
 
 
 FZF: Fuzzy finder:
