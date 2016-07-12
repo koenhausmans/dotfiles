@@ -10,6 +10,8 @@ Common shortcuts for tmux:
 `<C-a>p`: Previous window<br/>
 `<C-a><C-a>`: Switch to last window<br/>
 `<C-a><C-k>`: Kill window<br/>
+`<C-a>,`: Rename window<br/>
+`<C-a>:rename-window`: Rename window<br/>
 
 === Splits ===
 `<C-a>v`: Splits window horizontally<br/>
