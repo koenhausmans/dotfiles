@@ -4,16 +4,21 @@ Tmux:
 Common shortcuts for tmux:
 --------------------------
 
-=== Windows ===
+### General ###
+`<C-a>r`: Reload the tmux configuration<br/>
+
+### Windows ###
 `<C-a>c`: Create a new window<br/>
 `<C-a>n`: Next window<br/>
+`<C-a><C-n>`: Next window<br/>
 `<C-a>p`: Previous window<br/>
+`<C-a><C-p>`: Previous window<br/>
 `<C-a><C-a>`: Switch to last window<br/>
 `<C-a><C-k>`: Kill window<br/>
 `<C-a>,`: Rename window<br/>
 `<C-a>:rename-window`: Rename window<br/>
 
-=== Splits ===
+### Splits ###
 `<C-a>v`: Splits window horizontally<br/>
 `<C-a>|`: Splits window horizontally<br/>
 `<C-a>s`: Splits window vertically<br/>
@@ -28,3 +33,5 @@ Common shortcuts for tmux:
 `<C-a>l`: Resize pane to the right with 1<br/>
 `<C-a>L`: Resize pane to the right with 5<br/>
 
+### Predefined Window layouts ###
+`<C-a><M-.>`: Opens a new window for editing dotfiles
