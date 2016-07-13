@@ -8,6 +8,7 @@ Common shortcuts for tmux:
 `<C-a>r`: Reload the tmux configuration<br/>
 
 ### Windows ###
+`<C-a>*number*`: To go to the window with *number*<br/>
 `<C-a>c`: Create a new window<br/>
 `<C-a>n`: Next window<br/>
 `<C-a><C-n>`: Next window<br/>
@@ -33,5 +34,14 @@ Common shortcuts for tmux:
 `<C-a>l`: Resize pane to the right with 1<br/>
 `<C-a>L`: Resize pane to the right with 5<br/>
 
+### Panes ###
+`<C-a><space>`: Toggle between layouts<br/>
+`<C-a>q`: Show pane numbers, type the key to goto that pane<br/>
+`<C-a>o`: Swap panes<br/>
+`<C-a>{`: Move pane to the left<br/>
+`<C-a>}`: Move pane to the right<br/>
+`<C-a>z`: Toggle pane zoom<br/>
+
 ### Predefined Window layouts ###
-`<C-a><M-.>`: Opens a new window for editing dotfiles
+`<C-a><M-.>`: Opens a new window for editing dotfiles<br/>
+`<C-a><M-d>`: Opens a new window for editing<br/>
