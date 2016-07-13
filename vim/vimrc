@@ -144,8 +144,8 @@ set autoread
 let mapleader = ","
 let g:mapleader = ","
 
-" Don't allow buffers to exist in the background
-set nohidden
+" Allow buffers to exist in the background
+set hidden
 
 " No annoying sound on errors
 set noerrorbells
