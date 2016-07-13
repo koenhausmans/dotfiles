@@ -1,0 +1,24 @@
+###
+### Tmux custom TNO settings
+###
+# `<C-a><M-i>`: Opens a new window for editing all IVSP repositories
+# `<C-a><M-s>`: Opens a new window for editing ivsp-core
+# `<C-a><M-c>`: Opens a new window for editing sensormiddleware
+
+# Sensormiddleware editing
+bind-key M-s new-window -n "sensormiddleware" -c "$HOME/ivsp/sensormiddleware" \; \
+    send-keys 'vim' 'Enter' \; \
+    send-keys ':UpdateTags -R ./' 'Enter' \; \
+    split-window -h -p 30 -c '#{pane_current_path}' \; \
+    select-pane -t :.1
+
+# IVSP editing
+bind-key M-i new-window -n "ivsp" -c "$HOME/ivsp" \; \
+    send-keys 'vim' 'Enter'
+
+# Ivsp-core editing
+bind-key M-c new-window -n "ivsp-core" -c "$HOME/ivsp/ivsp-core" \; \
+    send-keys 'vim' 'Enter' \; \
+    send-keys ':UpdateTags -R ./' 'Enter' \; \
+    split-window -h -p 30 -c '#{pane_current_path}' \; \
+    select-pane -t :.1
