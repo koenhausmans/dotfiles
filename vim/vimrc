@@ -248,6 +248,10 @@ map <leader>bd :Bdelete<cr>
 " Close all the buffers
 map <leader>ba :bufdo :Bdelete<cr>
 
+" Move to next or previous buffer
+map <leader>bp :bp<cr>
+map <leader>bn :bn<cr>
+
 " Useful mappings for managing tabs
 map <leader>tn :tabnew<cr>
 map <leader>to :tabonly<cr>
