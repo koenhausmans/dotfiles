@@ -49,6 +49,10 @@ plugins=(extract ssh-agent dircycle)
 # Set the PATH environment variable
 export PATH="~/bin:$DOTFILES/bin:$PATH"
 
+# Set the default editor to vim
+export VISUAL="vim"
+export EDITOR="$VISUAL"
+
 # Save lots of history
 SAVEHIST=1000
 
