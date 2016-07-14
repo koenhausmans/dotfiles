@@ -440,6 +440,7 @@ noremap <silent> <leader>W :w !sudo tee % > /dev/null<cr> " Saves the file with 
 
 " Quit vim
 nmap <silent> <leader>q :quit<cr>
+nmap <silent> <leader>qq :quit!<cr>
 
 " Combined saving and quitting
 nmap <silent> <leader>wq :w!<cr>:quit<cr>
