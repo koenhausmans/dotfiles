@@ -17,6 +17,11 @@ Buffer shortcuts:
 `<leader>bd`: Delete the current buffer without screwing up window layout<br/>
 `<leader>ba`: Delete all loaded buffers<br/>
 
+Tab shortcuts:
+--------------
+`<leader>tn`: Open a new tab<br/>
+`<leader>tc`: Close a new tab<br/>
+
 Spell checking:
 ---------------
 
