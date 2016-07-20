@@ -1,5 +1,5 @@
-Vim Scripts - Keyboard shortcuts:
-=================================
+Vim Script - Keyboard shortcuts:
+================================
 
 `<leader>` key has been defined as `,`
 
@@ -10,6 +10,12 @@ File open/close:
 `<leader>W`: Saves a file with sudo rights<br/>
 `<leader>q`: Close the file<br/>
 
+Buffer shortcuts:
+-----------------
+`<leader>bn`: Go to the next buffer<br/>
+`<leader>bp`: Go to the previous buffer<br/>
+`<leader>bd`: Delete the current buffer without screwing up window layout<br/>
+`<leader>ba`: Delete all loaded buffers<br/>
 
 Spell checking:
 ---------------
