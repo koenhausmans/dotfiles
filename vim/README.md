@@ -16,6 +16,7 @@ Buffer shortcuts:
 `<leader>bp`: Go to the previous buffer<br/>
 `<leader>bd`: Delete the current buffer without screwing up window layout<br/>
 `<leader>ba`: Delete all loaded buffers<br/>
+`<C-6>`: Go to previous buffer
 
 Tab shortcuts:
 --------------
