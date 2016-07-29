@@ -7,8 +7,6 @@ echo "70-plugin-configuration.vim"
 """
 """ FZF Integration
 """
-"set rtp+=~/.fzf/
-
 nnoremap <c-p> :FZF -m<cr>
 
 fun! s:fzf_root()
@@ -25,42 +23,6 @@ nnoremap <silent> <leader>tt :Tags<CR>
 nnoremap <silent> <leader>bt :BTags<CR>
 nnoremap <silent> <leader>mm :Marks<CR>
 nnoremap <silent> <leader>ch :History:<CR>
-
-
-
-
-""""
-"""" CtrlP
-""""
-"let g:ctrlp_working_path_mode = 'rw'
-"map <leader>j :CtrlP<cr>
-""let g:ctrlp_custom_ignore = {
-""    \ 'dir':  '\v[\/]\.(git|hg|svn|sass-cache|pip_download_cache|wheel_cache)$',
-""    \ 'file': '\v\.(png|jpg|jpeg|gif|DS_Store|pyc)$',
-""    \ 'link': '',
-""    \ }
-"let g:ctrlp_show_hidden = 1
-"let g:ctrlp_clear_cache_on_exit = 0
-"" Wait to update results (This should fix the fact that backspace is so slow)
-"let g:ctrlp_lazy_update = 1
-"" Show as many results as our screen will allow
-"let g:ctrlp_match_window = 'max:1000'
-
-""  let g:ctrlp_abbrev = {
-""    \ 'gmode': 'i',
-""    \ 'abbrevs': [
-""      \ {
-""        \ 'pattern': '^shj',
-""        \ 'expanded': 'fanmgmt/static/js/workflow',
-""        \ 'mode': 'pfrz',
-""      \ },
-""      \ {
-""        \ 'pattern': '^shh',
-""        \ 'expanded': 'fanmgmt/templates/workflow/compliance_review/jst',
-""        \ 'mode': 'pfrz',
-""      \ }
-""      \ ]
-""    \ }
 
 """
 """ NerdTree
@@ -113,10 +75,6 @@ map <silent> <leader>z :Goyo<cr>
 ""let g:syntastic_auto_loc_list = 1
 ""let g:syntastic_check_on_open = 0
 ""let g:syntastic_check_on_wq = 0
-"
-"" Tagbar
-"nmap <F8> :TagbarToggle<CR>
-"nnoremap <silent> <leader>b :TagbarToggle<CR>
 
 """
 """ Easytags
