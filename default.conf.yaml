@@ -5,7 +5,6 @@
 - clean: ['~']
 
 - link:
-    ~/.dotfiles         : ''
     ~/.bashrc           : bash/bashrc
     ~/.bash_profile     : bash/bash_profile
     ~/.gitconfig        : git/gitconfig
