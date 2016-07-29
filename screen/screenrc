@@ -79,7 +79,7 @@ vbell_msg ""
 startup_message off
 
 # Make the shell in every window a zsh shell
-shell zsh
+#shell zsh
 
 # Keep 1000 scrollback lines
 defscrollback 1000
@@ -134,5 +134,10 @@ chdir
 #
 # Default windows
 #
-screen -t zsh 0
+#screen 0
 
+################
+#
+# Load a local specific .screenrc file
+#
+source .screenrc.local
