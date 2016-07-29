@@ -5,11 +5,16 @@
 - clean: ['~']
 
 - link:
-#    ~/.vimrc            : vim/vimrc
     ~/.tmux.conf        : tmux/tmux.conf
     ~/.oh-my-zsh        : oh-my-zsh
     ~/.zshrc            : zsh/zshrc
     ~/.fzf              : fzf
+    ~/.vim/plugin/10-plugins.vim:
+        create: true
+        path:   vim/10-plugins.vim
+    ~/.vim/plugin/70-plugin-configuration.vim:
+        create: true
+        path:   vim/70-plugin-configuration.vim
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
