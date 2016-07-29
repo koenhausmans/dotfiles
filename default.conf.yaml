@@ -1,0 +1,16 @@
+- defaults:
+    link:
+      relink: true
+
+- clean: ['~']
+
+- link:
+    ~/.dotfiles         : ''
+    ~/.bashrc           : bash/bashrc
+    ~/.bash_profile     : bash/bash_profile
+    ~/.bash_aliases     : bash/bash_aliases
+    ~/.gitconfig        : git/gitconfig
+    ~/.gitignore_global : git/gitignore
+    ~/.screenrc         : screen/screenrc
+    ~/.vimrc            : vim/vimrc_basic
+

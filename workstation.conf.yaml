@@ -5,14 +5,8 @@
 - clean: ['~']
 
 - link:
-    ~/.dotfiles         : ''
-    ~/.bashrc           : bash/bashrc
-    ~/.bash_aliases     : bash/bash_aliases
-    ~/.gitconfig        : git/gitconfig
-    ~/.gitignore_global : git/gitignore
-    ~/.screenrc         : screen/screenrc
-    ~/.tmux.conf        : tmux/tmux.conf
     ~/.vimrc            : vim/vimrc
+    ~/.tmux.conf        : tmux/tmux.conf
     ~/.oh-my-zsh        : oh-my-zsh
     ~/.zshrc            : zsh/zshrc
     ~/.fzf              : fzf
@@ -27,5 +21,4 @@
     stdout: true
     stderr: true
   - [~/.dotfiles/powerline/install.sh,Installing powerline and fonts]
-
 
