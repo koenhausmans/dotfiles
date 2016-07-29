@@ -1,129 +1,4 @@
-"#####################################################
-"#####################################################
-"
-" Vimrc Configurationn
-" Version: 0.1
-"
-" by Koen Hausmans (KH) (koen@hausmans.nl)
-"
-"#####################################################
-"
-" Changelog
-" =========
-" 2016-06-22 KH : Initial version
-"
-"#####################################################
-"#####################################################
-
-" Allow vim to break compatibility with vi
-set nocompatible " This must be first, because it changes other options
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Plugin Manager (vim-plug)
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-"auto-install vim-plug
-if empty(glob('~/.vim/autoload/plug.vim'))
-    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    autocmd VimEnter * PlugInstall
-endif
-
-call plug#begin('~/.vim/plugged')
-" Make sure you use single quotes
-
-"""
-""" Colorschemes: Additional colorschemes that can be used
-"""
-Plug 'captbaritone/molokai'
-Plug 'morhetz/gruvbox'
-
-"""
-""" Syntax: Additional syntaxes that can be used
-"""
-Plug 'tpope/vim-git', { 'for': 'git' }
-Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
-Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
-
-" Make % match xml tags
-"Plug 'edsono/vim-matchit', { 'for': ['html', 'xml'] }
-
-" Make tab handle all completions
-"Plug 'ervandew/supertab'
-
-" Syntastic: Code linting errors
-"Plug 'scrooloose/syntastic', { 'for': ['php', 'python', 'javascript', 'css', 'cpp', 'c'] }
-
-" Load the NERDTree plugin
-Plug 'scrooloose/nerdtree', { 'on':  ['NERDTreeToggle', 'NERDTreeFind'] }
-
-" Change brackets and quotes
-"Plug 'tpope/vim-surround'
-" Make vim-surround repeatable with .
-"Plug 'tpope/vim-repeat'
-
-"""
-""" Airline: Fancy statusline
-"""
-Plug 'bling/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-
-"""
-""" CtrlP: Fuzzy file openener
-"""
-"Plug 'ctrlpvim/ctrlp.vim'
-
-"""
-""" FZF Vim: Fuzzy file openener vim extension
-"""
-Plug 'junegunn/fzf.vim'
-
-"""
-""" Tmux: Loads the vim-tmux-navigator to allow tmux keyboard shortcuts to be used within vim
-"""
-Plug 'christoomey/vim-tmux-navigator'
-
-"""
-""" Git: Plugins for git usage
-""'
-" Fugitive: Git from within Vim
-Plug 'tpope/vim-fugitive'
-Plug 'airblade/vim-gitgutter'
-
-"""
-""" Goyo: Distraction free writing
-"""
-Plug 'junegunn/goyo.vim'
-
-"""
-""" Commenting: Commenting plugins
-"""
-" Load the NERDCommenter plugin
-Plug 'scrooloose/nerdcommenter'
-" Make commenting easier
-"Plug 'tpope/vim-commentary'
-
-"""
-""" Easytags: Automatically updates the ctags file
-"""
-Plug 'xolox/vim-misc'
-Plug 'xolox/vim-easytags'
-
-"""
-""" Bbye: Buffer Bye for Vim - Allows closing buffers without screwing up the window layout
-"""
-Plug 'moll/vim-bbye'
-
-"""
-""" Tagbar: Shows a list of tags that are available
-"""
-", { 'on':  ['TagbarToggle'] }
-"Plug 'majutsushi/tagbar'
-
-
-
-
-" Add plugins to &runtimepath
-call plug#end()
+echo "50-basic.vim"
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
@@ -153,7 +28,6 @@ set novisualbell
 set t_vb=
 set tm=500
 
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and Fonts
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -162,15 +36,14 @@ syntax enable
 set t_Co=256
 
 "colorscheme molokai
-colorscheme gruvbox
-set background=dark
+"colorscheme gruvbox
+"set background=dark
 
 " Set utf8 as standard encoding and en_US as the standard language
 set encoding=utf8
 
 " Use Unix as the standard file type
 set ffs=unix,dos,mac
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Text, tab and indent related
@@ -193,12 +66,8 @@ set softtabstop=4
 set linebreak
 set tw=500
 
-"set ai "Auto indent
-"set si "Smart indent
-
 " Wrap lines
 set wrap
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Search and matching
@@ -211,12 +80,6 @@ set hlsearch
 
 " For regular expressions turn magic on
 set magic
-
-" Use regex for searches
-"nnoremap / /\v
-"vnoremap / /\v
-"nnoremap ? ?\v
-"vnoremap ? ?\v
 
 " Ignore case when searching
 set ignorecase
@@ -234,7 +97,6 @@ set mat=2
 map <silent> <leader><cr> :nohlsearch<cr>
 map <silent> <leader><space> :nohlsearch<cr>
 
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Moving around, tabs, windows and buffers
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -242,16 +104,25 @@ map <silent> <leader><space> :nohlsearch<cr>
 map j gj
 map k gk
 
+"""
+""" Buffer shortcuts
+"""
+" Shortcut to list all buffers and allow quickly to select a buffer
+map <leader>b :ls<cr>:b<space>
+
 " Close the current buffer
-map <leader>bd :Bdelete<cr>
+map <leader>bd :bd<cr>
 
 " Close all the buffers
-map <leader>ba :bufdo :Bdelete<cr>
+map <leader>ba :bufdo :bd<cr>
 
 " Move to next or previous buffer
 map <leader>bp :bp<cr>
 map <leader>bn :bn<cr>
 
+"""
+""" Tab shortcuts
+"""
 " Useful mappings for managing tabs
 map <leader>tn :tabnew<cr>
 map <leader>to :tabonly<cr>
@@ -259,9 +130,6 @@ map <leader>tc :tabclose<cr>
 map <leader>tl :tabn<cr>
 map <leader>th :tabp<cr>
 map <leader>tm :tabmove
-
-" Shortcut to list all buffers and allow quickly to select a buffer
-map <leader>b :ls<cr>:b<space>
 
 " Opens a new tab with the current buffer's path
 " Super useful when editing files in the same directory
@@ -303,15 +171,6 @@ set ruler
 " The last window will have a status line always
 set laststatus=2
 
-" Format the status line
-"set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l
-
-" Don't show the mode in the last line of the screen, vim-airline takes care of it
-"set noshowmode
-
-" Height of the command bar
-"set cmdheight=2
-
 " Configure backspace so it acts as it should act
 se backspace=eol,start,indent
 set whichwrap+=<,>,h,l
@@ -349,16 +208,6 @@ set foldopen=block,hor,mark,percent,quickfix,search,tag,undo,jump
 """
 set splitbelow " Open new splits below
 set splitright " Open new vertical splits to the right
-
-" Returns true if paste mode is enabled
-"function! HasPaste()
-    "if &paste
-        "return 'PASTE MODE  '
-    "en
-    "return ''
-"endfunction
-
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Editing mappings
@@ -429,7 +278,6 @@ set formatoptions=cqrn1
 "    set undofile
 "endif
 
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Custom Filetypes
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -449,26 +297,11 @@ nmap <silent> <leader>qq :quit!<cr>
 " Combined saving and quitting
 nmap <silent> <leader>wq :w!<cr>:quit<cr>
 
-" Repurpose arrow keys to navigating windows
-"nnoremap <left> <C-w>h
-"nnoremap <right> <C-w>l
-"nnoremap <up> <C-w>k
-"nnoremap <down> <C-w>j
-"inoremap <up> <nop>
-"inoremap <down> <nop>
-"inoremap <left> <nop>
-"inoremap <right> <nop>
-
 " Navigate the vim splits with shortcuts
-"nnoremap <c-j> <c-w>j
-"nnoremap <c-k> <c-w>k
-"nnoremap <c-h> <c-w>h
-"nnoremap <c-l> <c-w>l
-
-
-" Make Y consistent with D
-"nnoremap Y y$
-
+nnoremap <c-j> <c-w>j
+nnoremap <c-k> <c-w>k
+nnoremap <c-h> <c-w>h
+nnoremap <c-l> <c-w>l
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Spell checking
@@ -482,145 +315,10 @@ map <leader>sp [s   " Move to the previous misspelled word
 map <leader>sa zg   " Add word under cursor as a good word
 map <leader>s? z=   " Suggest correctly spelled word
 
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Machine local vim file
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if filereadable(glob("$HOME/.vimrc.local"))
     source $HOME/.vimrc.local
 endif
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Plugin Setup
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-"""
-""" FZF Integration
-"""
-set rtp+=~/.fzf/
-
-nnoremap <c-p> :FZF -m<cr>
-
-fun! s:fzf_root()
-    let path = finddir(".git", expand("%:p:h").";")
-    return fnamemodify(substitute(path, ".git", "", ""), ":p:h")
-endfun
-
-nnoremap <silent> <leader>ff :exe 'Files ' . <SID>fzf_root()<CR>
-nnoremap <silent> <leader>fh :History<CR>
-nnoremap <silent> <leader>bb :Buffers<CR>
-nnoremap <silent> <leader>ll :Lines<CR>
-nnoremap <silent> <Leader>lb :BLines<CR>
-nnoremap <silent> <leader>tt :Tags<CR>
-nnoremap <silent> <leader>bt :BTags<CR>
-nnoremap <silent> <leader>mm :Marks<CR>
-nnoremap <silent> <leader>ch :History:<CR>
-
-
-
-
-""""
-"""" CtrlP
-""""
-"let g:ctrlp_working_path_mode = 'rw'
-"map <leader>j :CtrlP<cr>
-""let g:ctrlp_custom_ignore = {
-""    \ 'dir':  '\v[\/]\.(git|hg|svn|sass-cache|pip_download_cache|wheel_cache)$',
-""    \ 'file': '\v\.(png|jpg|jpeg|gif|DS_Store|pyc)$',
-""    \ 'link': '',
-""    \ }
-"let g:ctrlp_show_hidden = 1
-"let g:ctrlp_clear_cache_on_exit = 0
-"" Wait to update results (This should fix the fact that backspace is so slow)
-"let g:ctrlp_lazy_update = 1
-"" Show as many results as our screen will allow
-"let g:ctrlp_match_window = 'max:1000'
-
-""  let g:ctrlp_abbrev = {
-""    \ 'gmode': 'i',
-""    \ 'abbrevs': [
-""      \ {
-""        \ 'pattern': '^shj',
-""        \ 'expanded': 'fanmgmt/static/js/workflow',
-""        \ 'mode': 'pfrz',
-""      \ },
-""      \ {
-""        \ 'pattern': '^shh',
-""        \ 'expanded': 'fanmgmt/templates/workflow/compliance_review/jst',
-""        \ 'mode': 'pfrz',
-""      \ }
-""      \ ]
-""    \ }
-
-"""
-""" NerdTree
-"""
-let g:NERDTreeWinPos = "right"
-let NERDTreeShowHidden = 1
-let NERDTreeMinimalUI = 1
-let NERDTreeDirArrows = 1
-let g:NERDTreeWinSize = 35
-map <leader>nn :NERDTreeToggle<cr>
-"map <leader>nb :NERDTreeFromBookmark
-map <leader>nf :NERDTreeFind<cr>
-
-" Automatically close NERDTree if it is the only window remaining
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-
-
-"""
-""" Airline
-"""
-set rtp+=/usr/local/lib/python2.7/dist-packages/powerline/bindings/vim/
-" Set the airline theme to zenburn
-"let g:airline_theme='zenburn'
-"let g:airline_theme='molokai'
-let g:airline_theme='gruvbox'
-"let g:airline_theme='powerlineish'
-" The angle bracket defaults look fugly, don't show them
-"let g:airline_left_sep=' '
-"let g:airline_right_sep=' '
-"let g:airline_powerline_fonts=0
-let g:airline_powerline_fonts=1
-let g:airline#extensions#branch#displayed_head_limit=15
-
-
-"""
-""" Goyo
-"""
-"let g:goyo_width = 100
-let g:goyo_margin_top = 2
-let g:goyo_margin_bottom = 2
-map <silent> <leader>z :Goyo<cr>
-
-"
-"" Syntastic
-""set statusline+=%#warningmsg#
-""set statusline+=%{SyntasticStatuslineFlag()}
-""set statusline+=%*
-"
-""let g:syntastic_always_populate_loc_list = 1
-""let g:syntastic_auto_loc_list = 1
-""let g:syntastic_check_on_open = 0
-""let g:syntastic_check_on_wq = 0
-"
-"" Tagbar
-"nmap <F8> :TagbarToggle<CR>
-"nnoremap <silent> <leader>b :TagbarToggle<CR>
-
-"""
-""" Easytags
-"""
-set tags=./.tags;
-let g:easytags_async = 1
-let g:easytags_dynamic_files = 2
-let g:easytags_auto_highlight = 0
-set cpoptions+=d
-
-nmap <silent> <leader>ut :UpdateTags -R ./<CR>
-"nmap <silent> <leader>ht :HighlightTags<CR>
-
-"map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
-"map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
