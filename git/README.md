@@ -18,10 +18,11 @@ Local Changes:
 Branches:
 ---------
 
-| Command | Alternative | Description |
-| --- | --- | --- |
-| `git checkout -b test remote-name/test` | | Checkout branch "test" from "remote-name" remote branch (usefull with multiple branches |
-| `git checkout --track remote-name/test` | `git checkout test` | Checks out a new branch "test" that tracks the upstream branch "remote-name". The alternative command only works when there is only one branch named "test" on any of the remotes. |
+| Command | Description |
+| --- | --- |
+| `git checkout -b <local-branch> <remote>/<branch>` | Checkout `<local-branch>` that tracks upstream branch `<remote>/<branch>` |
+| `git checkout --track <remote>/<branch>` | Checkout `<branch>` that tracks upstream branch `<remote>/<branch>` |
+| `git checkout <branch>` | Checks out `<branch>` and tracks upstream branch i.f.f. there exists a branch named `<branch>` on one remote |
 | `git branch -vv` | | Show all branches including the upstream branches |
 
 
@@ -33,4 +34,6 @@ Remote commands:
 | `git pull --rebase` | Pull upstream branch and rebase to the new version |
 | `git push` | Push the local changes to the upstream branch |
 | `git fetch` | Receive all changes from a remote location |
-| `git rebase [branch]` | Rebases [branch] into the current branch |
+| `git rebase <branch>` | Rebases <branch> into the current branch |
+| `git branch -dr <remote/branch>` | Deletes a branch on the remote |
+| `git push <remote> --delete <branch>` | Deletes the remote branch `<remote>/<branch>` | 
