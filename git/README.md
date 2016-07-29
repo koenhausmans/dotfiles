@@ -9,7 +9,7 @@ Local Changes:
 | `git status --short --branch` | `git status -sb` | Short summary of local changes |
 | `git log --stat` | | Shows file statistics with log messages |
 | `git log --pretty=oneline` | | Shows the log messages in one line |
-| `git log --abrev-commit` | | Shows only a partial SHA1 hash for the commits |
+| `git log --abbrev-commit` | | Shows only a partial SHA1 hash for the commits |
 | `git log --graph` | | Shows a graph of the different branches |
 | `git diff` | | Shows the difference for all files |
 | `git diff --cached` | | Shows all staged differences |
@@ -33,3 +33,4 @@ Remote commands:
 | `git pull --rebase` | Pull upstream branch and rebase to the new version |
 | `git push` | Push the local changes to the upstream branch |
 | `git fetch` | Receive all changes from a remote location |
+| `git rebase [branch]` | Rebases [branch] into the current branch |
