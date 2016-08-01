@@ -7,8 +7,9 @@ pushd "$BASEDIR/powerline"
 font_dir="$HOME/.local/share/fonts"
 mkdir -p $font_dir
 
-python setup.py build
-powerline-daemon --replace
+pip install --user powerline-status
+#python setup.py build
+#powerline-daemon --replace
 
 cp font/PowerlineSymbols.otf $font_dir
 fc-cache -vf $font_dir

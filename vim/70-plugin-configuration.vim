@@ -42,6 +42,12 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 """ Airline
 """
 set rtp+=/usr/local/lib/python2.7/dist-packages/powerline/bindings/vim/
+set rtp+=~/.dotfiles/powerline/powerline/powerline/bindings/vim/
+
+" Fix the colorscheme as soon as powerline is installed
+colorscheme gruvbox
+set background=dark
+
 " Set the airline theme to zenburn
 "let g:airline_theme='zenburn'
 "let g:airline_theme='molokai'

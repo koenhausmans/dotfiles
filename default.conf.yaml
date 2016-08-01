@@ -10,10 +10,11 @@
     ~/.gitconfig        : git/gitconfig
     ~/.gitignore_global : git/gitignore
     ~/.screenrc         : screen/screenrc
-    ~/.vim/plugin/00-nocompatible.vim:
+    ~/.vimrc            : vim/vimrc
+    ~/.vim/00-nocompatible.vim:
         create: true
         path:   vim/00-nocompatible.vim
-    ~/.vim/plugin/50-basic.vim:
+    ~/.vim/50-basic.vim:
         create: true
         path:   vim/50-basic.vim
 
