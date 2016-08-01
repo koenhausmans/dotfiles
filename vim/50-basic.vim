@@ -296,10 +296,12 @@ nmap <silent> <leader>qq :quit!<cr>
 nmap <silent> <leader>wq :w!<cr>:quit<cr>
 
 " Navigate the vim splits with shortcuts
-nnoremap <c-j> <c-w>j
-nnoremap <c-k> <c-w>k
-nnoremap <c-h> <c-w>h
-nnoremap <c-l> <c-w>l
+if empty(glob("~/.vim/plugged/vim-tmux-navigator/"))
+  nnoremap <c-j> <c-w>j
+  nnoremap <c-k> <c-w>k
+  nnoremap <c-h> <c-w>h
+  nnoremap <c-l> <c-w>l
+endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Spell checking

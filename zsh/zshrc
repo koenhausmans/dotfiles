@@ -39,7 +39,8 @@ setopt no_auto_menu # Currently clobbered by oh my zsh!
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(extract ssh-agent dircycle)
+plugins=(extract dircycle)
+#ssh-agent
 #plugins=(git github git-extras dircycle tmux colored-man extract web-search)
 
 ###########################################################################
@@ -47,7 +48,7 @@ plugins=(extract ssh-agent dircycle)
 ###########################################################################
 
 # Set the PATH environment variable
-export PATH="~/bin:$DOTFILES/bin:$PATH"
+export PATH="~/bin:$DOTFILES/bin:~/.local/bin/:$PATH"
 
 # Set the default editor to vim
 export VISUAL="vim"
