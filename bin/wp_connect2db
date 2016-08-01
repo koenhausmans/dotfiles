@@ -20,5 +20,8 @@ DB_NAME=`cat $WORDPRESS_CONFIG | grep 'DB_NAME' | awk -F"'" '{ print $4 }'`
 DB_USER=`cat $WORDPRESS_CONFIG | grep 'DB_USER' | awk -F"'" '{ print $4 }'`
 DB_PASSWORD=`cat $WORDPRESS_CONFIG | grep 'DB_PASSWORD' | awk -F"'" '{ print $4 }'`
 
-mysql -u $DB_USER --password="$DB_PASSWORD" $DB_NAME
+echo -e "\e[34mDatabase\e[0m = $DB_NAME"
+echo -e "\e[34mUsername\e[0m = $DB_USER"
+echo -e "\e[34mPassword\e[0m = $DB_PASSWORD"
 
+mysql -u $DB_USER --password="$DB_PASSWORD" $DB_NAME "$*"
