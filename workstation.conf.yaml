@@ -18,13 +18,13 @@
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
-  - [~/.fzf/install --bin, Installing fzf binary]
   - [sudo apt-get update, Updating packages]
   -
     msg: Installing necessary packages
     command: sudo apt-get -qq -y install python python-pip vim vim-nox zsh tmux git exuberant-ctags python-setuptools g++ build-essential < /dev/null
     stdout: true
     stderr: true
+  - [~/.fzf/install --bin, Installing fzf binary]
   - [~/.dotfiles/powerline/install.sh,Installing powerline and fonts]
   - [~/.dotfiles/fonts/install,Installing additional fonts]
 
