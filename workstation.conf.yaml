@@ -1,9 +1,6 @@
 - defaults:
     link:
       relink: true
-    shell:
-      stdout: true
-      stderr: true
 
 - clean: ['~']
 
@@ -20,12 +17,34 @@
         path:   vim/70-plugin-configuration.vim
 
 - shell:
-  - [git submodule update --init --recursive, Installing submodules]
-  - [sudo apt-get update, Updating packages]
+  -
+    msg: Installing submodules
+    command: git submodule update --init --recursive]
+    stdout: true
+    stderr: true
+  -
+    msg: Updating packages
+    command: sudo apt-get update
+    stdout: true
+    stderr: true
   -
     msg: Installing necessary packages
     command: sudo apt-get -qq -y install python python-pip vim vim-nox zsh tmux git exuberant-ctags python-setuptools g++ build-essential < /dev/null
-  - [~/.fzf/install --bin, Installing fzf binary]
-  - [~/.dotfiles/powerline/install.sh,Installing powerline and fonts]
-  - [~/.dotfiles/fonts/install,Installing additional fonts]
+    stdout: true
+    stderr: true
+  -
+    msg: Installing fzf binary
+    command: ~/.fzf/install --bin
+    stdout: true
+    stderr: true
+  -
+    msg: Installing powerline and fonts
+    command: ~/.dotfiles/powerline/install.sh
+    stdout: true
+    stderr: true
+  -
+    msg: Installing additional fonts
+    command: ~/.dotfiles/fonts/install
+    stdout: true
+    stderr: true
 
