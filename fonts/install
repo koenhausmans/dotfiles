@@ -1,7 +1,8 @@
 #!/bin/bash
 
+PWD="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 font_dir="$HOME/.local/share/fonts"
 
-cp *.otf $font_dir
+cp $PWD/*.otf $font_dir
 
 fc-cache -vf $font_dir
