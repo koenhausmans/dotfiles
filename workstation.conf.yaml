@@ -33,6 +33,11 @@
     stdout: true
     stderr: true
   -
+    msg: Installing python packages
+    command: pip install --upgrade setuptools wheel
+    stdout: true
+    stderr: true
+  -
     msg: Installing fzf binary
     command: ~/.fzf/install --bin
     stdout: true
