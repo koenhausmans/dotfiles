@@ -41,10 +41,10 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 """
 """ Airline
 """
-set rtp+=/usr/local/lib/python2.7/dist-packages/powerline/bindings/vim/
-set rtp+=~/.dotfiles/powerline/powerline/powerline/bindings/vim/
+"set rtp+=/usr/local/lib/python2.7/dist-packages/powerline/bindings/vim/
+"set rtp+=~/.dotfiles/powerline/powerline/powerline/bindings/vim/
 
-" Fix the colorscheme as soon as powerline is installed
+" Fix the colorscheme as soon as the plugins have been installed by plug.vim (prevents warning at first startup)
 try
     colorscheme gruvbox
     set background=dark
