@@ -57,9 +57,6 @@ endtry
 let g:airline_theme='gruvbox'
 "let g:airline_theme='powerlineish'
 " The angle bracket defaults look fugly, don't show them
-"let g:airline_left_sep=' '
-"let g:airline_right_sep=' '
-"let g:airline_powerline_fonts=0
 let g:airline_powerline_fonts=1
 let g:airline#extensions#branch#displayed_head_limit=15
 
@@ -72,17 +69,6 @@ let g:goyo_margin_top = 2
 let g:goyo_margin_bottom = 2
 map <silent> <leader>z :Goyo<cr>
 
-"
-"" Syntastic
-""set statusline+=%#warningmsg#
-""set statusline+=%{SyntasticStatuslineFlag()}
-""set statusline+=%*
-"
-""let g:syntastic_always_populate_loc_list = 1
-""let g:syntastic_auto_loc_list = 1
-""let g:syntastic_check_on_open = 0
-""let g:syntastic_check_on_wq = 0
-
 """
 """ Easytags
 """
@@ -93,10 +79,6 @@ let g:easytags_auto_highlight = 0
 set cpoptions+=d
 
 nmap <silent> <leader>ut :UpdateTags -R ./<CR>
-"nmap <silent> <leader>ht :HighlightTags<CR>
-
-"map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
-"map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
 """
 """ Bbye: Buffer Bye for Vim configuration
