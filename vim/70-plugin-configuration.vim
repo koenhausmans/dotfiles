@@ -5,6 +5,8 @@
 """
 """ FZF Integration
 """
+set rtp+=~/.fzf
+
 nnoremap <c-p> :FZF -m<cr>
 
 fun! s:fzf_root()
