@@ -22,8 +22,10 @@ Branches:
 | --- | --- |
 | `git checkout -b <local-branch> <remote>/<branch>` | Checkout `<local-branch>` that tracks upstream branch `<remote>/<branch>` |
 | `git checkout --track <remote>/<branch>` | Checkout `<branch>` that tracks upstream branch `<remote>/<branch>` |
+| `git checkout -t <remote>/<branch>` | Checkout `<branch>` that tracks upstream branch `<remote>/<branch>` |
 | `git checkout <branch>` | Checks out `<branch>` and tracks upstream branch i.f.f. there exists a branch named `<branch>` on one remote |
-| `git branch -vv` | | Show all branches including the upstream branches |
+| `git branch -vv` | Show all branches including the upstream branches |
+| `git branch -r` | Show all remote branches |
 
 
 Remote commands:
@@ -33,6 +35,7 @@ Remote commands:
 | --- | --- |
 | `git pull --rebase` | Pull upstream branch and rebase to the new version |
 | `git push` | Push the local changes to the upstream branch |
+| `git push -u <remote> <branch>` | Push a local branch to a remote and set up tracking information |
 | `git fetch` | Receive all changes from a remote location |
 | `git rebase <branch>` | Rebases <branch> into the current branch |
 | `git branch -dr <remote/branch>` | Deletes a branch on the remote |
