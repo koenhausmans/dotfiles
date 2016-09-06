@@ -1,11 +1,20 @@
 Dotfiles:
 =========
 
+Installation:
+-------------
+
+### Basic Dotfiles: ###
+
 To install the basic dotfiles, execute:
  > ./install
 
+### Basic Dotfiles including Workstation dotfiles: ###
+
 To install the basic and workstation dotfiles, execute:
  > ./install workstation
+
+Next, change the default Terminal to use one of the "Powerline" fonts.
 
 
 Making local customizations:
