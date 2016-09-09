@@ -146,7 +146,7 @@ set viminfo^=%
 " => Visual settings / VIM user interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set 7 lines to the cursor - when moving vertically using j/k
-set scrolloff=7
+set scrolloff=3
 
 " Turn on the WiLd menu
 set wildmenu
