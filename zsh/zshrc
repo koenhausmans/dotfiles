@@ -48,7 +48,7 @@ plugins=(extract dircycle)
 ###########################################################################
 
 # Set the PATH environment variable
-export PATH="~/bin:$DOTFILES/bin:~/.local/bin/:$PATH"
+export PATH="$HOME/bin:$DOTFILES/bin:$HOME/.local/bin/:$PATH"
 
 # Set the default editor to vim
 export VISUAL="vim"
