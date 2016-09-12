@@ -24,4 +24,4 @@ echo -e "\e[34mDatabase\e[0m = $DB_NAME"
 echo -e "\e[34mUsername\e[0m = $DB_USER"
 echo -e "\e[34mPassword\e[0m = $DB_PASSWORD"
 
-#mysql -u $DB_USER --password="$DB_PASSWORD" $DB_NAME "$*"
+psql $DB_NAME $DB_USER "$*"
