@@ -12,6 +12,7 @@ File open/close:
 
 Buffer shortcuts:
 -----------------
+`<leader>b`: Shows buffer list and allows for quick navigation to another buffer<br/>
 `<leader>bn`: Go to the next buffer<br/>
 `<leader>bp`: Go to the previous buffer<br/>
 `<leader>bd`: Delete the current buffer without screwing up window layout<br/>
