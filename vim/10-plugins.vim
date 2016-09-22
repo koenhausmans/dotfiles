@@ -94,6 +94,24 @@ Plug 'xolox/vim-easytags'
 Plug 'moll/vim-bbye'
 
 """
+""" A.vim: Alternate files quickly (switch between header / source)
+"""
+" TODO: Determine whether this is usefull
+Plug 'vim-scripts/a.vim'
+
+"""
+""" CamelCaseMotion: Allows for camel case motions through words
+"""
+" TODO: Determine whether this is usefull
+Plug 'bkad/CamelCaseMotion'
+
+"""
+""" vim-multiple-cursors: Multiple selections for vim
+"""
+" TODO: Determine whether this is usefull
+Plug 'terryma/vim-multiple-cursors'
+
+"""
 """ Tagbar: Shows a list of tags that are available
 """
 ", { 'on':  ['TagbarToggle'] }
