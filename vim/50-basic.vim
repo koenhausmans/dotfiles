@@ -60,12 +60,21 @@ set shiftwidth=4
 set tabstop=4
 set softtabstop=4
 
+" Automatically indent when opening a new line, smartindent might indent
+" one extra level dependent on syntax
+set autoindent
+set smartindent
+
 " Linebreak on 500 characters
 set linebreak
 set tw=500
 
 " Wrap lines
 set wrap
+
+" Fix C indentation and make sure access specifiers are without indentation
+set cindent
+set cinoptions+=g0
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Search and matching

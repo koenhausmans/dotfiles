@@ -92,5 +92,13 @@ map <leader>bd :Bdelete<cr>
 " Close all the buffers
 map <leader>ba :bufdo :Bdelete<cr>
 
+"""
+""" CamelCaseMotion: Allows for camel case motion through words
+"""
+"call camelcasemotion#CreateMotionMappings('<leader>')
 
+"""
+""" NerdCommenter: Easy commenting of code
+"""
+let g:NERDCustomDelimiters = { 'arduino': { 'left': '//','right': '', 'leftAlt': '/*', 'rightAlt': '*/' } }
 
