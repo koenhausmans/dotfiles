@@ -2,14 +2,15 @@
 " => Plugin Manager (vim-plug)
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-"auto-install vim-plug
+"""
+""" Auto-install vim-plug
+"""
 if empty(glob('~/.vim/autoload/plug.vim'))
     silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     autocmd VimEnter * PlugInstall
 endif
 
 call plug#begin('~/.vim/plugged')
-" Make sure you use single quotes
 
 """
 """ Colorschemes: Additional colorschemes that can be used
@@ -24,9 +25,6 @@ Plug 'tpope/vim-git', { 'for': 'git' }
 Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
 Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 
-" Make % match xml tags
-"Plug 'edsono/vim-matchit', { 'for': ['html', 'xml'] }
-
 " Make tab handle all completions
 "Plug 'ervandew/supertab'
 
@@ -36,11 +34,6 @@ Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 " Load the NERDTree plugin
 Plug 'scrooloose/nerdtree', { 'on':  ['NERDTreeToggle', 'NERDTreeFind'] }
 
-" Change brackets and quotes
-"Plug 'tpope/vim-surround'
-" Make vim-surround repeatable with .
-"Plug 'tpope/vim-repeat'
-
 """
 """ Airline: Fancy statusline
 """
@@ -48,13 +41,9 @@ Plug 'bling/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
 """
-""" CtrlP: Fuzzy file openener
-"""
-"Plug 'ctrlpvim/ctrlp.vim'
-
-"""
 """ FZF Vim: Fuzzy file openener vim extension
 """
+Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 
 """
@@ -100,24 +89,10 @@ Plug 'moll/vim-bbye'
 Plug 'vim-scripts/a.vim'
 
 """
-""" CamelCaseMotion: Allows for camel case motions through words
-"""
-" TODO: Determine whether this is usefull
-Plug 'bkad/CamelCaseMotion'
-
-"""
 """ vim-multiple-cursors: Multiple selections for vim
 """
 " TODO: Determine whether this is usefull
 Plug 'terryma/vim-multiple-cursors'
 
-"""
-""" Tagbar: Shows a list of tags that are available
-"""
-", { 'on':  ['TagbarToggle'] }
-"Plug 'majutsushi/tagbar'
-
-
-" Add plugins to &runtimepath
 call plug#end()
 

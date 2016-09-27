@@ -5,8 +5,6 @@
 """
 """ FZF Integration
 """
-set rtp+=~/.fzf
-
 nnoremap <c-p> :FZF -m<cr>
 
 fun! s:fzf_root()
@@ -43,8 +41,6 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 """
 """ Airline
 """
-"set rtp+=/usr/local/lib/python2.7/dist-packages/powerline/bindings/vim/
-"set rtp+=~/.dotfiles/powerline/powerline/powerline/bindings/vim/
 
 " Fix the colorscheme as soon as the plugins have been installed by plug.vim (prevents warning at first startup)
 try
@@ -54,11 +50,7 @@ catch /^Vim\%((\a\+)\)\=:E185/
 endtry
 
 " Set the airline theme to zenburn
-"let g:airline_theme='zenburn'
-"let g:airline_theme='molokai'
 let g:airline_theme='gruvbox'
-"let g:airline_theme='powerlineish'
-" The angle bracket defaults look fugly, don't show them
 let g:airline_powerline_fonts=1
 let g:airline#extensions#branch#displayed_head_limit=15
 
@@ -66,7 +58,6 @@ let g:airline#extensions#branch#displayed_head_limit=15
 """
 """ Goyo
 """
-"let g:goyo_width = 100
 let g:goyo_margin_top = 2
 let g:goyo_margin_bottom = 2
 map <silent> <leader>z :Goyo<cr>
@@ -91,11 +82,6 @@ map <leader>bd :Bdelete<cr>
 
 " Close all the buffers
 map <leader>ba :bufdo :Bdelete<cr>
-
-"""
-""" CamelCaseMotion: Allows for camel case motion through words
-"""
-"call camelcasemotion#CreateMotionMappings('<leader>')
 
 """
 """ NerdCommenter: Easy commenting of code
