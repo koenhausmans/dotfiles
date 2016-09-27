@@ -1,7 +1,6 @@
 - defaults:
     link:
       relink: true
-
 - clean: ['~']
 
 - link:
@@ -30,7 +29,7 @@
     stderr: true
   -
     msg: Installing python packages
-    command: pip install --upgrade setuptools wheel
+    command: sudo pip install --upgrade setuptools wheel
     stdout: true
     stderr: true
   -
