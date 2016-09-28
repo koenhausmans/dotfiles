@@ -66,18 +66,9 @@ HISTFILE=~/.history
 
 source $ZSH/oh-my-zsh.sh
 
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
-
-# ssh
-# export SSH_KEY_PATH="~/.ssh/dsa_id"
-
 ###########################################################################
 #                            Source other files                           #
 ###########################################################################
-
-# Let other namespaces make zsh changes
-#source $HOME/.dotfiles/*/.zshrc
 
 # Customize to your needs...
 if [ -f $HOME/.zshrc.local ]; then
