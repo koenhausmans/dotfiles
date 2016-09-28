@@ -78,7 +78,7 @@ do
     echo
 done
 
-if [ -z $(ls -A $BACKUP_DIRECTORY) ]
+if [ -z "$(ls -A $BACKUP_DIRECTORY)" ]
 then
     echo "Backup directory empty, removing folder"
     rm -rf $BACKUP_DIRECTORY
