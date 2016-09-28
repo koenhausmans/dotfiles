@@ -43,7 +43,7 @@ Plug 'vim-airline/vim-airline-themes'
 """
 """ FZF Vim: Fuzzy file openener vim extension
 """
-Plug 'junegunn/fzf'
+Plug 'junegunn/fzf', {'dir': '~/.fzf', 'frozen': 1}
 Plug 'junegunn/fzf.vim'
 
 """
