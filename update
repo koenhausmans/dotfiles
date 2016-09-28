@@ -1,0 +1,10 @@
+#!/bin/bash
+
+BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+pushd $BASEDIR > /dev/null
+
+git pull --rebase
+git submodule update --init --remote --merge --recursive
+
+popd > /dev/null
