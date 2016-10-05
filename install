@@ -15,9 +15,16 @@ DOTBOT_BIN="bin/dotbot"
 BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 cd "${BASEDIR}"
+
+ALL_CONFIG_FILES="${DEFAULT_CONFIG_PREFIX} ${@}"
+if [ "$1" == "all" ] ; then
+	ALL_CONFIG_FILES=`find . -iname "*.conf.yaml" -exec basename {} \; | sed -e 's/.conf.yaml$//g'`
+fi
+
 git submodule update --init --recursive "${DOTBOT_DIR}"
 
-for conf in ${DEFAULT_CONFIG_PREFIX} ${@}; do
+for conf in ${ALL_CONFIG_FILES}; do
+    conf=`echo $conf | sed -e 's/.conf.yaml$//g'`
     "${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${conf}${CONFIG_SUFFIX}"
 done
 
