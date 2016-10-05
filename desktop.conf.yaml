@@ -1,0 +1,12 @@
+- shell:
+  -
+    msg: Installing powerline and fonts
+    command: ~/.dotfiles/powerline/install.sh
+    stdout: true
+    stderr: true
+  -
+    msg: Installing additional fonts
+    command: ~/.dotfiles/fonts/install
+    stdout: true
+    stderr: true
+
