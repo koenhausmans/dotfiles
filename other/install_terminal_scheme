@@ -1,0 +1,21 @@
+#!/bin/bash
+
+echo "Gruvbox colorscheme installer"
+echo
+
+KONSOLE_COLORSCHEME="https://raw.githubusercontent.com/morhetz/gruvbox-contrib/master/konsole/Gruvbox_dark.colorscheme"
+
+TMPDIR=$(mktemp -d)
+
+pushd $TMPDIR > /dev/null
+
+if hash konsole 2>/dev/null ; then
+    echo "Installing Konsole colorscheme"
+
+    wget --quiet $KONSOLE_COLORSCHEME
+    sudo cp Gruvbox_dark.colorscheme /usr/share/konsole/
+fi
+
+popd > /dev/null
+rm -rf $TMPDIR
+
