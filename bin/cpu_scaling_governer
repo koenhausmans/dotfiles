@@ -1,0 +1,60 @@
+#!/bin/bash
+# Source: https://ubuntuforums.org/showthread.php?t=2080751
+# init
+
+##### SHOW INITIAL MENU #####
+while :
+do
+clear
+echo "***************************************"
+echo "* Choose CPU Scaling Governor:        *"
+echo "***************************************"
+echo "* [1] On Demand                       *"
+echo "* [2] Conservative                    *"
+echo "* [3] Powersave                       *"
+echo "* [4] Performance                     *"
+echo "* [Q] Exit                            *"
+echo "***************************************"
+echo -n "Enter your menu choice: "
+read choice
+case $choice in
+##### END SHOW INITIAL MENU #####
+
+
+##### (1) ACTIVATE "ON DEMAND" GOVERNOR #####
+1) sudo cpufreq-set -r -g ondemand ;;
+##### END ACTIVATE "ON DEMAND" GOVERNOR #####
+
+
+##### (2) ACTIVATE "CONSERVATIVE" GOVERNOR #####
+2) sudo cpufreq-set -r -g conservative ;;
+##### END ACTIVATE "CONSERVATIVE" GOVERNOR #####
+
+
+##### (3) ACTIVATE "POWERSAVE" GOVERNOR #####
+3) sudo cpufreq-set -r -g powersave ;; 
+##### END ACTIVATE "POWERSAVE" GOVERNOR #####
+
+
+##### (4) ACTIVATE "PERFORMANCE" GOVERNOR #####
+4) sudo cpufreq-set -r -g performance ;;
+##### END ACTIVATE "PEFORMANCE" GOVERNOR #####
+
+
+##### (Q) EXIT THE PROGRAM #####
+q|Q) exit 0;;
+##### END EXIT THE PROGRAM #####
+
+
+##### INVALID OPTION #####
+*) echo "Oopps!!! You didn't choose a valid option.";
+echo "Press Enter to continue. . ." ; read ;;
+##### END INVALID OPTION #####
+
+esac
+done
+
+##### END INVALID OPTION #####
+
+esac
+done
