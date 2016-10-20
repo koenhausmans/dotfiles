@@ -1,0 +1,73 @@
+#!/bin/bash
+
+BLOCK_SIZE="MiB"
+ROOT_USAGE=""
+QUIET=""
+ADDITIONAL_OPTIONS=""
+
+function show_help() {
+    echo """
+usage: $0 --size=SIZE
+
+arguments:
+  -s SIZE|--size=SIZE  Sets the size unit that will be filtered on.
+                       Possible options: k/kb/kib, m/mb/mib, g/gb/gib
+  -r|--root            Executes the command as root
+  -q|--quiet           Ignore errors
+"""
+    exit
+}
+
+function extend_size_abbreviation() {
+    size_unit=""
+    lower_case_input=`echo "$1" | tr '[:upper:]' '[:lower:]'`
+    case "$lower_case_input" in
+        k|kb|kib)
+            size_unit="KiB"
+            ;;
+        m|mb|mib)
+            size_unit="MiB"
+            ;;
+        g|gb|gib)
+            size_unit="GiB"
+            ;;
+        *)
+            echo -e "\e[31mInvalid size provided\e[0m"
+            exit
+            ;;
+    esac
+    echo "$size_unit"
+}
+
+while [[ $# -ge 1 ]] ; do
+    case "$1" in
+    -s|--size)
+        BLOCK_SIZE="$(extend_size_abbreviation $2)"
+        shift
+        ;;
+    -s=*|--size=*)
+        BLOCK_SIZE="$(extend_size_abbreviation ${1#*=})"
+        ;;
+    -r|--root)
+        ROOT_USAGE="sudo"
+        ;;
+    -q|--quiet)
+        QUIET="true"
+        ;;
+    -h|--help)
+        show_help
+        exit
+        ;;
+    *)
+        ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS $1"
+        ;;
+    esac
+    shift
+done
+
+if [[ "$QUIET" == "true" ]] ; then
+    $ROOT_USAGE du --block-size=$BLOCK_SIZE --max-depth=1 $ADDITIONAL_OPTIONS 2>/dev/null | sort -n
+else
+    $ROOT_USAGE du --block-size=$BLOCK_SIZE --max-depth=1 $ADDITIONAL_OPTIONS | sort -n
+fi
+
