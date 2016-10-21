@@ -75,6 +75,7 @@ set wrap
 " Fix C indentation and make sure access specifiers are without indentation
 set cindent
 set cinoptions+=g0
+set cinoptions+=N-s
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Search and matching
