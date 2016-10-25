@@ -22,11 +22,26 @@ while [[ $# -ge 1 ]] ; do
         VERBOSE="true"
         ;;
     -h|--help)
-        echo """
-usage: $(basename $0) -v
+        echo -e """
+usage: \e[33m$(basename $0)\e[0m -v -e \"query\"
 
-arguments:
-  -v|--verbose  Hides the output of the command
+Connects to the mysql database using the information found in the wordpress config.
+It recursivel tries to find the config file by searching for \"wp-config.php\" in the current folder.
+Additional arguments to the mysql can be supplied as arguments to the command.
+
+\e[32;2mArguments:\e[0m
+  -v|--verbose  Shows the received mysql information from the wordpress config file
+  -h|--help     Shows this help message
+
+\e[32mExamples:\e[0m
+  - \e[34m\`wp_connent2db\`\e[0m
+    Connect to the mysql database
+
+  - \e[34m\`wp_connect2db --execute=\"SELECT 'Hello World' AS Message;\"\`\e[0m
+    Executes the SELECT command through the mysql database
+
+  - \e[34m\`echo \"SELECT 'Hello World' AS Message;\" | wp_connect2db\`\e[0m
+    Executes the SELECT command through the mysql database in batch mode
 """
         exit
         ;;
@@ -38,13 +53,13 @@ arguments:
 done
 
 
-WORDPRESS_CONFIG=`find . -iname wp-config.php 2>/dev/null`
+WORDPRESS_CONFIG=`find ${PWD} -iname wp-config.php | head -1 2>/dev/null`
 
 DB_NAME=`cat $WORDPRESS_CONFIG | grep 'DB_NAME' | awk -F"'" '{ print $4 }'`
 DB_USER=`cat $WORDPRESS_CONFIG | grep 'DB_USER' | awk -F"'" '{ print $4 }'`
 DB_PASSWORD=`cat $WORDPRESS_CONFIG | grep 'DB_PASSWORD' | awk -F"'" '{ print $4 }'`
 
-if [[ "$VERBOSE" != "true" ]] ; then
+if [[ "$VERBOSE" == "true" ]] ; then
     echo -e "\e[34mDatabase\e[0m = $DB_NAME"
     echo -e "\e[34mUsername\e[0m = $DB_USER"
     echo -e "\e[34mPassword\e[0m = $DB_PASSWORD"
