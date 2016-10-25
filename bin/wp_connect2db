@@ -14,14 +14,41 @@
 ##
 ###############################################################################
 
+VERBOSE=""
+ADDITIONAL_COMMANDS=()
+while [[ $# -ge 1 ]] ; do
+    case "$1" in
+    -v|--verbose)
+        VERBOSE="true"
+        ;;
+    -h|--help)
+        echo """
+usage: $(basename $0) -v
+
+arguments:
+  -v|--verbose  Hides the output of the command
+"""
+        exit
+        ;;
+    *)
+        ADDITIONAL_COMMANDS+=("$1")
+        ;;
+    esac
+    shift
+done
+
+
 WORDPRESS_CONFIG=`find . -iname wp-config.php 2>/dev/null`
 
 DB_NAME=`cat $WORDPRESS_CONFIG | grep 'DB_NAME' | awk -F"'" '{ print $4 }'`
 DB_USER=`cat $WORDPRESS_CONFIG | grep 'DB_USER' | awk -F"'" '{ print $4 }'`
 DB_PASSWORD=`cat $WORDPRESS_CONFIG | grep 'DB_PASSWORD' | awk -F"'" '{ print $4 }'`
 
-echo -e "\e[34mDatabase\e[0m = $DB_NAME"
-echo -e "\e[34mUsername\e[0m = $DB_USER"
-echo -e "\e[34mPassword\e[0m = $DB_PASSWORD"
+if [[ "$VERBOSE" != "true" ]] ; then
+    echo -e "\e[34mDatabase\e[0m = $DB_NAME"
+    echo -e "\e[34mUsername\e[0m = $DB_USER"
+    echo -e "\e[34mPassword\e[0m = $DB_PASSWORD"
+fi
 
-mysql -u $DB_USER --password="$DB_PASSWORD" $DB_NAME "$*"
+mysql --user="$DB_USER" --password="$DB_PASSWORD" $DB_NAME "${ADDITIONAL_COMMANDS[@]}"
+
