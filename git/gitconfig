@@ -27,6 +27,9 @@
 [include]
     path = ~/.gitconfig.local
 
+[push]
+    default = matching
+
 [user]
     email = koen@hausmans.nl
     name = Koen Hausmans
