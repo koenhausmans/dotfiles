@@ -52,14 +52,22 @@ Additional arguments to the mysql can be supplied as arguments to the command.
     shift
 done
 
+[[ "$VERBOSE" == "true" ]] && echo "Searching for wordpress config file..."
 
 WORDPRESS_CONFIG=`find ${PWD} -iname wp-config.php | head -1 2>/dev/null`
+
+if [[ -z "$WORDPRESS_CONFIG" ]]; then
+    echo -e "\e[31;1mCannot find wordpress config file.\e[0;31m Is the command execute from the public_html folder of a wordpress site?\e[0m"
+    exit
+fi
 
 DB_NAME=`cat $WORDPRESS_CONFIG | grep 'DB_NAME' | awk -F"'" '{ print $4 }'`
 DB_USER=`cat $WORDPRESS_CONFIG | grep 'DB_USER' | awk -F"'" '{ print $4 }'`
 DB_PASSWORD=`cat $WORDPRESS_CONFIG | grep 'DB_PASSWORD' | awk -F"'" '{ print $4 }'`
 
 if [[ "$VERBOSE" == "true" ]] ; then
+    echo
+    echo "Found wordpress configuration file with following information:"
     echo -e "\e[34mDatabase\e[0m = $DB_NAME"
     echo -e "\e[34mUsername\e[0m = $DB_USER"
     echo -e "\e[34mPassword\e[0m = $DB_PASSWORD"
