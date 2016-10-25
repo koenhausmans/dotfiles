@@ -116,6 +116,9 @@ bind + resize +1
 bind - resize -1
 bind _ resize max
 
+# Kill shortcut
+bindkey ^c kill
+
 ################
 #
 # Change the status line
