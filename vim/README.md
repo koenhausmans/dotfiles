@@ -62,7 +62,8 @@ The following shortcuts are allowed in Normal mode:
 
 `<C-p>`: Open FZF with multiple select mode enabled<br/>
 `<leader>ff`: Open FZF from (git) project root<br/>
-`<leader>ff`: Open FZF for previously opened files<br/>
+`<leader>gf`: Open FZF for all files in the current git repository<br/>
+`<leader>fh`: Open FZF for previously opened files<br/>
 `<leader>bb`: Open FZF for buffers<br/>
 `<leader>ll`: Open FZF for all lines in opened buffers<br/>
 `<leader>lb`: Open FZF for all lines in current file<br/>
