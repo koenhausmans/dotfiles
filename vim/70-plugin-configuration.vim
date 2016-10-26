@@ -7,12 +7,20 @@
 """
 nnoremap <c-p> :FZF -m<cr>
 
-fun! s:fzf_root()
-    let path = finddir(".git", expand("%:p:h").";")
-    return fnamemodify(substitute(path, ".git", "", ""), ":p:h")
-endfun
+"fun! s:fzf_root()
+    "let path = finddir(".git", expand("%:p:h").";")
+    "return fnamemodify(substitute(path, ".git", "", ""), ":p:h")
+"endfun
 
-nnoremap <silent> <leader>ff :exe 'Files ' . <SID>fzf_root()<CR>
+function! s:find_git_root()
+    return system('git rev-parse --show-toplevel 2> /dev/null')[:-2]
+endfunction
+
+command! ProjectFiles execute 'Files' s:find_git_root()
+
+"nnoremap <silent> <leader>ff :exe 'Files ' . <SID>fzf_root()<CR>
+nnoremap <silent> <leader>ff :ProjectFiles<CR>
+nnoremap <silent> <leader>gf :GitFiles<CR>
 nnoremap <silent> <leader>fh :History<CR>
 nnoremap <silent> <leader>bb :Buffers<CR>
 nnoremap <silent> <leader>ll :Lines<CR>
