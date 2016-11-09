@@ -17,6 +17,9 @@ set autoread
 let mapleader = ","
 let g:mapleader = ","
 
+" Map the semicolon to a colon, s.t. shift is not required
+map ; :
+
 " Allow buffers to exist in the background
 set hidden
 
@@ -33,9 +36,12 @@ set tm=500
 syntax enable
 set t_Co=256
 
-"colorscheme molokai
-"colorscheme gruvbox
-"set background=dark
+" Fix the colorscheme as soon as the plugins have been installed by plug.vim (prevents warning at first startup)
+try
+    colorscheme gruvbox
+    set background=dark
+catch /^Vim\%((\a\+)\)\=:E185/
+endtry
 
 " Set utf8 as standard encoding and en_US as the standard language
 set encoding=utf8
@@ -71,11 +77,6 @@ set tw=500
 
 " Wrap lines
 set wrap
-
-" Fix C indentation and make sure access specifiers are without indentation
-set cindent
-set cinoptions+=g0
-set cinoptions+=N-s
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Search and matching
@@ -119,35 +120,36 @@ map k gk
 map <leader>b :ls<cr>:b<space>
 
 " Close the current buffer
-map <leader>bd :bd<cr>
+map <leader>c :bd<cr>
 
 " Close all the buffers
-map <leader>ba :bufdo :bd<cr>
-
-" Move to next or previous buffer
-map <leader>bp :bp<cr>
-map <leader>bn :bn<cr>
+" map <leader>ba :bufdo :bd<cr>
 
 """
 """ Tab shortcuts
 """
 " Useful mappings for managing tabs
-map <leader>tn :tabnew<cr>
-map <leader>to :tabonly<cr>
-map <leader>tc :tabclose<cr>
-map <leader>tl :tabn<cr>
-map <leader>th :tabp<cr>
-map <leader>tm :tabmove
+" map <leader>tn :tabnew<cr>
+" map <leader>to :tabonly<cr>
+" map <leader>tc :tabclose<cr>
+" map <leader>tl :tabn<cr>
+" map <leader>th :tabp<cr>
+" map <leader>tm :tabmove
 
 " Opens a new tab with the current buffer's path
 " Super useful when editing files in the same directory
-map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
+" map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
 
 " Return to last edit position when opening files (You want this!)
 autocmd BufReadPost *
      \ if line("'\"") > 0 && line("'\"") <= line("$") |
      \   exe "normal! g`\"" |
      \ endif
+
+" Automatically open cwindow or lwindow on :grep / :make / :lvimgrep / etc.
+autocmd QuickFixCmdPost [^l]* cwindow
+autocmd QuickFixCmdPost l*    lwindow
+
 
 " Remember info about open buffers on close
 set viminfo^=%
@@ -214,8 +216,10 @@ set foldopen=block,hor,mark,percent,quickfix,search,tag,undo,jump
 """
 """ Splits
 """
-set splitbelow " Open new splits below
-set splitright " Open new vertical splits to the right
+" Open new splits below
+set splitbelow
+" Open new vertical splits to the right
+set splitright
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Editing mappings
@@ -249,11 +253,9 @@ function! StripTrailingWhitespaces()
   %s/\s\+$//ge
   exe "normal `z"
 endfunc
-autocmd BufWrite *.py :call StripTrailingWhitespaces()
-autocmd BufWrite *.coffee :call StripTrailingWhitespaces()
 
 " Trim trailing white space
-nmap <silent> <leader>t :call StripTrailingWhitespaces()<CR>:retab<CR>
+nmap <silent> <leader>T :call StripTrailingWhitespaces()<CR>:retab<CR>
 
 """
 """ Format Options
@@ -268,7 +270,6 @@ nmap <silent> <leader>t :call StripTrailingWhitespaces()<CR>:retab<CR>
 " 1 Don't break line after one-letter words
 " a Automatically format paragraphs
 set formatoptions=cqrn1
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Files, backups and undo
@@ -286,44 +287,35 @@ set formatoptions=cqrn1
 "    set undofile
 "endif
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Custom Filetypes
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-autocmd BufRead,BufNewFile *.md,*.markdown set filetype=markdown
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Custom mapping
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Fast saving
 nmap    <silent> <leader>w :w!<cr>
-noremap <silent> <leader>W :w !sudo tee % > /dev/null<cr> " Saves the file with sudo rights
+
+" Fast saving the file with sudo rights
+noremap <silent> <leader>W :w !sudo tee % > /dev/null<cr>
 
 " Quit vim
 nmap <silent> <leader>q :quit<cr>
-nmap <silent> <leader>qq :quit!<cr>
+nmap <silent> <leader>Q :quit!<cr>
 
 " Combined saving and quitting
 nmap <silent> <leader>wq :w!<cr>:quit<cr>
+nmap <silent> <leader>Wq :w !sudo tee % > /dev/null<cr>:quit<cr>
+
+" " Faster Quickfix mappings
+" nmap <silent> <leader>n :cnext<cr>
+" nmap <silent> <leader>p :cprevious<cr>
 
 " Navigate the vim splits with shortcuts
 if empty(glob("~/.vim/plugged/vim-tmux-navigator/"))
-  nnoremap <c-j> <c-w>j
-  nnoremap <c-k> <c-w>k
-  nnoremap <c-h> <c-w>h
-  nnoremap <c-l> <c-w>l
+    nnoremap <c-j> <c-w>j
+    nnoremap <c-k> <c-w>k
+    nnoremap <c-h> <c-w>h
+    nnoremap <c-l> <c-w>l
 endif
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Spell checking
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-map <leader>ss :setlocal spell!<cr>
-set spelllang=en_us
-
-" Shortcuts using <leader>
-map <leader>sn ]s   " Move to the next misspelled word
-map <leader>sp [s   " Move to the previous misspelled word
-map <leader>sa zg   " Add word under cursor as a good word
-map <leader>s? z=   " Suggest correctly spelled word
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Machine local vim file

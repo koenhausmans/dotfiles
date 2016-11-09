@@ -25,12 +25,6 @@ Plug 'tpope/vim-git', { 'for': 'git' }
 Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
 Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 
-" Make tab handle all completions
-"Plug 'ervandew/supertab'
-
-" Syntastic: Code linting errors
-"Plug 'scrooloose/syntastic', { 'for': ['php', 'python', 'javascript', 'css', 'cpp', 'c'] }
-
 " Load the NERDTree plugin
 Plug 'scrooloose/nerdtree', { 'on':  ['NERDTreeToggle', 'NERDTreeFind'] }
 
@@ -66,10 +60,8 @@ Plug 'junegunn/goyo.vim'
 """
 """ Commenting: Commenting plugins
 """
-" Load the NERDCommenter plugin
-Plug 'scrooloose/nerdcommenter'
 " Make commenting easier
-"Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-commentary'
 
 """
 """ Easytags: Automatically updates the ctags file
@@ -86,13 +78,62 @@ Plug 'moll/vim-bbye'
 """ A.vim: Alternate files quickly (switch between header / source)
 """
 " TODO: Determine whether this is usefull
-Plug 'vim-scripts/a.vim'
+" Plug 'vim-scripts/a.vim'
 
 """
 """ vim-multiple-cursors: Multiple selections for vim
 """
 " TODO: Determine whether this is usefull
-Plug 'terryma/vim-multiple-cursors'
+" Plug 'terryma/vim-multiple-cursors'
+
+"""
+""" surround.vim: quoting/parenthesizing made simple
+"""
+Plug 'tpope/vim-surround'
+
+"""
+""" repeat.vim: Enable repeating supported plugin maps with "."
+"""
+Plug 'tpope/vim-repeat'
+
+"""
+""" unimpaired.vim: Pair mapping for vim lists
+"""
+Plug 'tpope/vim-unimpaired'
+
+"==========================================
+"          Programming Plugins
+"==========================================
+"
+"""
+""" DelimitMate: Provides automatic matching brackets / quotes
+"""
+" Plug 'Raimondi/delimitMate'
+
+"""
+""" Auto Pairs: Provides automatic matching brackets / quotes
+"""
+Plug 'jiangmiao/auto-pairs'
+
+"""
+""" Supertab: Make tab handle all completions
+"""
+Plug 'ervandew/supertab'
+
+"""
+""" Syntastic: Code linting errors
+"""
+Plug 'scrooloose/syntastic', { 'for': ['php', 'python', 'javascript', 'css', 'cpp', 'c'] }
+
+"""
+""" vim-cmake: Allows for creation of cmake files
+"""
+Plug 'vhdirk/vim-cmake'
+
+"""
+""" vim-dispatch: Asynchronous build and test dispatcher
+"""
+Plug 'tpope/vim-dispatch'
 
 call plug#end()
 
