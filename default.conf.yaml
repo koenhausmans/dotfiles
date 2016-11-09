@@ -21,4 +21,5 @@
     ~/.vimrc                   : vim/vimrc
     ~/.vim/00-nocompatible.vim : vim/00-nocompatible.vim
     ~/.vim/50-basic.vim        : vim/50-basic.vim
+    ~/.vim/51-grep.vim         : vim/51-grep.vim
 
