@@ -18,6 +18,18 @@ Buffer shortcuts:
 `<leader>c`: Delete the current buffer without screwing up window layout<br/>
 `<C-6>`: Go to previous buffer
 
+Movement shortcuts:
+-------------------
+
+`(`: Move sentence backward<br/>
+`)`: Move sentence forward<br/>
+`{`: Move paragraph backward<br/>
+`}`: Move paragraph forward<br/>
+`]]`: Move section forward or until the next '{' in the first column<br/>
+`][`: Move section forward or until the next '}' in the first column<br/>
+`[[`: Move section backward or until the next '{' in the first column<br/>
+`[]`: Move section backward or until the next '}' in the first column<br/>
+
 List shortcuts:
 ---------------
 `]b`: Go to next buffer<br/>
