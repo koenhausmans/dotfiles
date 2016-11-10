@@ -86,9 +86,10 @@ To recursively generate tags from the CWD down, press `<leader>ut`.
 
 `<C-]>`: Jump to the tag underneath the cursor<br/>
 `<C-t>`: Jump back up in the tag stack<br/>
-`<C-I>`: Jump back down in the tag stack<br/>
-`<C-O>`: Jump back up in the tag stack<br/>
-
+`<C-I>`: Jump back down in the jumplist<br/>
+`<C-O>`: Jump back up in the jumplist<br/>
+`<g;>`: Jump back up in the changelist<br/>
+`<g,>`: Jump back up in the changelist<br/>
 
 
 FZF: Fuzzy finder:
