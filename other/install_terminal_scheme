@@ -4,17 +4,32 @@ echo "Gruvbox colorscheme installer"
 echo
 
 KONSOLE_COLORSCHEME="https://raw.githubusercontent.com/morhetz/gruvbox-contrib/master/konsole/Gruvbox_dark.colorscheme"
+XFCE4_COLORSCHEME="https://raw.githubusercontent.com/mkarmona/dotfiles/master/.config/xfce4/terminal/colorschemes/gruvbox-dark.theme"
 
 TMPDIR=$(mktemp -d)
 
 pushd $TMPDIR > /dev/null
 
+###
+### KDE Terminal
+###
 if hash konsole 2>/dev/null ; then
     echo "Installing Konsole colorscheme"
 
     wget --quiet $KONSOLE_COLORSCHEME
     sudo cp Gruvbox_dark.colorscheme /usr/share/konsole/
     sudo cp Gruvbox_dark.colorscheme /usr/share/kde4/apps/konsole/
+fi
+
+###
+### XFCE4 - Terminal
+###
+if hash xfce4-terminal 2>/dev/null ; then
+    echo "Installing Xfce4 colorscheme"
+
+    wget --quiet $XFCE4_COLORSCHEME
+    mkdir -p "/usr/share/xfce4/terminal/colorschemes/"
+    sudo cp gruvbox-dark.theme /usr/share/xfce4/terminal/colorschemes/
 fi
 
 popd > /dev/null
