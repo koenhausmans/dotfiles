@@ -1,0 +1,107 @@
+#!/bin/bash
+
+###############################################################################
+##
+## QLIPP: Checks Wordpress installation for changes compared to latest WP
+## ======================================================================
+##
+## Brief: Script downloads and checks for differences compared to the latest
+##        WordPress installation
+##
+## Changelog:
+## ----------
+##   2016-07-26 - Koen Hausmans : Initial version
+##
+###############################################################################
+
+source helper_functions.sh
+
+
+
+
+DOWNLOAD_LINK="https://wordpress.org/latest.zip"
+
+TMPDIR=`mktemp -d -t wordpress.XXXXXXXXXX`
+if [ $? -ne 0 ] ; then
+    write_error "Cannot create temporary directory"
+    exit 1
+fi
+
+write_labeled_text "Created a temporary directory" "$TMPDIR"
+pushd $TMPDIR > /dev/null
+
+write_header "Downloading latest wordpress release:"
+curl --progress-bar -o latest.zip https://wordpress.org/latest.zip
+#wget -q --no-check-certificate $DOWNLOAD_LINK 2>&1 > /dev/null
+cp ~/wordpress.zip latest.zip
+if [ $? -ne 0 ] ; then
+    write_error "Cannot download latest wordpress installation"
+    exit 1
+fi
+
+write_header "Unpacking the wordpress installation from zip..."
+unzip -q latest.zip
+
+rm latest.zip
+
+popd > /dev/null
+
+# Start recursively checking all files
+
+LATEST_WORDPRESS="$TMPDIR/wordpress"
+WEBSITE_FOLDER=$(dirname -- "$(find $PWD -iname 'wp-config.php' 2> /dev/null)")
+
+echo
+write_labeled_text "Wordpress folder to compare" "$WEBSITE_FOLDER"
+
+diff -r $WEBSITE_FOLDER $LATEST_WORDPRESS > wordpress-comparison.log
+echo
+write_header "Comparison output written to file 'wordpress-comparison.log'"
+
+echo
+write_header -n "Do you want to show the output here [y/n]?"
+echo -n " "
+read -n 1 -r
+echo
+echo
+
+if [[ $REPLY  =~ ^[Yy]$ ]] ; then
+    write_header "Starting comparison of folders..."
+
+    diff_output="$(diff -r $WEBSITE_FOLDER $LATEST_WORDPRESS | grep $WEBSITE_FOLDER)"
+
+    echo "$diff_output" | while read -r line
+    do
+        if $(echo "$line" | grep "Only in $WEBSITE_FOLDER" > /dev/null)
+        then
+            folder_length=$((${#WEBSITE_FOLDER} + 9))
+            file_name=$(echo "${line:$folder_length}" | sed -e "s%: %/%g")
+            echo -e "\e[35mThe following file is only in the website\e[0m: $file_name"
+        fi
+
+        if $(echo "$line" | grep "diff -r" > /dev/null)
+        then
+            website_file=$(echo "$line" | awk '{ print $3 }')
+            original_file=$(echo "$line" | awk '{ print $4 }')
+
+            inspected_file=$(echo "${website_file:${#WEBSITE_FOLDER}}")
+
+            echo -e "\e[36mChecking difference for file\e[0m: $inspected_file"
+            diff $website_file $original_file
+        fi
+        echo
+    done
+
+    #| awk '{ print $4 }' | while read -r line
+    #do
+    #    echo "Processing $line"
+    #done
+    #for s in `diff -r $WEBSITE_FOLDER $LATEST_WORDPRESS | grep $WEBSITE_FOLDER`
+    #do
+    #    echo $s
+    #    echo
+    #done
+fi
+
+# Cleanup
+rm -rf $TMPDIR
