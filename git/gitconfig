@@ -1,6 +1,7 @@
 [alias]
     lg = log --graph --pretty=format:'%C(yellow)%h%Creset -%Cred%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
     changes = status --short --branch
+    ctags = '!.git/hooks/ctags'
     dt = diff-tree --no-commit-id --name-only -r
     pl = pull --rebase
     ps = push
@@ -26,6 +27,9 @@
 # Allow local customizations in the .gitconfig.local file
 [include]
     path = ~/.gitconfig.local
+
+[init]
+    templatedir = ~/.dotfiles/git/git-template
 
 [push]
     default = matching
