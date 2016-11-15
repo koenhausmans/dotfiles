@@ -18,7 +18,7 @@ let mapleader = ","
 let g:mapleader = ","
 
 " Map the semicolon to a colon, s.t. shift is not required
-map ; :
+noremap ; :
 
 " Allow buffers to exist in the background
 set hidden
@@ -27,7 +27,6 @@ set hidden
 set noerrorbells
 set novisualbell
 set t_vb=
-set tm=500
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and Fonts
@@ -78,6 +77,10 @@ set tw=500
 " Wrap lines
 set wrap
 
+" Change the timeout timings when matching to mappings / keys
+set timeoutlen=400
+set ttimeoutlen=10
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Search and matching
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -103,24 +106,27 @@ set showmatch
 set mat=2
 
 " Disable highlight when <leader><cr> or <leader><space> is pressed
-map <silent> <leader><cr> :nohlsearch<cr>
-map <silent> <leader><space> :nohlsearch<cr>
+nnoremap <silent> <leader><cr> :nohlsearch<cr>
+nnoremap <silent> <leader><space> :nohlsearch<cr>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Moving around, tabs, windows and buffers
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Treat long lines as break lines (useful when moving around in them)
-map j gj
-map k gk
+noremap <buffer> <silent> j gj
+noremap <buffer> <silent> k gk
+noremap <buffer> <silent> $ g$
+" Remap VIM 0 to first non-blank character
+noremap <buffer> <silent> 0 g^
 
 """
 """ Buffer shortcuts
 """
 " Shortcut to list all buffers and allow quickly to select a buffer
-map <leader>b :ls<cr>:b<space>
+nnoremap <leader>b :ls<cr>:b<space>
 
 " Close the current buffer
-map <leader>c :bd<cr>
+nnoremap <leader>c :bd<cr>
 
 " Close all the buffers
 " map <leader>ba :bufdo :bd<cr>
@@ -224,17 +230,9 @@ set splitright
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Editing mappings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Remap VIM 0 to first non-blank character
-map 0 ^
-
-" Move a line of text using ALT+[jk] or Command+[jk] on mac
-nmap <M-j> mz:m+<cr>`z
-nmap <M-k> mz:m-2<cr>`z
-vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
-vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
-
 " Escape from Insert/Visual mode by using jk key combination
-map! jk <esc>
+inoremap jk <esc>
+inoremap kj <esc>
 
 " Reselect visual block after indent/outdent: http://vimbits.com/bits/20
 vnoremap < <gv
@@ -292,18 +290,18 @@ set formatoptions=cqrn1
 " => Custom mapping
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Fast saving
-nmap    <silent> <leader>w :w!<cr>
+nnoremap <silent> <leader>w :w!<cr>
 
 " Fast saving the file with sudo rights
-noremap <silent> <leader>W :w !sudo tee % > /dev/null<cr>
+nnoremap <silent> <leader>W :w !sudo tee % > /dev/null<cr>
 
 " Quit vim
-nmap <silent> <leader>q :quit<cr>
-nmap <silent> <leader>Q :quit!<cr>
+nnoremap <silent> <leader>q :quit<cr>
+nnoremap <silent> <leader>Q :quit!<cr>
 
 " Combined saving and quitting
-nmap <silent> <leader>wq :w!<cr>:quit<cr>
-nmap <silent> <leader>Wq :w !sudo tee % > /dev/null<cr>:quit<cr>
+nnoremap <silent> <leader>wq :w!<cr>:quit<cr>
+nnoremap <silent> <leader>Wq :w !sudo tee % > /dev/null<cr>:quit<cr>
 
 " " Faster Quickfix mappings
 " nmap <silent> <leader>n :cnext<cr>
