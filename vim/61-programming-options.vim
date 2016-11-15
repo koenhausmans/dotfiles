@@ -12,6 +12,11 @@ autocmd Filetype c,cpp,cs,java  setlocal commentstring=//\ %s
 autocmd BufRead,BufNewFile *.md,*.markdown set filetype=markdown
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Code completion
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set omnifunc=syntaxcomplete#Complete
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => C++ specific options
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Fix C indentation and make sure access specifiers are without indentation

@@ -120,7 +120,8 @@ nmap <silent> <leader>ut :UpdateTags -R ./<CR>
 " {{{
 
 " Close the current buffer
-map <leader>c :Bdelete<cr>
+cabbrev bd Bdelete
+nnoremap <leader>c :Bdelete<cr>
 
 " Close all the buffers
 " map <leader>ba :bufdo :Bdelete<cr>
