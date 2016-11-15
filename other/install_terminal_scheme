@@ -13,12 +13,19 @@ pushd $TMPDIR > /dev/null
 ###
 ### KDE Terminal
 ###
+KonsoleGruvboxFilename="$(basename $KONSOLE_COLORSCHEME)"
 if hash konsole 2>/dev/null ; then
     echo "Installing Konsole colorscheme"
 
-    wget --quiet $KONSOLE_COLORSCHEME
-    sudo cp Gruvbox_dark.colorscheme /usr/share/konsole/
-    sudo cp Gruvbox_dark.colorscheme /usr/share/kde4/apps/konsole/
+    [[ -f $KonsoleGruvboxFilename ]] || wget --quiet $KONSOLE_COLORSCHEME
+    sudo cp $KonsoleGruvboxFilename /usr/share/konsole/
+fi
+
+if hash yakuake 2>/dev/null ; then
+    echo "Installing Konsole colorscheme"
+
+    [[ -f $KonsoleGruvboxFilename ]] || wget --quiet $KONSOLE_COLORSCHEME
+    sudo cp $KonsoleGruvboxFilename /usr/share/kde4/apps/konsole/
 fi
 
 ###
