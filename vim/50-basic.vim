@@ -113,11 +113,11 @@ nnoremap <silent> <leader><space> :nohlsearch<cr>
 " => Moving around, tabs, windows and buffers
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Treat long lines as break lines (useful when moving around in them)
-noremap <buffer> <silent> j gj
-noremap <buffer> <silent> k gk
-noremap <buffer> <silent> $ g$
+noremap <silent> j gj
+noremap <silent> k gk
+noremap <silent> $ g$
 " Remap VIM 0 to first non-blank character
-noremap <buffer> <silent> 0 g^
+noremap <silent> 0 g^
 
 """
 """ Buffer shortcuts
