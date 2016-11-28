@@ -62,6 +62,10 @@ SAVEHIST=1000
 # Save it to a file
 HISTFILE=~/.history
 
+
+bindkey '^[OD' backward-word
+bindkey '^[OC' forward-word
+
 ###########################################################################
 #                             Load Oh-My-Zsh                              #
 ###########################################################################
