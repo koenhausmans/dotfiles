@@ -6,16 +6,21 @@
 while :
 do
 clear
-echo "***************************************"
-echo "* Choose CPU Scaling Governor:        *"
-echo "***************************************"
-echo "* [1] On Demand                       *"
-echo "* [2] Conservative                    *"
-echo "* [3] Powersave                       *"
-echo "* [4] Performance                     *"
-echo "* [Q] Exit                            *"
-echo "***************************************"
-echo -n "Enter your menu choice: "
+
+CurrentGoverner=$(cpufreq-info -p)
+echo -e "\e[34mCurrent governer\e[0m: $CurrentGoverner"
+echo
+echo    "***************************************"
+echo    "* Choose CPU Scaling Governor:        *"
+echo    "***************************************"
+echo -e "* \e[34m[1]\e[0m On Demand                       *"
+echo -e "* \e[34m[2]\e[0m Conservative                    *"
+echo -e "* \e[34m[3]\e[0m Powersave                       *"
+echo -e "* \e[34m[4]\e[0m Performance                     *"
+echo -e "* \e[34m[Q]\e[0m Exit                            *"
+echo    "***************************************"
+echo
+echo -en "\e[34mEnter your menu choice\e[0m: "
 read choice
 case $choice in
 ##### END SHOW INITIAL MENU #####
