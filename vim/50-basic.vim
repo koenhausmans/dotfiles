@@ -78,7 +78,7 @@ set tw=500
 set wrap
 
 " Change the timeout timings when matching to mappings / keys
-set timeoutlen=400
+set timeoutlen=300
 set ttimeoutlen=10
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
