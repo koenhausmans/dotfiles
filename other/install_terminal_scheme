@@ -22,7 +22,7 @@ if hash konsole 2>/dev/null ; then
 fi
 
 if hash yakuake 2>/dev/null ; then
-    echo "Installing Konsole colorscheme"
+    echo "Installing Yakuake colorscheme"
 
     [[ -f $KonsoleGruvboxFilename ]] || wget --quiet $KONSOLE_COLORSCHEME
     sudo cp $KonsoleGruvboxFilename /usr/share/kde4/apps/konsole/
