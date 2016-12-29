@@ -96,9 +96,9 @@ let g:airline#extensions#tabline#enabled=1
 """ Goyo
 """
 " {{{
-let g:goyo_margin_top = 2
-let g:goyo_margin_bottom = 2
-map <silent> <leader>z :Goyo<cr>
+"let g:goyo_margin_top = 2
+"let g:goyo_margin_bottom = 2
+"map <silent> <leader>z :Goyo<cr>
 "}}}
 
 """

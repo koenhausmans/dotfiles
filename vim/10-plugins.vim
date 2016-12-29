@@ -26,7 +26,7 @@ Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
 Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 
 " Load the NERDTree plugin
-Plug 'scrooloose/nerdtree', { 'on':  ['NERDTreeToggle', 'NERDTreeFind'] }
+"Plug 'scrooloose/nerdtree', { 'on':  ['NERDTreeToggle', 'NERDTreeFind'] }
 
 """
 """ Airline: Fancy statusline
@@ -50,7 +50,7 @@ Plug 'christoomey/vim-tmux-navigator'
 ""'
 " Fugitive: Git from within Vim
 Plug 'tpope/vim-fugitive'
-Plug 'airblade/vim-gitgutter'
+"Plug 'airblade/vim-gitgutter'
 
 """
 """ Goyo: Distraction free writing
@@ -66,8 +66,8 @@ Plug 'tpope/vim-commentary'
 """
 """ Easytags: Automatically updates the ctags file
 """
-Plug 'xolox/vim-misc'
-Plug 'xolox/vim-easytags'
+"Plug 'xolox/vim-misc'
+"Plug 'xolox/vim-easytags'
 
 """
 """ Bbye: Buffer Bye for Vim - Allows closing buffers without screwing up the window layout
