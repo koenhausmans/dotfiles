@@ -55,7 +55,7 @@ Plug 'tpope/vim-fugitive'
 """
 """ Goyo: Distraction free writing
 """
-Plug 'junegunn/goyo.vim'
+" Plug 'junegunn/goyo.vim'
 
 """
 """ Commenting: Commenting plugins
@@ -70,7 +70,7 @@ Plug 'tpope/vim-commentary'
 "Plug 'xolox/vim-easytags'
 
 """
-""" Bbye: Buffer Bye for Vim - Allows closing buffers without screwing up the window layout
+
 """
 Plug 'moll/vim-bbye'
 
@@ -128,12 +128,12 @@ Plug 'scrooloose/syntastic', { 'for': ['php', 'python', 'javascript', 'css', 'cp
 """
 """ vim-cmake: Allows for creation of cmake files
 """
-Plug 'vhdirk/vim-cmake'
+" Plug 'vhdirk/vim-cmake'
 
 """
 """ vim-dispatch: Asynchronous build and test dispatcher
 """
-Plug 'tpope/vim-dispatch'
+" Plug 'tpope/vim-dispatch'
 
 call plug#end()
 
