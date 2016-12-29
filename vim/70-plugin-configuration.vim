@@ -57,25 +57,25 @@ command! -nargs=+ -complete=dir AgIn call SearchWithAgInDirectory(<f-args>)
 """
 " {{{
 
-let g:NERDTreeWinPos = "right"
-let NERDTreeShowHidden = 1
-let NERDTreeMinimalUI = 1
-let NERDTreeDirArrows = 1
-let g:NERDTreeWinSize = 35
+" let g:NERDTreeWinPos = "right"
+" let NERDTreeShowHidden = 1
+" let NERDTreeMinimalUI = 1
+" let NERDTreeDirArrows = 1
+" let g:NERDTreeWinSize = 35
 
-map <F1> :call NERDTreeToggleAndFind()<cr>
-map <F2> :NERDTreeToggle<cr>
+" map <F1> :call NERDTreeToggleAndFind()<cr>
+" map <F2> :NERDTreeToggle<cr>
 
-function! NERDTreeToggleAndFind()
-    if (exists('t:NERDTreeBufName') && bufwinnr(t:NERDTreeBufName) != -1)
-        execute ':NERDTreeClose'
-    else
-        execute ':NERDTreeFind'
-    endif
-endfunction
+" function! NERDTreeToggleAndFind()
+"     if (exists('t:NERDTreeBufName') && bufwinnr(t:NERDTreeBufName) != -1)
+"         execute ':NERDTreeClose'
+"     else
+"         execute ':NERDTreeFind'
+"     endif
+" endfunction
 
 " Automatically close NERDTree if it is the only window remaining
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+"autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 " }}}
 
@@ -105,13 +105,13 @@ let g:airline#extensions#tabline#enabled=1
 """ Easytags
 """
 "{{{
-set tags=./.tags;
-let g:easytags_async = 1
-let g:easytags_dynamic_files = 2
-let g:easytags_auto_highlight = 0
-set cpoptions+=d
-
-nmap <silent> <leader>ut :UpdateTags -R ./<CR>
+"set tags=./.tags;
+"let g:easytags_async = 1
+"let g:easytags_dynamic_files = 2
+"let g:easytags_auto_highlight = 0
+"set cpoptions+=d
+"
+"nmap <silent> <leader>ut :UpdateTags -R ./<CR>
 "}}}
 
 """
@@ -158,6 +158,6 @@ let g:syntastic_cpp_compiler_options = ' -std=c++14'
 """ Git-Gutter
 """
 " {{{
-let g:gitgutter_map_keys = 0
+" let g:gitgutter_map_keys = 0
 " }}}
 

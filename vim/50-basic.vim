@@ -18,7 +18,7 @@ let mapleader = ","
 let g:mapleader = ","
 
 " Map the semicolon to a colon, s.t. shift is not required
-noremap ; :
+"noremap ; :
 
 " Allow buffers to exist in the background
 set hidden
