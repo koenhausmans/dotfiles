@@ -15,7 +15,6 @@ call plug#begin('~/.vim/plugged')
 """
 """ Colorschemes: Additional colorschemes that can be used
 """
-Plug 'captbaritone/molokai'
 Plug 'morhetz/gruvbox'
 
 """
@@ -24,9 +23,6 @@ Plug 'morhetz/gruvbox'
 Plug 'tpope/vim-git', { 'for': 'git' }
 Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
 Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
-
-" Load the NERDTree plugin
-"Plug 'scrooloose/nerdtree', { 'on':  ['NERDTreeToggle', 'NERDTreeFind'] }
 
 """
 """ Airline: Fancy statusline
@@ -50,41 +46,12 @@ Plug 'christoomey/vim-tmux-navigator'
 ""'
 " Fugitive: Git from within Vim
 Plug 'tpope/vim-fugitive'
-"Plug 'airblade/vim-gitgutter'
+Plug 'airblade/vim-gitgutter'
 
 """
-""" Goyo: Distraction free writing
+""" Bbye: Buffer Bye for Vim - Allows closing buffers without screwing up the window layout
 """
-" Plug 'junegunn/goyo.vim'
-
-"""
-""" Commenting: Commenting plugins
-"""
-" Make commenting easier
-Plug 'tpope/vim-commentary'
-
-"""
-""" Easytags: Automatically updates the ctags file
-"""
-"Plug 'xolox/vim-misc'
-"Plug 'xolox/vim-easytags'
-
-"""
-
-"""
-Plug 'moll/vim-bbye'
-
-"""
-""" A.vim: Alternate files quickly (switch between header / source)
-"""
-" TODO: Determine whether this is usefull
-" Plug 'vim-scripts/a.vim'
-
-"""
-""" vim-multiple-cursors: Multiple selections for vim
-"""
-" TODO: Determine whether this is usefull
-" Plug 'terryma/vim-multiple-cursors'
+Plug 'moll/vim-bbye', {'on': 'Bdelete'}
 
 """
 """ surround.vim: quoting/parenthesizing made simple
@@ -104,11 +71,12 @@ Plug 'tpope/vim-unimpaired'
 "==========================================
 "          Programming Plugins
 "==========================================
-"
+
 """
-""" DelimitMate: Provides automatic matching brackets / quotes
+""" Commenting: Commenting plugins
 """
-" Plug 'Raimondi/delimitMate'
+" Make commenting easier
+Plug 'tpope/vim-commentary'
 
 """
 """ Auto Pairs: Provides automatic matching brackets / quotes
@@ -124,16 +92,6 @@ Plug 'ervandew/supertab'
 """ Syntastic: Code linting errors
 """
 Plug 'scrooloose/syntastic', { 'for': ['php', 'python', 'javascript', 'css', 'cpp', 'c'] }
-
-"""
-""" vim-cmake: Allows for creation of cmake files
-"""
-" Plug 'vhdirk/vim-cmake'
-
-"""
-""" vim-dispatch: Asynchronous build and test dispatcher
-"""
-" Plug 'tpope/vim-dispatch'
 
 call plug#end()
 
