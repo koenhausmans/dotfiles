@@ -17,9 +17,6 @@ set autoread
 let mapleader = ","
 let g:mapleader = ","
 
-" Map the semicolon to a colon, s.t. shift is not required
-"noremap ; :
-
 " Allow buffers to exist in the background
 set hidden
 
@@ -128,24 +125,6 @@ nnoremap <leader>b :ls<cr>:b<space>
 " Close the current buffer
 nnoremap <leader>c :bd<cr>
 
-" Close all the buffers
-" map <leader>ba :bufdo :bd<cr>
-
-"""
-""" Tab shortcuts
-"""
-" Useful mappings for managing tabs
-" map <leader>tn :tabnew<cr>
-" map <leader>to :tabonly<cr>
-" map <leader>tc :tabclose<cr>
-" map <leader>tl :tabn<cr>
-" map <leader>th :tabp<cr>
-" map <leader>tm :tabmove
-
-" Opens a new tab with the current buffer's path
-" Super useful when editing files in the same directory
-" map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
-
 " Return to last edit position when opening files (You want this!)
 autocmd BufReadPost *
      \ if line("'\"") > 0 && line("'\"") <= line("$") |
@@ -156,17 +135,16 @@ autocmd BufReadPost *
 autocmd QuickFixCmdPost [^l]* cwindow
 autocmd QuickFixCmdPost l*    lwindow
 
-
 " Remember info about open buffers on close
-set viminfo^=%
+"set viminfo^=%
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Visual settings / VIM user interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Set 7 lines to the cursor - when moving vertically using j/k
+" Set 3 lines to the cursor - when moving vertically using j/k
 set scrolloff=3
 
-" Turn on the WiLd menu
+" Turn on the Wild menu
 set wildmenu
 
 " Ignore compiled files
@@ -218,7 +196,6 @@ set foldlevelstart=20       " Open 20 levels of folding when I open a file
 " Open folds under the following conditions
 set foldopen=block,hor,mark,percent,quickfix,search,tag,undo,jump
 
-
 """
 """ Splits
 """
@@ -230,9 +207,6 @@ set splitright
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Editing mappings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Escape from Insert/Visual mode by using jk key combination
-inoremap jk <esc>
-inoremap kj <esc>
 
 " Reselect visual block after indent/outdent: http://vimbits.com/bits/20
 vnoremap < <gv
@@ -270,23 +244,6 @@ nmap <silent> <leader>T :call StripTrailingWhitespaces()<CR>:retab<CR>
 set formatoptions=cqrn1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Files, backups and undo
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Turn backup off, since most stuff is in SVN, git etc. anyway...
-"set nobackup
-"set nowb
-"set noswapfile
-
-" Don't leave .swp files everywhere. Put them in a central place
-"set directory=$HOME/.vim/swapdir//
-"set backupdir=$HOME/.vim/backupdir//
-"if exists('+undodir')
-"    set undodir=$HOME/.vim/undodir
-"    set undofile
-"endif
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Custom mapping
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Fast saving
@@ -302,10 +259,6 @@ nnoremap <silent> <leader>Q :quit!<cr>
 " Combined saving and quitting
 nnoremap <silent> <leader>wq :w!<cr>:quit<cr>
 nnoremap <silent> <leader>Wq :w !sudo tee % > /dev/null<cr>:quit<cr>
-
-" " Faster Quickfix mappings
-" nmap <silent> <leader>n :cnext<cr>
-" nmap <silent> <leader>p :cprevious<cr>
 
 " Navigate the vim splits with shortcuts
 if empty(glob("~/.vim/plugged/vim-tmux-navigator/"))
