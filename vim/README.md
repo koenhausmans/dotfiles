@@ -18,9 +18,17 @@ Buffer shortcuts:
 `<leader>c`: Delete the current buffer without screwing up window layout<br/>
 `<C-6>`: Go to previous buffer
 
+Editing shortcuts:
+------------------
+`guu`: Entire line to lower case<br/>
+`gUU`: Entire line to UPPER case<br/>
+`U`: Undo all changes on line<br/>
+`C`: Change to end of line<br/>
+`[<space>`: Add blank lines above the cursor (Provided by tpope/vim-unimpaired)<br/>
+`]<space>`: Add blank lines below the cursor (Provided by tpope/vim-unimpaired)<br/>
+
 Movement shortcuts:
 -------------------
-
 `(`: Move sentence backward<br/>
 `)`: Move sentence forward<br/>
 `{`: Move paragraph backward<br/>
@@ -29,13 +37,57 @@ Movement shortcuts:
 `][`: Move section forward or until the next '}' in the first column<br/>
 `[[`: Move section backward or until the next '{' in the first column<br/>
 `[]`: Move section backward or until the next '}' in the first column<br/>
+`gi`: Goto last insert position<br/>
+`gv`: Reselect last selection<br/>
+`;`: Repeat last `f{char}` command<br/>
+`,`: Repeat last `f{char}` command (reverse)<br/>
+`o`: In visual mode, change cursor to opposite end<br/>
+`'.`: Jump to last modification line<br/>
+`\`.`: Jump to last modification position<br/>
+`'<`: Jump to the first char of the visual selection<br/>
+`'>`: Jump to the last char of the visual selection<br/>
+`g-`: Go to older text state<br/>
+`''`: Moves to previous edit line<br/>
+`\`\``: Moves to previous edit position<br/>
+`<C-t>`: Jump back up in the tag stack<br/>
+`<C-I>`: Jump back down in the jumplist<br/>
+`<C-O>`: Jump back up in the jumplist<br/>
+`<g;>`: Jump back up in the changelist<br/>
+`<g,>`: Jump back up in the changelist<br/>
+`zt`: Redraw current line at top
+`zz`: Redraw current line at center
+`zb`: Redraw current line at bottom
+`H`: Move cursor to the top
+`M`: Move cursor to the center
+`L`: Move cursor to the bottom
 
-List shortcuts:
----------------
+Window shortcuts:
+-----------------
+`<C-W>r`: Rotate window downwards/rightwards<br/>
+`<C-W>R`: Rotate window upwards/leftwards<br/>
+`<C-W>J`: Move window to the top<br/>
+`<C-W>K`: Move window to the bottom<br/>
+`<C-W>H`: Move window to the left<br/>
+`<C-W>L`: Move window to the right<br/>
+`<C-W>_`: Maximize height of window<br/>
+`<C-W>|`: Maximize width of window<br/>
+`<C-W>=`: All windows equal widths/heights<br/>
+`<C-W>o`: Make the current window the only window<br/>
+`<C-W>x`: Swap neighbouring windows<br/>
+
+Register shortcuts:
+-------------------
+`<C-R><C-W>`: Copy current word in command mode<br/>
+`<C-R>x`: Copy register x in command mode<br/>
+
+List shortcuts (Provided by tpope/vim-unimpaired):
+--------------------------------------------------
 `]b`: Go to next buffer<br/>
 `[b`: Go to previous buffer<br/>
-`]t`: Go to next tab<br/>
-`[t`: Go to previous tab<br/>
+`]B`: Go to the first buffer<br/>
+`[B`: Go to the last buffer<br/>
+`]t`: Go to next tag<br/>
+`[t`: Go to previous tag<br/>
 `]l`: Go to next location list result<br/>
 `[l`: Go to previous location list result<br/>
 `]<C-L>`: Go to next location list result in another file<br/>
@@ -45,9 +97,13 @@ List shortcuts:
 `]<C-Q>`: Go to next quickfix result in another file<br/>
 `[<C-Q>`: Go to previous quickfix result in another file<br/>
 
+Option toggling (Provided by tpope/vim-unimpaired):
+---------------------------------------------------
+`[on`: Enable line numbers</br>
+`]on`: Disable line numbers</br>
+
 Fold shortcuts:
 ---------------
-
 `zf`: To create a fold<br/>
 `zd`: To delete a fold<br/>
 `zo`: To open one fold under the cursor<br/>
@@ -59,54 +115,33 @@ Fold shortcuts:
 
 Insert Completion:
 ------------------
-
 `<C-X><C-O>`: Omni-completion, guess what kind of item is in front and show the match<br/>
 `<C-X><C-N>`: Completion for keywords in the current file<br/>
 `<C-X><C-F>`: Completion for file names<br/>
 `<C-X><C-J>`: Completion for tags<br/>
-
-Preview Window:
----------------
-
-`<C-W>z`: Close any open "Preview" window<br/>
-`<C-W>}`: Open tag under cursor and open a preview window<br/>
+`<C-X><C-L>`: Completion for entire line<br/>
 
 Spell checking:
 ---------------
-
+`[os`: Enable spell checking<br/>
+`]os`: Disable spell checking<br/>
 `<leader>ss`: Toggle spell checking<br/>
-`<leader>sn`: Move to the next misspelled word<br/>
-`<leader>sp`: Move to the previous misspelled word<br/>
-`<leader>sa`: Add word under cursor as a good word<br/>
-`<leader>s?`: Suggest correctly spelled word<br/>
+`]s`: Move to the next misspelled word<br/>
+`[s`: Move to the previous misspelled word<br/>
+`zg`: Add word under cursor as a good word<br/>
+`z=`: Suggest correctly spelled word<br/>
 
-NERDTree: Tree File Explorer:
------------------------------
-
-`<F1>`: Open NERDTree and find the currently opened file in the tree<br/>
-`<F2>`: Open NERDTree<br/>
-
-[https://www.cheatography.com/stepk/cheat-sheets/vim-nerdtree/]
-
-Ctags: Tag support in vim:
---------------------------
-
-### Easytags: Tag generation:
-To recursively generate tags from the CWD down, press `<leader>ut`.
-
-### CTags Shortcuts:
-
-`<C-]>`: Jump to the tag underneath the cursor<br/>
-`<C-t>`: Jump back up in the tag stack<br/>
-`<C-I>`: Jump back down in the jumplist<br/>
-`<C-O>`: Jump back up in the jumplist<br/>
-`<g;>`: Jump back up in the changelist<br/>
-`<g,>`: Jump back up in the changelist<br/>
-
+Tag shortcuts:
+--------------
+`gf`: Go to file<br/>
+`<C-W>f`: Go to file in new window<br/>
+`<C-]>`: Jump to the tag under the cursor<br/>
+`g]`: Show multiple tag matches<br/>
+`<C-W>}`: Open tag under cursor and open a preview window<br/>
+`<C-W>z`: Close any open "Preview" window<br/>
 
 FZF: Fuzzy finder:
 ------------------
-
 The following shortcuts are allowed in Normal mode:
 
 `<C-p>`: Open FZF with multiple select mode enabled<br/>
@@ -120,7 +155,7 @@ The following shortcuts are allowed in Normal mode:
 `<leader>/`: Open FZF for an Ag search<br/>
 `<leader>.`: Open FZF for an Ag search under a directory<br/>
 
-`K`: Open FZF for an Ag search lookign for the current word under the cursor<br/>
+`K`: Open FZF for an Ag search looking for the current word under the cursor<br/>
 
 In a fzf window, the following shortcuts are supported:
 
@@ -131,20 +166,13 @@ In a fzf window, the following shortcuts are supported:
 `<C-x>`: Open result in a horizontal split<br/>
 `<C-v>`: Open result in a vertical split<br/>
 
-Goyo: Distraction free editing:
--------------------------------
-
-To enable distraction free editing, press `<leader>z`.
-
 Commentary.vim: Comment stuff out:
 ----------------------------------
-
 `gcc`: To comment out a line<br/>
 `gc`: To comment out the target of motion (e.g. `gcap` to comment out a paragraph)<br/>
 
 Surround.vim: Quoting/Parenthesizing made simple:
 -------------------------------------------------
-
 `cs"'`: To change the `"` quotes to `'`<br/>
 `ds"`: To remove the `"` quotes<br/>
 `ysiw]`: To add `[]` quotes around current word<br/>
