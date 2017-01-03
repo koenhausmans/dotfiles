@@ -24,7 +24,6 @@ set cindent
 
 " Do not indent C++ scope declarations (public/private/protected) within classes
 set cinoptions+=g0
-
 " Do not indent after a namespace block
 set cinoptions+=N-s
 
