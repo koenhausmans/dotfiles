@@ -159,14 +159,14 @@ if exists("&wildignorecase")
     set wildignorecase
 endif
 
-"Always show current position
+" Always show current position
 set ruler
 
 " The last window will have a status line always
 set laststatus=2
 
 " Configure backspace so it acts as it should act
-se backspace=eol,start,indent
+set backspace=eol,start,indent
 set whichwrap+=<,>,h,l
 
 " Don't redraw while executing macros (good performance config)
