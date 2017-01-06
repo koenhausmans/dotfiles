@@ -1,83 +1,49 @@
-# Set the DOTFILES path
+##
+## Environment variables
+##
+
 export DOTFILES="$HOME/.dotfiles"
-
-# Path to your oh-my-zsh installation.
-export ZSH=$HOME/.oh-my-zsh
-
-# Change the custom ZSH configuration path
-ZSH_CUSTOM=$DOTFILES/zsh-custom
-
-# Set name of the theme to load.
-# Look in ~/.oh-my-zsh/themes/
-# Optionally, if you set this to "random", it'll load a random theme each
-# time that oh-my-zsh is loaded.
-ZSH_THEME="agnoster"
-
-# Uncomment the following line to use hyphen-insensitive completion. Case
-# sensitive completion must be off. _ and - will be interchangeable.
-HYPHEN_INSENSITIVE="true"
-
-# Uncomment the following line to enable command auto-correction.
-ENABLE_CORRECTION="true"
-
-# Uncomment the following line to display red dots whilst waiting for completion.
-COMPLETION_WAITING_DOTS="true"
-
-# Uncomment the following line to disable auto-setting terminal title.
-#DISABLE_AUTO_TITLE="true"
-
-# Disable the oh-my-zsh auto update functionality, this is being performed by the .dotfiles repository
-DISABLE_AUTO_UPDATE="true"
-
-# Uncomment the following line if you want to change the command execution time
-# stamp shown in the history command output.
-# The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-HIST_STAMPS="yyyy-mm-dd"
-
-# Don't fill in autocomplete if there is ambiguity
-setopt no_auto_menu # Currently clobbered by oh my zsh!
-
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-plugins=(extract dircycle)
-#ssh-agent
-#plugins=(git github git-extras dircycle tmux colored-man extract web-search)
-
-###########################################################################
-#                           User Configuration                            #
-###########################################################################
 
 # Set the PATH environment variable
 export PATH="$HOME/bin:$DOTFILES/bin:$HOME/.local/bin/:$PATH"
 
-# Set the default editor to vim
-export VISUAL="vim"
-export EDITOR="$VISUAL"
+##
+## Plugins
+##
 
-# Save lots of history
-SAVEHIST=1000
-
-# Save it to a file
-HISTFILE=~/.history
-
-
-#bindkey '^[OD' backward-word
-#bindkey '^[OC' forward-word
-
-###########################################################################
-#                             Load Oh-My-Zsh                              #
-###########################################################################
-
-source $ZSH/oh-my-zsh.sh
-
-###########################################################################
-#                            Source other files                           #
-###########################################################################
-
-# Customize to your needs...
-if [ -f $HOME/.zshrc.local ]; then
-    source $HOME/.zshrc.local
+# Automaticall load zplug if it doesn't exist
+if [[ ! -d $HOME/.zplug ]] ; then
+    git clone https://github.com/zplug/zplug $HOME/.zplug
 fi
+
+source $HOME/.zplug/init.zsh
+
+#zplug "lib/completion", from:oh-my-zsh
+
+zplug "zsh-users/zsh-syntax-highlighting", from:github, defer:3
+zplug "zsh-users/zsh-history-substring-search", from:github, defer:3
+zplug "zsh-users/zsh-completions", from:github, defer:3
+
+zplug "agnoster/agnoster-zsh-theme", from:github, as:theme
+
+if ! zplug check --verbose ; then
+    printf "Install zplug plugins? [y/N]: "
+    if read -q ; then
+        echo ; zplug install
+    fi
+fi
+
+zplug load
+
+##
+## Load zsh modules
+##
+for file ($DOTFILES/zsh/*.zsh(N)); do
+    source $file
+done
+
+##
+## Allow for machine-specific local changes
+##
+[[ -f $HOME/.zshrc.local ]] && source $HOME/.zshrc.local
 
