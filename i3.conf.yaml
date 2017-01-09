@@ -1,7 +1,0 @@
-- defaults:
-    link:
-      relink: true
-
-- link:
-    ~/.i3/config : i3/config
-
