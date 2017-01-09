@@ -7,22 +7,23 @@ export DOTFILES="$HOME/.dotfiles"
 # Set the PATH environment variable
 export PATH="$HOME/bin:$DOTFILES/bin:$HOME/.local/bin/:$PATH"
 
+# Zplug directory
+export ZPLUG_HOME="$HOME/.local/share/zplug/"
+
 ##
 ## Plugins
 ##
 
 # Automaticall load zplug if it doesn't exist
-if [[ ! -d $HOME/.zplug ]] ; then
-    git clone https://github.com/zplug/zplug $HOME/.zplug
+if [[ ! -d $ZPLUG_HOME ]] ; then
+    git clone https://github.com/zplug/zplug $ZPLUG_HOME
 fi
 
-source $HOME/.zplug/init.zsh
+source $ZPLUG_HOME/init.zsh
 
-#zplug "lib/completion", from:oh-my-zsh
-
+zplug "zsh-users/zsh-completions", from:github
+zplug "zsh-users/zsh-autosuggestions", from:github, defer:2
 zplug "zsh-users/zsh-syntax-highlighting", from:github, defer:3
-zplug "zsh-users/zsh-history-substring-search", from:github, defer:3
-zplug "zsh-users/zsh-completions", from:github, defer:3
 
 zplug "agnoster/agnoster-zsh-theme", from:github, as:theme
 
@@ -36,7 +37,7 @@ fi
 zplug load
 
 ##
-## Load zsh modules
+## Load zsh files in the dotfiles repository
 ##
 for file ($DOTFILES/zsh/*.zsh(N)); do
     source $file
