@@ -4,7 +4,6 @@
 - clean: ['~']
 
 - link:
-    ~/.oh-my-zsh                       : oh-my-zsh
     ~/.fzf                             : fzf
     ~/.vim/10-plugins.vim              : vim/10-plugins.vim
     ~/.vim/70-plugin-configuration.vim : vim/70-plugin-configuration.vim
