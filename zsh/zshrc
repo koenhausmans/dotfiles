@@ -27,6 +27,8 @@ zplug "zsh-users/zsh-syntax-highlighting", from:github, defer:3
 
 zplug "agnoster/agnoster-zsh-theme", from:github, as:theme
 
+zplug "rupa/z", from:github, use:z.sh
+
 if ! zplug check --verbose ; then
     printf "Install zplug plugins? [y/N]: "
     if read -q ; then
