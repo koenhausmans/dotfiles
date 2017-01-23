@@ -6,8 +6,7 @@
 set history=700
 
 " Enable filetype plugins
-filetype plugin on
-filetype indent on
+filetype plugin indent on
 
 " Set to auto read when a file is changed from the outside
 set autoread
@@ -24,6 +23,13 @@ set hidden
 set noerrorbells
 set novisualbell
 set t_vb=
+
+set path=.,/usr/include,,**
+
+set undofile
+set undodir=~/.vim/undodir
+
+set spelllang=en_us
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and Fonts
@@ -102,8 +108,7 @@ set showmatch
 " How many tenths of a second to blink when matching brackets
 set mat=2
 
-" Disable highlight when <leader><cr> or <leader><space> is pressed
-nnoremap <silent> <leader><cr> :nohlsearch<cr>
+" Disable highlight when <leader><space> is pressed
 nnoremap <silent> <leader><space> :nohlsearch<cr>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -135,9 +140,6 @@ autocmd BufReadPost *
 autocmd QuickFixCmdPost [^l]* cwindow
 autocmd QuickFixCmdPost l*    lwindow
 
-" Remember info about open buffers on close
-"set viminfo^=%
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Visual settings / VIM user interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -151,7 +153,7 @@ set wildmenu
 set wildignore=*.o,*~,*.pyc
 
 " List all matches and complete till longest common string
-set wildmode=list:longest
+set wildmode=list:full
 
 " My command line autocomplete is case insensitive. Keep vim consistent with
 " that. It's a recent feature to vim, test to make sure it's supported first.
@@ -166,7 +168,7 @@ set ruler
 set laststatus=2
 
 " Configure backspace so it acts as it should act
-set backspace=eol,start,indent
+set backspace=indent,eol,start
 set whichwrap+=<,>,h,l
 
 " Don't redraw while executing macros (good performance config)
@@ -248,6 +250,9 @@ set formatoptions=cqrn1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Fast saving
 nnoremap <silent> <leader>w :w!<cr>
+
+" Fast editing a new file
+nnoremap <leader>e :e **/*
 
 " Fast saving the file with sudo rights
 nnoremap <silent> <leader>W :w !sudo tee % > /dev/null<cr>

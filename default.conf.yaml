@@ -22,7 +22,6 @@
     ~/.vim/00-nocompatible.vim         : vim/00-nocompatible.vim
     ~/.vim/50-basic.vim                : vim/50-basic.vim
     ~/.vim/51-grep.vim                 : vim/51-grep.vim
-    ~/.vim/60-spellchecking.vim        : vim/60-spellchecking.vim
     ~/.vim/61-programming-options.vim  : vim/61-programming-options.vim
     ~/.tmux.conf                       : tmux/tmux.conf
     ~/.zshrc                           : zsh/zshrc
