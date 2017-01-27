@@ -1,5 +1,14 @@
-# Aliases for git usage in zsh
+##
+## Aliases
+##
 
+# Remove shortcuts
+alias rr="rm -rf"
+
+# Output the week number
+alias week="date +%V"
+
+# Git aliases / shortcuts
 alias g='git'
 alias ga='git add'
 alias gb='git branch'
