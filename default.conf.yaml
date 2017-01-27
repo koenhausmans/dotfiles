@@ -13,13 +13,16 @@
     stderr: true
 
 - link:
-    ~/.bashrc                  : bash/bashrc
-    ~/.bash_profile            : bash/bash_profile
-    ~/.gitconfig               : git/gitconfig
-    ~/.gitignore_global        : git/gitignore
-    ~/.screenrc                : screen/screenrc
-    ~/.vimrc                   : vim/vimrc
-    ~/.vim/00-nocompatible.vim : vim/00-nocompatible.vim
-    ~/.vim/50-basic.vim        : vim/50-basic.vim
-    ~/.vim/51-grep.vim         : vim/51-grep.vim
+    ~/.bashrc                          : bash/bashrc
+    ~/.bash_profile                    : bash/bash_profile
+    ~/.gitconfig                       : git/gitconfig
+    ~/.gitignore_global                : git/gitignore
+    ~/.screenrc                        : screen/screenrc
+    ~/.vimrc                           : vim/vimrc
+    ~/.vim/00-nocompatible.vim         : vim/00-nocompatible.vim
+    ~/.vim/50-basic.vim                : vim/50-basic.vim
+    ~/.vim/51-grep.vim                 : vim/51-grep.vim
+    ~/.vim/61-programming-options.vim  : vim/61-programming-options.vim
+    ~/.tmux.conf                       : tmux/tmux.conf
+    ~/.zshrc                           : zsh/zshrc
 

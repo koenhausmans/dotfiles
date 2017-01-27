@@ -4,13 +4,8 @@
 - clean: ['~']
 
 - link:
-    ~/.tmux.conf                       : tmux/tmux.conf
-    ~/.oh-my-zsh                       : oh-my-zsh
-    ~/.zshrc                           : zsh/zshrc
     ~/.fzf                             : fzf
     ~/.vim/10-plugins.vim              : vim/10-plugins.vim
-    ~/.vim/60-spellchecking.vim        : vim/60-spellchecking.vim
-    ~/.vim/61-programming-options.vim  : vim/61-programming-options.vim
     ~/.vim/70-plugin-configuration.vim : vim/70-plugin-configuration.vim
 
 - shell:
