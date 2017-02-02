@@ -17,6 +17,7 @@
     ~/.bash_profile                    : bash/bash_profile
     ~/.gitconfig                       : git/gitconfig
     ~/.gitignore_global                : git/gitignore
+    ~/.inputrc                         : bash/inputrc
     ~/.screenrc                        : screen/screenrc
     ~/.vimrc                           : vim/vimrc
     ~/.vim/00-nocompatible.vim         : vim/00-nocompatible.vim
