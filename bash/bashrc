@@ -1,6 +1,6 @@
-# ~/.bashrc: executed by bash(1) for non-login shells.
-# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
-# for examples
+### ---------------------------------------------------------------------------
+### General
+### ---------------------------------------------------------------------------
 
 # If not running interactively, don't do anything
 case $- in
@@ -8,91 +8,64 @@ case $- in
       *) return;;
 esac
 
-# don't put duplicate lines or lines starting with space in the history.
-# See bash(1) for more options
-HISTCONTROL=ignoreboth
-
-# append to the history file, don't overwrite it
-shopt -s histappend
-
-# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=1000
-HISTFILESIZE=2000
-
-# check the window size after each command and, if necessary,
-# update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
-# If set, the pattern "**" used in a pathname expansion context will
-# match all files and zero or more directories and subdirectories.
-#shopt -s globstar
+set -o emacs
 
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
-# set variable identifying the chroot you work in (used in the prompt below)
-if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
+### ---------------------------------------------------------------------------
+### Auto completion
+### ---------------------------------------------------------------------------
+shopt -s extglob
+shopt -s globstar
+shopt -s hostcomplete
+shopt -s nocaseglob
+
+bind "TAB:menu-complete"
+bind "set show-all-if-ambiguous on"
+
+if [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
 fi
 
-# set a fancy prompt (non-color, unless we know we "want" color)
-case "$TERM" in
-    xterm-color) color_prompt=yes;;
-esac
-
-# uncomment for a colored prompt, if the terminal has the capability; turned
-# off by default to not distract the user: the focus in a terminal window
-# should be on the output of commands, not on the prompt
-#force_color_prompt=yes
-
-if [ -n "$force_color_prompt" ]; then
-    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-	# We have color support; assume it's compliant with Ecma-48
-	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-	# a case would tend to support setf rather than setaf.)
-	color_prompt=yes
-    else
-	color_prompt=
-    fi
+if [ -f /etc/bash_completion.d/git-prompt ] ; then
+    . /etc/bash_completion.d/git-prompt
 fi
 
-if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-fi
-unset color_prompt force_color_prompt
+### ---------------------------------------------------------------------------
+### Environment variables
+### ---------------------------------------------------------------------------
 
-# If this is an xterm set the title to user@host:dir
-case "$TERM" in
-xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-    ;;
-*)
-    ;;
-esac
-
-# enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
+if [[ $TERM == xterm ]] ; then
+    TERM=xterm-256color
 fi
 
-# Add an "alert" alias for long running commands.  Use like so:
-#   sleep 10; alert
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+export DOTFILES="$HOME/.dotfiles"
 
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
+export PATH="$HOME/bin:$DOTFILES/bin:$HOME/.local/bin/:$PATH"
 
-###
+export VISUAL="vim"
+export EDITOR="$VISUAL"
+
+### ---------------------------------------------------------------------------
+### Directories
+### ---------------------------------------------------------------------------
+shopt -s autocd
+shopt -s cdspell
+shopt -s cdable_vars
+shopt -s dirspell
+
+alias ls='ls --color=auto'
+
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+### ---------------------------------------------------------------------------
 ### Aliases
-###
+### ---------------------------------------------------------------------------
 
 # Remove shortcuts
 alias rr="rm -rf"
@@ -103,40 +76,95 @@ alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
 alias ......="cd ../../../../.."
-alias -- -="cd -"		# Go to previous directory with -
+
+alias -- -='cd -'
+
+# Ls aliases
+alias lsa='ls -lah'
+alias l='ls -lah'
+alias ll='ls -lh'
+alias la='ls -lAh'
 
 # Git alias
 alias g="git"
+alias ga='git add'
+alias gb='git branch'
+alias gc='git commit'
+alias gca='git commit -a'
+alias gcam='git commit -a -m'
+alias gce='git commit -e'
+alias gcm='git commit -m'
+alias gco='git checkout'
+alias gd='git diff'
+alias gdc='git diff --cached'
+alias gdt='git diff-tree --no-commit-id --name-only -r'
+alias gl='git log --stat'
+alias gpush='git push'
+alias gpull='git pull --rebase'
+alias gr='git remote'
+alias gs='git status -sb'
 
-# Ls aliases
-alias l='ls -lah'
-alias la='ls -lAh'
-alias ll='ls -lh'
-alias lsa='ls -lah'
 
 # Output the week number
 alias week="date +%V"
 
+### ---------------------------------------------------------------------------
+### Customization
+### ---------------------------------------------------------------------------
 
-# enable programmable completion features (you don't need to enable
-# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
-# sources /etc/bash.bashrc).
-if ! shopt -oq posix; then
-  if [ -f /usr/share/bash-completion/bash_completion ]; then
-    . /usr/share/bash-completion/bash_completion
-  elif [ -f /etc/bash_completion ]; then
-    . /etc/bash_completion
-  fi
+
+export GIT_PS1_SHOWDIRTYSTATE=1
+export GIT_PS1_SHOWUPSTREAM="auto"
+
+SELECT="if [[ \$? != 0 ]]; then echo -e \"\[\033[01;31m\]\"; else echo -e \"\[\033[01;34m\]\" ; fi"
+export PS1="\w \[\033[01;40;33m\]\$(__git_ps1 '(%s) ')\[\033[01;34m\]\$\[\033[00m\] "
+
+[[ -n "$SSH_CONNECTION" ]] && export PS1="\[\033[01;32m\]\u@\h\[\033[01;34m\] $PS1"
+
+export PS1="\[\033[G\]\`${SELECT}\`$PS1"
+
+### ---------------------------------------------------------------------------
+### History
+### ---------------------------------------------------------------------------
+
+set -o histexpand
+
+shopt -s cmdhist
+shopt -s histappend
+
+HISTCONTROL=ignoreboth
+HISTSIZE=1000
+HISTFILESIZE=2000
+
+### ---------------------------------------------------------------------------
+### FZF Plugin
+### ---------------------------------------------------------------------------
+
+if [[ -d "$HOME/.fzf" ]] ; then
+    export PATH="$PATH:$HOME/.fzf/bin"
+    export MANPATH="$MANPATH:$HOME/.fzf/man"
+
+    [[ $- == *i* ]] && source "$HOME/.fzf/shell/completion.bash" 2> /dev/null
+
+    source "$HOME/.fzf/shell/key-bindings.bash"
 fi
 
-# Set the terminal s.t. tmux and vim show the proper colors
-export TERM="xterm-256color"
+### ---------------------------------------------------------------------------
+### Z Plugin
+### ---------------------------------------------------------------------------
+Z_HOME="$HOME/.local/share/z/"
+if [[ ! -d "$Z_HOME" ]] ; then
+    git clone https://github.com/rupa/z $Z_HOME
+fi
+. $Z_HOME/z.sh
 
-# Set the DOTFILES path
-export DOTFILES="$HOME/.dotfiles"
+### ---------------------------------------------------------------------------
+### Load machine-specific config files
+### ---------------------------------------------------------------------------
 
-# Update the path to include /bin/ directories
-export PATH=$HOME/bin:$DOTFILES/bin:$HOME/.local/bin/:$HOME/.fzf/bin/:$PATH
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
 
 # Source global definitions
 if [ -f /etc/bashrc ]; then

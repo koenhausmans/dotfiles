@@ -16,7 +16,15 @@ export ZPLUG_HOME="$HOME/.local/share/zplug/"
 
 # Automaticall load zplug if it doesn't exist
 if [[ ! -d $ZPLUG_HOME ]] ; then
-    git clone https://github.com/zplug/zplug $ZPLUG_HOME
+    echo "Installing zplug..."
+    git clone --quiet https://github.com/zplug/zplug $ZPLUG_HOME
+fi
+
+# Download z plugin
+Z_HOME="$HOME/.local/share/z/"
+if [[ ! -d "$Z_HOME" ]] ; then
+    echo "Installing z.sh..."
+    git clone --quiet https://github.com/rupa/z $Z_HOME
 fi
 
 source $ZPLUG_HOME/init.zsh
@@ -29,7 +37,7 @@ zplug "felixr/docker-zsh-completion"
 
 zplug "agnoster/agnoster-zsh-theme", as:theme
 
-zplug "rupa/z", use:z.sh
+zplug "$Z_HOME", from:local, use:z.sh
 
 if ! zplug check --verbose ; then
     printf "Install zplug plugins? [y/N]: "
