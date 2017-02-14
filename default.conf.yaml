@@ -5,13 +5,6 @@
 
 - clean: ['~']
 
-- shell:
-  -
-    msg: Cleaning dotfiles
-    command: ./clean
-    stdout: true
-    stderr: true
-
 - link:
     ~/.bashrc                          : bash/bashrc
     ~/.bash_profile                    : bash/bash_profile
