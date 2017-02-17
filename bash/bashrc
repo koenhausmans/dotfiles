@@ -113,7 +113,7 @@ export GIT_PS1_SHOWDIRTYSTATE=1
 export GIT_PS1_SHOWUPSTREAM="auto"
 
 SELECT="if [[ \$? != 0 ]]; then echo -e \"\[\033[01;31m\]\"; else echo -e \"\[\033[01;34m\]\" ; fi"
-export PS1="\w \[\033[01;40;33m\]\$(__git_ps1 '(%s) ')\[\033[01;34m\]\$\[\033[00m\] "
+export PS1="\w \[\033[01;33m\]\$(__git_ps1 '(%s) ')\[\033[01;34m\]\$\[\033[00m\] "
 
 export PS1="\`${SELECT}\`$PS1"
 
