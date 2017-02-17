@@ -28,3 +28,17 @@ Making (machine) local customizations for some of the tools can be done by editi
  * `vim` : `~/.vimrc.local`
  * `zsh` : `~/.zshrc.local`
 
+Required packages (Ubuntu):
+---------------------------
+ * curl
+ * git
+ * bash
+ * python python-pip python-setuptools
+ * vim vim-nox
+ * zsh
+ * tmux
+ * exuberant-ctags
+ * g++
+ * build-essential
+ * silversearcher-ag-el
+
