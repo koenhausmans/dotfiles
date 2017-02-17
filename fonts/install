@@ -36,8 +36,8 @@ popd > /dev/null
 rm -rf $TMPDIR
 
 # Install Powerline Symbols
-PowerlineSymbolsConfig="https://raw.githubusercontent.com/powreline/powerline/develop/font/10-powerline-symbols.conf"
-PowerlineSymbolsFont="https://raw.githubusercontent.com/powreline/powerline/develop/font/PowerlineSymbols.otf"
+PowerlineSymbolsConfig="https://raw.githubusercontent.com/powerline/powerline/develop/font/10-powerline-symbols.conf"
+PowerlineSymbolsFont="https://raw.githubusercontent.com/powerline/powerline/develop/font/PowerlineSymbols.otf"
 
 curl $PowerlineSymbolsConfig -o "$FontConfigDirectory/10-powerline-symbols.conf"
 curl $PowerlineSymbolsFont -o "$FontConfigDirectory/PowerlineSymbols.otf"

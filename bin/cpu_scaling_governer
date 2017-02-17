@@ -2,6 +2,8 @@
 # Source: https://ubuntuforums.org/showthread.php?t=2080751
 # init
 
+set -euo pipefail
+
 ##### SHOW INITIAL MENU #####
 while :
 do
