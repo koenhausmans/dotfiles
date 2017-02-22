@@ -18,10 +18,10 @@ set -o emacs
 ### ---------------------------------------------------------------------------
 ### Auto completion
 ### ---------------------------------------------------------------------------
-shopt -s extglob
-shopt -s globstar
-shopt -s hostcomplete
-shopt -s nocaseglob
+shopt -s extglob 2>/dev/null
+shopt -s globstar 2>/dev/null
+shopt -s hostcomplete 2>/dev/null
+shopt -s nocaseglob 2>/dev/null
 
 bind "TAB:menu-complete"
 bind "set show-all-if-ambiguous on"
@@ -49,10 +49,10 @@ export EDITOR="$VISUAL"
 ### ---------------------------------------------------------------------------
 ### Directories
 ### ---------------------------------------------------------------------------
-shopt -s autocd
-shopt -s cdspell
-shopt -s cdable_vars
-shopt -s dirspell
+shopt -s autocd 2>/dev/null
+shopt -s cdspell 2>/dev/null
+shopt -s cdable_vars 2>/dev/null
+shopt -s dirspell 2>/dev/null
 
 alias ls='ls --color=auto'
 
@@ -112,12 +112,21 @@ alias week="date +%V"
 export GIT_PS1_SHOWDIRTYSTATE=1
 export GIT_PS1_SHOWUPSTREAM="auto"
 
+export PS1=""
+
+# Add user and hostname if there is a SSH connection
+[[ -n "$SSH_CONNECTION" ]] && export PS1="$PS1\[\033[01;32m\]\u@\h "
+
+# Add the current working folder
 SELECT="if [[ \$? != 0 ]]; then echo -e \"\[\033[01;31m\]\"; else echo -e \"\[\033[01;34m\]\" ; fi"
-export PS1="\w \[\033[01;33m\]\$(__git_ps1 '(%s) ')\[\033[01;34m\]\$\[\033[00m\] "
+export PS1="$PS1\`${SELECT}\`\w "
 
-export PS1="\`${SELECT}\`$PS1"
+# Add git information (if available)
+[[ $(type __git_ps1 2> /dev/null) ]] && export PS1="$PS1\[\033[01;33m\]\$(__git_ps1 '(%s) ')"
 
-[[ -n "$SSH_CONNECTION" ]] && export PS1="\[\033[01;32m\]\u@\h\[\033[01;34m\] $PS1"
+# Add the dollar symbol
+export PS1="$PS1\[\033[01;34m\]\$\[\033[00m\] "
+
 
 ### ---------------------------------------------------------------------------
 ### History
