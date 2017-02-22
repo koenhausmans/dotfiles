@@ -26,7 +26,7 @@ set t_vb=
 
 set path=.,,**
 
-if has("undofile")
+if has("persistent_undo")
     set undofile
     set undodir=~/.vim/undodir
 endif
