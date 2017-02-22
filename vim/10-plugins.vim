@@ -16,6 +16,7 @@ call plug#begin('~/.vim/plugged')
 """ Colorschemes: Additional colorschemes that can be used
 """
 Plug 'morhetz/gruvbox'
+Plug 'romainl/flattened'
 
 """
 """ Syntax: Additional syntaxes that can be used
