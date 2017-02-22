@@ -26,10 +26,14 @@ set t_vb=
 
 set path=.,,**
 
-set undofile
-set undodir=~/.vim/undodir
+if has("undofile")
+    set undofile
+    set undodir=~/.vim/undodir
+endif
 
-set spelllang=en_us
+if has("spell")
+    set spelllang=en_us
+endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and Fonts
