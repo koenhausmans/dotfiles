@@ -1,3 +1,10 @@
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Compatibility mode
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if &compatible
+	set nocompatible
+endif
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -283,4 +290,51 @@ endif
 if filereadable(glob("$HOME/.vimrc.local"))
     source $HOME/.vimrc.local
 endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Grep and Vimgrep configuration
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+if executable('ag')
+    set grepprg=ag\ --vimgrep\ $*
+    set grepformat=%f:%l:%c:%m
+
+    command! -nargs=+ -complete=file_in_path -bar Ag silent grep! <args>|cwindow|redraw!
+elseif executable('ack')
+    set grepprg=ack\ --nogroup\ --column\ --smart-case\ --nocolor\ --follow\ $*
+    set grepformat=%f:%l:%c:%m
+
+    command! -nargs=+ -complete=file_in_path -bar Ack silent grep! <args>|cwindow|redraw!
+endif
+
+nnoremap <silent> K :grep! "\b<c-r><c-w>\b"<cr>:cwindow<cr>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Filetype specific commands
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+autocmd BufWrite *.py :call StripTrailingWhitespaces()
+autocmd BufWrite *.coffee :call StripTrailingWhitespaces()
+
+autocmd Filetype c,cpp,cs,java  setlocal commentstring=//\ %s
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Custom Filetypes
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+autocmd BufRead,BufNewFile *.md,*.markdown set filetype=markdown
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Code completion
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set omnifunc=syntaxcomplete#Complete
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => C++ specific options
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Fix C indentation and make sure access specifiers are without indentation
+set cindent
+
+" Do not indent C++ scope declarations (public/private/protected) within classes
+set cinoptions+=g0
+" Do not indent after a namespace block
+set cinoptions+=N-s
 
