@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if ! hash fc-cache 2>/dev/null ; then
+	echo "No font information commands found, therefore unnecessary to install additional fonts. Exiting..."
+	exit 0
+fi
+
 # Get the current directory of this install script
 PWD="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
