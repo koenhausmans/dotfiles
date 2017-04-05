@@ -1,30 +1,128 @@
 #!/usr/bin/env bash
+# Based on: https://github.com/holman/dotfiles/blob/master/script/bootstrap
 
+
+## DO NOT CHANGE BELOW
+
+# Enable unofficial bash strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
+# Set up helper functions for outputting to the command line
+info () {
+	printf "\r  [ \033[00;34m..\033[0m ] $1\n"
+}
+
+user () {
+	printf "\r  [ \033[0;33m??\033[0m ] $1\n"
+}
+
+success () {
+	printf "\r\033[2K  [ \033[00;32mOK\033[0m ] $1\n"
+}
+
+fail () {
+	printf "\r\033[2K  [\033[0;31mFAIL\033[0m] $1\n"
+	echo ''
+	exit
+}
+
+# Check for root permissions
 if [ "$(whoami)" == "root" ] ; then
-    echo -e "\e[31mPlease execute without sudo!\e[0m"
-    exit 1
+	fail "Please execute without root permissions!"
 fi
 
-set -e
-
-DEFAULT_CONFIG_PREFIX="default"
-CONFIG_SUFFIX=".conf.yaml"
-DOTBOT_DIR="dotbot"
-
-DOTBOT_BIN="bin/dotbot"
 BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_ROOT="$(dirname "$BASEDIR")"
 
-cd "${BASEDIR}"
+link_file () {
+	local src=$1 dst=$2
 
-ALL_CONFIG_FILES="${DEFAULT_CONFIG_PREFIX} ${@}"
-if [ "$1" == "all" ] ; then
-	ALL_CONFIG_FILES=`find . -iname "*.conf.yaml" -exec basename {} \; | sed -e 's/.conf.yaml$//g'`
-fi
+	local overwrite= backup= skip=
+	local action=
 
-git submodule update --init --recursive "${DOTBOT_DIR}"
+	if [ -f "$dst" -o -d "$dst" -o -L "$dst" ]
+	then
 
-for conf in ${ALL_CONFIG_FILES}; do
-    conf=`echo $conf | sed -e 's/.conf.yaml$//g'`
-    "${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" -c "${conf}${CONFIG_SUFFIX}"
-done
+		if [ "$overwrite_all" == "false" ] && [ "$backup_all" == "false" ] && [ "$skip_all" == "false" ]
+		then
 
+			local currentSrc="$(readlink $dst)"
+
+			if [ "$currentSrc" == "$src" ]
+			then
+
+				skip=true;
+
+			else
+
+				user "File already exists: $dst ($(basename "$src")), what do you want to do?\n\
+					[s]kip, [S]kip all, [o]verwrite, [O]verwrite all, [b]ackup, [B]ackup all?"
+				read -n 1 action
+
+				case "$action" in
+					o )
+						overwrite=true;;
+					O )
+						overwrite_all=true;;
+					b )
+						backup=true;;
+					B )
+						backup_all=true;;
+					s )
+						skip=true;;
+					S )
+						skip_all=true;;
+					* )
+						;;
+				esac
+
+			fi
+
+		fi
+
+		overwrite=${overwrite:-$overwrite_all}
+		backup=${backup:-$backup_all}
+		skip=${skip:-$skip_all}
+
+		if [ "$overwrite" == "true" ]
+		then
+			rm -rf "$dst"
+			success "removed $dst"
+		fi
+
+		if [ "$backup" == "true" ]
+		then
+			mv "$dst" "${dst}.backup"
+			success "moved $dst to ${dst}.backup"
+		fi
+
+		if [ "$skip" == "true" ]
+		then
+			success "skipped $src"
+		fi
+	fi
+
+	if [ "$skip" != "true" ]  # "false" or empty
+	then
+		ln -s "$1" "$2"
+		success "linked $1 to $2"
+	fi
+}
+
+install_dotfiles () {
+	info 'installing dotfiles'
+
+	local overwrite_all=false backup_all=false skip_all=false
+
+	for src in $(find -H "$DOTFILES_ROOT" -maxdepth 2 -name '*.symlink' -not -path '*.git*')
+	do
+		dst="$HOME/.$(basename "${src%.*}")"
+		link_file "$src" "$dst"
+	done
+}
+
+install_dotfiles
+
+echo
+echo '  All installed!'
