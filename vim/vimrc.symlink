@@ -75,6 +75,11 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-unimpaired'
 
 """
+""" vim-cool: Disable hlsearch when you are done searching
+"""
+Plug 'romainl/vim-cool'
+
+"""
 """ ===== Programming Plugins =====
 """
 
@@ -122,16 +127,18 @@ function! s:find_git_root()
 endfunction
 
 command! GitRootFiles execute 'Files' s:find_git_root()
+command! LocalFiles execute 'Files' expand('%:h')
 
-nnoremap <silent> <leader>f :Files<cr>
-nnoremap <silent> <leader>g :GitRootFiles<cr>
-nnoremap <silent> <leader>G :GitFiles<cr>
-nnoremap <silent> <leader>? :History<cr>
 nnoremap <silent> <leader>b :Buffers<cr>
+nnoremap <silent> <leader>G :GitFiles<cr>
+nnoremap <silent> <leader>f :Files<cr>
+nnoremap <silent> <leader>F :LocalFiles<cr>
 nnoremap <silent> <leader>t :Tags<cr>
-nnoremap <silent> <leader>m :Marks<cr>
 nnoremap <silent> <leader>/ :execute 'Ag ' . input('Ag/')<cr>
-nnoremap <silent> <leader>. :AgIn 
+"nnoremap <silent> <leader>g :GitRootFiles<cr>
+"nnoremap <silent> <leader>? :History<cr>
+"nnoremap <silent> <leader>m :Marks<cr>
+"nnoremap <silent> <leader>. :AgIn 
 
 nnoremap <silent> K :call SearchWordWithAg()<cr>
 vnoremap <silent> K :call SearchVisualSelectionWithAg()<cr>
