@@ -18,18 +18,23 @@ set -o emacs
 ### ---------------------------------------------------------------------------
 ### Auto completion
 ### ---------------------------------------------------------------------------
+shopt -s dotglob 2>/dev/null
 shopt -s extglob 2>/dev/null
 shopt -s globstar 2>/dev/null
 shopt -s hostcomplete 2>/dev/null
 shopt -s nocaseglob 2>/dev/null
 
 bind "TAB:menu-complete"
+bind "set completion-ignore-case on"
+bind "set completion-map-case on"
 bind "set show-all-if-ambiguous on"
 
 # Load bash_completion (including git support)
-[ -f /etc/bash_completion ] && . /etc/bash_completion
-[ -f /etc/bash_completion.d/git-prompt ] && . /etc/bash_completion.d/git-prompt
-[ -f /etc/bash_completion.d/git ] && . /etc/bash_completion.d/git
+[[ -f /etc/bash_completion ]] && . /etc/bash_completion
+[[ -f /etc/bash_completion.d/git-prompt ]] && . /etc/bash_completion.d/git-prompt
+[[ -f /etc/bash_completion.d/git ]] && . /etc/bash_completion.d/git
+[[ -f /usr/share/git/completion/git-prompt.sh ]] && . /usr/share/git/completion/git-prompt.sh
+[[ -f /usr/share/bash-completion/bash_completion ]] && . /usr/share/bash-completion/bash_completion
 
 ### ---------------------------------------------------------------------------
 ### Environment variables

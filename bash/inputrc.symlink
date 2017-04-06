@@ -12,3 +12,8 @@ set keymap vi-insert
 "\ea": emacs-editing-mode
 
 set editing-mode emacs
+
+set completion-ignore-case on
+set completion-map-case on
+set show-all-if-ambiguous on
+
