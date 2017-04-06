@@ -31,7 +31,7 @@ set noerrorbells
 set novisualbell
 set t_vb=
 
-set path=.,,**
+set path=.,**
 
 if has("persistent_undo")
     set undofile
@@ -80,7 +80,6 @@ set tabstop=4
 set softtabstop=4
 
 " Automatically indent when opening a new line, smartindent might indent
-" one extra level dependent on syntax
 set autoindent
 set smartindent
 
@@ -119,9 +118,6 @@ set showmatch
 " How many tenths of a second to blink when matching brackets
 set mat=2
 
-" Disable highlight when <leader><space> is pressed
-nnoremap <silent> <leader><space> :nohlsearch<cr>
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Moving around, tabs, windows and buffers
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -132,14 +128,6 @@ noremap <silent> $ g$
 " Remap VIM 0 to first non-blank character
 noremap <silent> 0 g^
 
-"""
-""" Buffer shortcuts
-"""
-" Shortcut to list all buffers and allow quickly to select a buffer
-nnoremap <leader>b :ls<cr>:b<space>
-
-" Close the current buffer
-nnoremap <leader>c :bd<cr>
 
 " Return to last edit position when opening files (You want this!)
 autocmd BufReadPost *
@@ -166,6 +154,8 @@ set wildignore=*.o,*~,*.pyc
 " List all matches and complete till longest common string
 set wildmode=list:full
 
+set wildcharm=<C-z>
+
 " My command line autocomplete is case insensitive. Keep vim consistent with
 " that. It's a recent feature to vim, test to make sure it's supported first.
 if exists("&wildignorecase")
@@ -187,6 +177,18 @@ set lazyredraw
 
 " Highlight the current line
 set cursorline
+
+augroup highlight_follows_focus
+    autocmd!
+    autocmd WinEnter * set cursorline
+    autocmd WinLeave * set nocursorline
+augroup END
+
+augroup highligh_follows_vim
+    autocmd!
+    autocmd FocusGained * set cursorline
+    autocmd FocusLost * set nocursorline
+augroup END
 
 " Show line numbers
 set number
@@ -239,9 +241,6 @@ function! StripTrailingWhitespaces()
   exe "normal `z"
 endfunc
 
-" Trim trailing white space
-nmap <silent> <leader>T :call StripTrailingWhitespaces()<CR>:retab<CR>
-
 """
 """ Format Options
 """
@@ -259,11 +258,24 @@ set formatoptions=cqrn1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Custom mapping
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Fast saving
-nnoremap <silent> <leader>w :w!<cr>
-
-" Fast editing a new file
+nnoremap <leader>a :argadd <c-r>=fnameescape(expand('%:p:h'))<cr>/*<C-d>
+nnoremap <leader>b :b <C-z><S-Tab>
+nnoremap <leader>c :bd<cr>
 nnoremap <leader>e :e **/*
+nnoremap <leader>E :e <C-R>=expand('%:h').'/*'<CR>
+nnoremap <leader>f :find *
+nnoremap <leader>F :find <C-R>=expand('%:h').'/*'<CR>
+nnoremap <leader>s :sfind *
+nnoremap <leader>S :sfind <C-R>=expand('%:h').'/*'<CR>
+nnoremap <leader>v :vert sfind *
+nnoremap <leader>V :vert sfind <C-R>=expand('%:h').'/*'<CR>
+
+nnoremap <leader>t :tjump /
+
+" Trim trailing white space
+nmap <silent> <leader>T :call StripTrailingWhitespaces()<CR>:retab<CR>
+
+nnoremap <leader>m :make<cr>
 
 " Fast saving the file with sudo rights
 nnoremap <silent> <leader>W :w !sudo tee % > /dev/null<cr>
@@ -272,9 +284,17 @@ nnoremap <silent> <leader>W :w !sudo tee % > /dev/null<cr>
 nnoremap <silent> <leader>q :quit<cr>
 nnoremap <silent> <leader>Q :quit!<cr>
 
+" Fast saving
+nnoremap <silent> <leader>w :w!<cr>
+
 " Combined saving and quitting
 nnoremap <silent> <leader>wq :w!<cr>:quit<cr>
 nnoremap <silent> <leader>Wq :w !sudo tee % > /dev/null<cr>:quit<cr>
+
+nnoremap <leader>/ :grep<space>
+
+" Disable highlight when <leader><space> is pressed
+nnoremap <silent> <leader><space> :nohlsearch<cr>
 
 " Navigate the vim splits with shortcuts
 if empty(glob("~/.vim/plugged/vim-tmux-navigator/"))
@@ -326,6 +346,11 @@ autocmd BufRead,BufNewFile *.md,*.markdown set filetype=markdown
 " => Code completion
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set omnifunc=syntaxcomplete#Complete
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Matchit.vim
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+runtime macros/matchit.vim
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => C++ specific options
