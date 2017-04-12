@@ -141,11 +141,7 @@ setw -g window-status-format "#[fg=colour237,bg=colour239]#[fg=colour223] #I#
 setw -g window-status-current-format " #I#{?window_flags,#{window_flags}, }  #[bold]#W#[nobold] #[fg=colour109,bg=colour237]"
 
 ###
-### Load version specific config files
-###
-run-shell "bash $DOTFILES/tmux/load-correct-tmux-versions.sh"
-
-###
 ### Local config
 ###
-    if-shell "[ -f ~/.tmux.conf.local ]" 'source ~/.tmux.conf.local'
+if-shell "[ -f ~/.tmux.conf.local ]" 'source ~/.tmux.conf.local'
+
