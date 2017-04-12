@@ -42,3 +42,18 @@ Required packages (Ubuntu):
  * build-essential
  * silversearcher-ag-el
 
+Required packages(Arch Linux):
+------------------------------
+ * base-devel
+ * bash bash-completion
+ * ctags
+ * zsh
+ * vim
+ * tmux
+ * the_silver_searcher
+ * python python-setuptools python-pip
+ * mlocate
+ * curl
+ * git
+ * bash-git-prompt
+
