@@ -114,23 +114,22 @@ alias week="date +%V"
 ### Customization
 ### ---------------------------------------------------------------------------
 
-export GIT_PS1_SHOWDIRTYSTATE=1
-export GIT_PS1_SHOWUPSTREAM="auto"
-
-export PS1=""
-
 # Add user and hostname if there is a SSH connection
-[[ -n "$SSH_CONNECTION" ]] && export PS1="$PS1\[\033[01;32m\]\u@\h "
+PREPEND_HOSTNAME=""
+[[ -n "$SSH_CONNECTION" ]] && PREPEND_HOSTNAME="\[\033[01;33m\]\u@\h "
 
-# Add the current working folder
+# Add the selective colors for the working folder in case the previous command failed
 SELECT="if [[ \$? != 0 ]]; then echo -e \"\[\033[01;31m\]\"; else echo -e \"\[\033[01;34m\]\" ; fi"
-export PS1="$PS1\`${SELECT}\`\w "
 
-# Add git information (if available)
-[[ $(type __git_ps1 2> /dev/null) ]] && export PS1="$PS1\[\033[01;33m\]\$(__git_ps1 '(%s) ')"
+if [[ $(type __git_ps1 2> /dev/null) ]] ; then
+    export GIT_PS1_SHOWDIRTYSTATE=1
+    export GIT_PS1_SHOWUPSTREAM="auto"
+    export GIT_PS1_SHOWCOLORHINTS=1
 
-# Add the dollar symbol
-export PS1="$PS1\[\033[01;34m\]\$\[\033[00m\] "
+    PROMPT_COMMAND='__git_ps1 "$PREPEND_HOSTNAME\`${SELECT}\`\w\[\033[0m\]" "\[\033[01;34m\] \\\$ \[\033[0m\]" " (\[\033[1m\]%s\[\033[0m\])"'
+else
+    export PS1="$PREPEND_HOSTNAME\`${SELECT}\`\w \[\033[01;34m\]\$\[\033[00m\] "
+fi
 
 
 ### ---------------------------------------------------------------------------
