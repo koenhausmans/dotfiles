@@ -9,8 +9,8 @@ bind C-a send-prefix
 ###
 ### Change the default shell
 ###
-set-option -g default-command /bin/zsh
-set-option -g default-shell /bin/zsh
+set-option -g default-command "$SHELL"
+set-option -g default-shell "$SHELL"
 
 ###
 ### Enable ctrl-left + ctrl-right word movement
