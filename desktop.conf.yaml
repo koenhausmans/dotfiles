@@ -1,7 +1,0 @@
-- shell:
-  -
-    msg: Installing additional fonts
-    command: ~/.dotfiles/fonts/install
-    stdout: true
-    stderr: true
-
