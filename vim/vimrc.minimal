@@ -330,17 +330,18 @@ endif
 nnoremap <silent> K :grep! "\b<c-r><c-w>\b"<cr>:cwindow<cr>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Custom Filetypes
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+autocmd BufRead,BufNewFile *.md,*.markdown set filetype=markdown
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Filetype specific commands
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 autocmd BufWrite *.py :call StripTrailingWhitespaces()
 autocmd BufWrite *.coffee :call StripTrailingWhitespaces()
 
 autocmd Filetype c,cpp,cs,java  setlocal commentstring=//\ %s
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Custom Filetypes
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-autocmd BufRead,BufNewFile *.md,*.markdown set filetype=markdown
+autocmd Filetype markdown setlocal spell
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Code completion
