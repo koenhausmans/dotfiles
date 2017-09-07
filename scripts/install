@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Based on: https://github.com/holman/dotfiles/blob/master/script/install
+
+## DO NOT CHANGE BELOW
+
+# Enable unofficial bash strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
+BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+source "$BASEDIR/_helpers.sh"
+
+DOTFILES_ROOT="$(dirname "$BASEDIR")"
+
+info 'Running installer scripts'
+
+find $DOTFILES_ROOT -iname install.sh -print0 | while IFS="" read -r -d "" installer
+do
+    ShortInstallerName=$(echo ${installer} | sed 's:/home/koen/.dotfiles/::g')
+    info "Executing \e[1m${ShortInstallerName}\e[0m"
+
+    # Disable immediate exit if a command fails, otherwise the check for exit codes does not work
+    set +e
+
+    sh -c "${installer}"
+    if [ $? -ne 0 ] ; then
+        fail "Error while executing \e[1m${ShortInstallerName}\e[0m"
+    fi
+done
+

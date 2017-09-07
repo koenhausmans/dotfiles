@@ -1,0 +1,2 @@
+# Export the current username to hide it from the shell prompt
+export DEFAULT_USER="$USER"
