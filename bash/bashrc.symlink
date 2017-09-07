@@ -83,7 +83,7 @@ alias -- -='cd -'
 
 # Ls aliases
 alias lsa='ls -lah'
-alias l='ls -lah'
+alias l='ls -lh'
 alias ll='ls -lh'
 alias la='ls -lAh'
 
