@@ -1,0 +1,28 @@
+
+WSL_SESSION_FILE="/dev/shm/wsl-session"
+SSH_AGENT_FOLDER="/dev/shm/ssh-agent"
+
+
+# DO NOT CHANGE BELOW
+
+
+# Source: https://www.reynoldsbd.net/post/wsl-hacks-1/
+
+# Set the DISPLAY environment variable for usage with X server for Windows (eg. Xming)
+export DISPLAY=localhost:0.0
+
+# Only execute once per wsl session
+if [[ ! -f "$WSL_SESSION_FILE" ]] ; then
+    touch "$WSL_SESSION_FILE"
+
+    # Remove the temporary files/folders once at start of the wsl session
+    rm -rf /tmp/*
+
+    # Fire up ssh-agent once per wsl session
+    mkdir -p "$SSH_AGENT_FOLDER"
+    ssh-agent -a "$SSH_AGENT_FOLDER/agent.sock" &> "$SSH_AGENT_FOLDER/env"
+fi
+
+# Every time a terminal starts, source the proper ssh environment variables
+. "$SSH_AGENT_FOLDER/env" > /dev/null
+

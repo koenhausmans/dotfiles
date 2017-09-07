@@ -4,17 +4,15 @@ Dotfiles:
 Installation:
 -------------
 
-### Basic Dotfiles: ###
+### Install all submodules: ###
 
-To install the basic dotfiles, execute:
- > `./install`
+To install the submodules, execute:
+ > `./scripts/install`
 
-### Basic Dotfiles including Workstation dotfiles: ###
+### Install symlinks: ###
 
-To install the basic and workstation dotfiles, execute:
- > `./install workstation`
-
-Next, change the default Terminal to use one of the "Powerline" fonts.
+To install all symlinks in the home directory, execute:
+ > `./scripts/bootstrap`
 
 Making local customizations:
 ----------------------------
@@ -41,4 +39,20 @@ Required packages (Ubuntu):
  * g++
  * build-essential
  * silversearcher-ag-el
+
+Required packages(Arch Linux):
+------------------------------
+ * base-devel
+ * bash bash-completion
+ * ctags
+ * zsh
+ * vim
+ * tmux
+ * the_silver_searcher
+ * python python-setuptools python-pip
+ * mlocate
+ * curl
+ * git
+ * bash-git-prompt
+ * wget
 
