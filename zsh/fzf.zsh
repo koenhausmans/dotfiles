@@ -16,6 +16,7 @@ fi
 
 # Key bindings
 # ------------
+FZF_TMUX=1
 [[ -f "$HOME/.fzf/shell/key-bindings.zsh" ]] && source "$HOME/.fzf/shell/key-bindings.zsh"
 
 # Custom scripts

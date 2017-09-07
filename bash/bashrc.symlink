@@ -153,6 +153,7 @@ if [[ -d "$HOME/.fzf" ]] ; then
     export PATH="$PATH:$HOME/.fzf/bin"
     export MANPATH="$MANPATH:$HOME/.fzf/man"
 
+    FZF_TMUX=1
     [[ $- == *i* ]] && source "$HOME/.fzf/shell/completion.bash" 2> /dev/null
 
     source "$HOME/.fzf/shell/key-bindings.bash"
