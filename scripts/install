@@ -27,5 +27,8 @@ do
     if [ $? -ne 0 ] ; then
         fail "Error while executing \e[1m${ShortInstallerName}\e[0m"
     fi
+
+    # Re-enable immediate exit if a command fails
+    set -e
 done
 
