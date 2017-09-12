@@ -111,7 +111,12 @@ call plug#end()
 " => Load minimal vimrc file for common settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-exec "source " . $DOTFILES . "/vim/vimrc.minimal"
+if !empty($DOTFILES)
+    let s:vimrc_root = $DOTFILES
+else
+    let s:vimrc_root = expand(expand('<sfile>:p:h') . "/.dotfiles")
+endif
+exec "source " . expand(s:vimrc_root . "/vim/vimrc.minimal")
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Plugin Setup
