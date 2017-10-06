@@ -152,7 +152,8 @@ set wildmenu
 set wildignore=*.o,*~,*.pyc
 
 " List all matches and complete till longest common string
-set wildmode=list:full
+set wildmode=full
+"set wildmode=list:longest,full
 
 set wildcharm=<C-z>
 
@@ -259,7 +260,7 @@ set formatoptions=cqrn1
 " => Custom mapping
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 nnoremap <leader>a :argadd <c-r>=fnameescape(expand('%:p:h'))<cr>/*<C-d>
-nnoremap <leader>b :b <C-z><S-Tab>
+nnoremap <leader>b :b <C-z>
 nnoremap <leader>c :bd<cr>
 nnoremap <leader>e :e **/*
 nnoremap <leader>E :e <C-R>=expand('%:h').'/*'<CR>
