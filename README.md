@@ -14,6 +14,11 @@ To install the submodules, execute:
 To install all symlinks in the home directory, execute:
  > `./scripts/bootstrap`
 
+Minimal installation:
+---------------------
+
+Add the `minimal` argument to both the `bootstrap` as `install` script, to install minimal versions of the dotfiles.
+
 Making local customizations:
 ----------------------------
 
