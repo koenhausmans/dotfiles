@@ -189,7 +189,7 @@ augroup END
 
 " Show (relative) line numbers
 set number
-if has("relativenumber")
+if version >= 703
     set relativenumber
 endif
 
