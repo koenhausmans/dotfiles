@@ -15,20 +15,43 @@ DOTFILES_ROOT="$(dirname "$BASEDIR")"
 
 info 'Running installer scripts'
 
+will_install_all=false
 find $DOTFILES_ROOT -iname install.sh -print0 | while IFS="" read -r -d "" installer
 do
-    ShortInstallerName=$(echo ${installer} | sed 's:/home/koen/.dotfiles/::g')
-    info "Executing \e[1m${ShortInstallerName}\e[0m"
+    action=""
+    will_install=false
 
-    # Disable immediate exit if a command fails, otherwise the check for exit codes does not work
-    set +e
+    ShortInstallerName=$(echo ${installer} | sed "s:$DOTFILES_ROOT/::g")
+    user "Do you want to install \e[1m${ShortInstallerName}\e[0m?\n\
+        [y]es, [Y]es to all, [n]o?"
+    read -n 1 action < /dev/tty
 
-    sh -c "${installer}"
-    if [ $? -ne 0 ] ; then
-        fail "Error while executing \e[1m${ShortInstallerName}\e[0m"
+    case "$action" in
+        y )
+            will_install=true;;
+        Y )
+            will_install_all=true;;
+        n )
+            ;;
+    esac
+
+    do_install=${will_install:-$will_install_all}
+
+    if [[ "$do_install" == "true" ]] ; then
+        info "Installing \e[1m${ShortInstallerName}\e[0m"
+
+        # Disable immediate exit if a command fails, otherwise the check for exit codes does not work
+        set +e
+
+        sh -c "${installer} $@"
+        if [ $? -ne 0 ] ; then
+            fail "Error while executing \e[1m${ShortInstallerName}\e[0m"
+        else
+            success "Finished installing \e[1m${ShortInstallerName}\e[0m"
+        fi
+
+        # Re-enable immediate exit if a command fails
+        set -e
     fi
-
-    # Re-enable immediate exit if a command fails
-    set -e
 done
 
