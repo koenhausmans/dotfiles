@@ -123,7 +123,6 @@ noremap <silent> $ g$
 " Remap VIM 0 to first non-blank character
 noremap <silent> 0 g^
 
-
 " Return to last edit position when opening files (You want this!)
 autocmd BufReadPost *
      \ if line("'\"") > 0 && line("'\"") <= line("$") |
@@ -131,8 +130,11 @@ autocmd BufReadPost *
      \ endif
 
 " Automatically open cwindow or lwindow on :grep / :make / :lvimgrep / etc.
-autocmd QuickFixCmdPost [^l]* cwindow
-autocmd QuickFixCmdPost l*    lwindow
+augroup automaticquickfix
+    autocmd!
+    autocmd QuickFixCmdPost [^l]* cwindow
+    autocmd QuickFixCmdPost    l* lwindow
+augroup END
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Visual settings / VIM user interface
