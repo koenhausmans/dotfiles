@@ -34,6 +34,7 @@ endif
 
 if has("spell")
     set spelllang=en_us
+    autocmd Filetype markdown setlocal spell
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -356,7 +357,6 @@ autocmd BufWrite *.py :call StripTrailingWhitespaces()
 autocmd BufWrite *.coffee :call StripTrailingWhitespaces()
 
 autocmd Filetype c,cpp,cs,java  setlocal commentstring=//\ %s
-autocmd Filetype markdown setlocal spell
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Code completion
