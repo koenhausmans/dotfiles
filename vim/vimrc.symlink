@@ -25,7 +25,6 @@ Plug 'romainl/apprentice'
 Plug 'tpope/vim-git', { 'for': 'git' }
 Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
 Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
-Plug 'calincru/qml.vim'
 
 """
 """ Airline: Fancy statusline
