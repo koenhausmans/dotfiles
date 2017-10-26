@@ -89,16 +89,6 @@ Plug 'tpope/vim-commentary'
 """
 Plug 'jiangmiao/auto-pairs'
 
-"""
-""" Supertab: Make tab handle all completions
-"""
-Plug 'ervandew/supertab'
-
-"""
-""" Syntastic: Code linting errors
-"""
-Plug 'scrooloose/syntastic', { 'for': ['php', 'python', 'javascript', 'css', 'cpp', 'c'] }
-
 call plug#end()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -204,13 +194,12 @@ let g:surround_{char2nr("*")} = "/* \r */"
 """
 " {{{
 
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 0
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-
-let g:syntastic_cpp_compiler_options = ' -std=c++14'
-
+"let g:syntastic_always_populate_loc_list = 1
+"let g:syntastic_auto_loc_list = 0
+"let g:syntastic_check_on_open = 1
+"let g:syntastic_check_on_wq = 0
+"
+"let g:syntastic_cpp_compiler_options = ' -std=c++14'
 
 " }}}
 
