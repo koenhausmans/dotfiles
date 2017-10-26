@@ -341,6 +341,7 @@ nnoremap <silent> K :grep! "\b<c-r><c-w>\b"<cr>:cwindow<cr>
 " => Custom Filetypes
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 autocmd BufRead,BufNewFile *.md,*.markdown set filetype=markdown
+autocmd BufRead,BufNewFile Jenkinsfile* set filetype=groovy
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Filetype specific commands
