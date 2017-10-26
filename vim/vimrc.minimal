@@ -34,7 +34,10 @@ endif
 
 if has("spell")
     set spelllang=en_us
-    autocmd Filetype markdown setlocal spell
+    augroup MarkdownSpell
+        autocmd!
+        autocmd Filetype markdown setlocal spell
+    augroup END
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -124,13 +127,16 @@ noremap <silent> $ g$
 noremap <silent> 0 g^
 
 " Return to last edit position when opening files (You want this!)
-autocmd BufReadPost *
-     \ if line("'\"") > 0 && line("'\"") <= line("$") |
-     \   exe "normal! g`\"" |
-     \ endif
+augroup LastBufferPosition
+    autocmd!
+    autocmd BufReadPost *
+        \ if line("'\"") > 0 && line("'\"") <= line("$") |
+        \   exe "normal! g`\"" |
+        \ endif
+augroup END
 
 " Automatically open cwindow or lwindow on :grep / :make / :lvimgrep / etc.
-augroup automaticquickfix
+augroup AutomaticQuickFix
     autocmd!
     autocmd QuickFixCmdPost [^l]* cwindow
     autocmd QuickFixCmdPost    l* lwindow
@@ -177,14 +183,10 @@ set lazyredraw
 " Highlight the current line
 set cursorline
 
-augroup highlight_follows_focus
+augroup HighlightFollowsFocus
     autocmd!
     autocmd WinEnter * set cursorline
     autocmd WinLeave * set nocursorline
-augroup END
-
-augroup highligh_follows_vim
-    autocmd!
     autocmd FocusGained * set cursorline
     autocmd FocusLost * set nocursorline
 augroup END
@@ -338,18 +340,18 @@ endif
 nnoremap <silent> K :grep! "\b<c-r><c-w>\b"<cr>:cwindow<cr>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Custom Filetypes
+" => Custom Filetypes & Specific Commands
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-autocmd BufRead,BufNewFile *.md,*.markdown set filetype=markdown
-autocmd BufRead,BufNewFile Jenkinsfile* set filetype=groovy
+augroup AdditionalFileTypesCommands
+    autocmd!
+    autocmd BufRead,BufNewFile *.md,*.markdown set filetype=markdown
+    autocmd BufRead,BufNewFile Jenkinsfile* set filetype=groovy
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Filetype specific commands
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-autocmd BufWrite *.py :call StripTrailingWhitespaces()
-autocmd BufWrite *.coffee :call StripTrailingWhitespaces()
+    autocmd BufWrite *.py :call StripTrailingWhitespaces()
+    autocmd BufWrite *.coffee :call StripTrailingWhitespaces()
 
-autocmd Filetype c,cpp,cs,java  setlocal commentstring=//\ %s
+    autocmd Filetype c,cpp,cs,java  setlocal commentstring=//\ %s
+augroup END
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Code completion
