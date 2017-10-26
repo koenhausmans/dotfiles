@@ -26,6 +26,7 @@ set t_vb=
 
 " Update the path to provide search in subfolders
 set path+=**
+set path+=/usr/include
 
 if has("persistent_undo")
     set undofile
