@@ -2,9 +2,6 @@
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" Sets how many lines of history VIM has to remember
-set history=700
-
 " Enable filetype plugins
 filetype plugin indent on
 
@@ -148,25 +145,6 @@ augroup END
 " Set 3 lines to the cursor - when moving vertically using j/k
 set scrolloff=3
 
-" Turn on the Wild menu
-set wildmenu
-
-" Ignore compiled files
-set wildignore=*.o,*~,*.pyc
-
-" List all matches and complete till longest common string
-set wildmode=full
-"set wildmode=list:longest,full
-set wildmode=list:full
-
-set wildcharm=<C-z>
-
-" My command line autocomplete is case insensitive. Keep vim consistent with
-" that. It's a recent feature to vim, test to make sure it's supported first.
-if exists("&wildignorecase")
-    set wildignorecase
-endif
-
 " Configure backspace so it acts as it should act
 set backspace=indent,eol,start
 set whichwrap+=<,>,h,l
@@ -225,7 +203,7 @@ set splitright
 
 
 """
-""" Statusline behavior {{{
+""" Statusline Behavior {{{
 """
 set ruler
 set laststatus=2
@@ -246,11 +224,48 @@ set statusline+=L:\ %3l\ /\ %3L
 " Column indicator
 set statusline+=\ \ C:\ %4v
 
+" Define statusline
+" set statusline=
+" Filename
+" set statusline+=%*%f
+" Window type (help, preview, qlist)
+" set statusline+=%*%(%h%w%)
+" Modified flag
+" set statusline+=%3*%(%m%)
+" Readonly flag
+" set statusline+=%1*%(%r%)
+" Midline separator
+" set statusline+=%=
 
 hi ModeMsg ctermfg=31 ctermbg=none
 
+""" END Statusline Behavior }}}
 
-"}}}
+
+"""
+""" Command Line Behavior {{{
+"""
+
+set wildmenu
+set wildignore=*.o,*~,*.pyc
+
+" List all matches and complete till longest common string
+set wildmode=full
+"set wildmode=list:longest,full
+set wildmode=list:full
+
+set wildcharm=<C-z>
+
+if exists("&wildignorecase")
+    set wildignorecase
+endif
+
+if &history < 1000
+    set history=1000
+endif
+
+""" END Command line behavior }}}
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Editing mappings
