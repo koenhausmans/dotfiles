@@ -90,7 +90,7 @@ set timeoutlen=300
 set ttimeoutlen=10
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Search and matching
+" Search behavior {{{
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Show search results as we type
 set incsearch
@@ -112,6 +112,9 @@ set showmatch
 
 " How many tenths of a second to blink when matching brackets
 set mat=2
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" END Search behavior }}}
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Moving around, tabs, windows and buffers
