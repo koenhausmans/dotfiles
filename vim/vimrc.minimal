@@ -179,7 +179,7 @@ augroup SmartNumbers
 augroup END
 
 " Highlight tabs and trailing spaces
-set listchars=tab:▸\ ,trail:•
+set listchars=tab:»\ ,trail:•
 
 " Make whitespace characters visible
 set list
