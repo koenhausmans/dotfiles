@@ -179,10 +179,8 @@ set cursorline
 
 augroup HighlightFollowsFocus
     autocmd!
-    autocmd WinEnter * set cursorline
-    autocmd WinLeave * set nocursorline
-    autocmd FocusGained * set cursorline
-    autocmd FocusLost * set nocursorline
+    autocmd WinEnter,FocusGained * set cursorline
+    autocmd WinLeave,FocusLost * set nocursorline
 augroup END
 
 " Show (relative) line numbers
@@ -190,6 +188,14 @@ set number
 if exists("&relativenumber")
     set relativenumber
 endif
+
+augroup SmartNumbers
+    autocmd!
+     if exists("&relativenumber")
+         autocmd WinEnter,FocusGained * setlocal number relativenumber
+         autocmd WinLeave,FocusLost * setlocal number norelativenumber
+     endif
+augroup END
 
 " Highlight tabs and trailing spaces
 set listchars=tab:▸\ ,trail:•
@@ -219,12 +225,32 @@ set splitright
 
 
 """
-""" Update the statusline
+""" Statusline behavior {{{
 """
 set ruler
 set laststatus=2
-set statusline=\ %f\ %y\ %m\ %h\ %r\ %{winnr()}\%=L:\ %l/%L\ C:\ %v
 
+"set statusline=\ %f\ %y\ %m\ %h\ %r\ %{winnr()}\%=L:\ %l/%L\ C:\ %v
+" Define statusline items
+set statusline=
+" Filename
+set statusline+=%f
+" File type, Window Type (help, preview, qlist)
+set statusline+=\ [%Y%H]
+" Modified flag
+set statusline+=\ %m
+" Midline separator
+set statusline+=%=
+" Line indicator
+set statusline+=L:\ %3l\ /\ %3L
+" Column indicator
+set statusline+=\ \ C:\ %4v
+
+
+hi ModeMsg ctermfg=31 ctermbg=none
+
+
+"}}}
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Editing mappings
