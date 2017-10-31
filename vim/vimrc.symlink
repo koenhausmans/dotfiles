@@ -157,8 +157,12 @@ function! SearchWithAgInDirectory(...)
 endfunction
 command! -nargs=+ -complete=dir AgIn call SearchWithAgInDirectory(<f-args>)
 
-
 " }}}
+
+"""
+""" vim-argwrap
+"""
+nnoremap <silent> <leader>A :ArgWrap<cr>
 
 """
 """ Bbye: Buffer Bye for Vim configuration
