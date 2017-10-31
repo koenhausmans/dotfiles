@@ -75,6 +75,11 @@ Plug 'tpope/vim-unimpaired'
 Plug 'romainl/vim-cool'
 
 """
+""" ReplaceWithRegister: Replace text with the contents of a register
+"""
+Plug 'vim-scripts/ReplaceWithRegister'
+
+"""
 """ ===== Programming Plugins =====
 """
 
