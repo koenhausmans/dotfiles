@@ -26,12 +26,6 @@ Plug 'tpope/vim-git', { 'for': 'git' }
 Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
 
 """
-""" Airline: Fancy statusline
-"""
-Plug 'bling/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-
-"""
 """ FZF Vim: Fuzzy file openener vim extension
 """
 Plug 'junegunn/fzf', {'dir': '~/.fzf', 'frozen': 1}
@@ -80,13 +74,17 @@ Plug 'romainl/vim-cool'
 Plug 'vim-scripts/ReplaceWithRegister'
 
 """
+""" vim-argwrap: Wrap and unwrap function arguments, lists and dictionaries
+"""
+Plug 'FooSoft/vim-argwrap'
+
+"""
 """ ===== Programming Plugins =====
 """
 
 """
-""" Commenting: Commenting plugins
+""" vim-commentary: Commenting plugins
 """
-" Make commenting easier
 Plug 'tpope/vim-commentary'
 
 """
@@ -163,17 +161,6 @@ command! -nargs=+ -complete=dir AgIn call SearchWithAgInDirectory(<f-args>)
 " }}}
 
 """
-""" Airline
-"""
-" {{{
-
-let g:airline_theme='gruvbox'
-let g:airline_powerline_fonts=1
-let g:airline#extensions#branch#displayed_head_limit=15
-
-" }}}
-
-"""
 """ Bbye: Buffer Bye for Vim configuration
 """
 " {{{
@@ -193,21 +180,6 @@ nnoremap <leader>c :Bdelete<cr>
 let g:surround_{char2nr("*")} = "/* \r */"
 
 " }}}
-
-"""
-""" Syntastic
-"""
-" {{{
-
-"let g:syntastic_always_populate_loc_list = 1
-"let g:syntastic_auto_loc_list = 0
-"let g:syntastic_check_on_open = 1
-"let g:syntastic_check_on_wq = 0
-"
-"let g:syntastic_cpp_compiler_options = ' -std=c++14'
-
-" }}}
-
 
 """
 """ Git-Gutter
