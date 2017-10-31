@@ -167,12 +167,6 @@ if exists("&wildignorecase")
     set wildignorecase
 endif
 
-" Always show current position
-set ruler
-
-" The last window will have a status line always
-set laststatus=2
-
 " Configure backspace so it acts as it should act
 set backspace=indent,eol,start
 set whichwrap+=<,>,h,l
@@ -222,6 +216,15 @@ set foldopen=block,hor,mark,percent,quickfix,search,tag,undo,jump
 set splitbelow
 " Open new vertical splits to the right
 set splitright
+
+
+"""
+""" Update the statusline
+"""
+set ruler
+set laststatus=2
+set statusline=\ %f\ %y\ %m\ %h\ %r\ %{winnr()}\%=L:\ %l/%L\ C:\ %v
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Editing mappings
