@@ -235,7 +235,7 @@ vnoremap < <gv
 vnoremap > >gv
 vnoremap = =gv
 
-" Nobody ever uses "Ex" mode, and it's annoying to leave
+" Disable "Ex" mode
 noremap Q <nop>
 
 """
