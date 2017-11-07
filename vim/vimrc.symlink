@@ -1,9 +1,4 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Compatibility mode
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set nocompatible
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Plugin Manager (vim-plug)
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -22,20 +17,13 @@ call plug#begin('~/.vim/plugged')
 """
 Plug 'morhetz/gruvbox'
 Plug 'romainl/flattened'
+Plug 'romainl/apprentice'
 
 """
 """ Syntax: Additional syntaxes that can be used
 """
 Plug 'tpope/vim-git', { 'for': 'git' }
 Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
-Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
-Plug 'calincru/qml.vim'
-
-"""
-""" Airline: Fancy statusline
-"""
-Plug 'bling/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
 
 """
 """ FZF Vim: Fuzzy file openener vim extension
@@ -81,29 +69,28 @@ Plug 'tpope/vim-unimpaired'
 Plug 'romainl/vim-cool'
 
 """
+""" ReplaceWithRegister: Replace text with the contents of a register
+"""
+Plug 'vim-scripts/ReplaceWithRegister'
+
+"""
+""" vim-argwrap: Wrap and unwrap function arguments, lists and dictionaries
+"""
+Plug 'FooSoft/vim-argwrap'
+
+"""
 """ ===== Programming Plugins =====
 """
 
 """
-""" Commenting: Commenting plugins
+""" vim-commentary: Commenting plugins
 """
-" Make commenting easier
 Plug 'tpope/vim-commentary'
 
 """
 """ Auto Pairs: Provides automatic matching brackets / quotes
 """
 Plug 'jiangmiao/auto-pairs'
-
-"""
-""" Supertab: Make tab handle all completions
-"""
-Plug 'ervandew/supertab'
-
-"""
-""" Syntastic: Code linting errors
-"""
-Plug 'scrooloose/syntastic', { 'for': ['php', 'python', 'javascript', 'css', 'cpp', 'c'] }
 
 call plug#end()
 
@@ -170,19 +157,12 @@ function! SearchWithAgInDirectory(...)
 endfunction
 command! -nargs=+ -complete=dir AgIn call SearchWithAgInDirectory(<f-args>)
 
-
 " }}}
 
 """
-""" Airline
+""" vim-argwrap
 """
-" {{{
-
-let g:airline_theme='gruvbox'
-let g:airline_powerline_fonts=1
-let g:airline#extensions#branch#displayed_head_limit=15
-
-" }}}
+nnoremap <silent> <leader>A :ArgWrap<cr>
 
 """
 """ Bbye: Buffer Bye for Vim configuration
@@ -204,22 +184,6 @@ nnoremap <leader>c :Bdelete<cr>
 let g:surround_{char2nr("*")} = "/* \r */"
 
 " }}}
-
-"""
-""" Syntastic
-"""
-" {{{
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 0
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-
-let g:syntastic_cpp_compiler_options = ' -std=c++14'
-
-
-" }}}
-
 
 """
 """ Git-Gutter
