@@ -1,48 +1,46 @@
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => General
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""" MISC EDITOR BEHAVIOR {{{
 
 " Enable filetype plugins
 filetype plugin indent on
 
+" Set utf8 as standard encoding and en_US as the standard language
+set encoding=utf8
+
+" Enable syntax highlighting
+syntax enable
+
 " Set to auto read when a file is changed from the outside
 set autoread
-
-" With a map leader it's possible to do extra key combinations
-" like <leader>w saves the current file
-let mapleader = ","
-let g:mapleader = ","
 
 " Allow buffers to exist in the background
 set hidden
 
-" No annoying sound on errors
-set noerrorbells
-set novisualbell
-set t_vb=
+" Recognize numbered lists
+set formatoptions+=n
+" Delete comment character when joining lines
+set formatoptions+=j
+
+" Change the timeout timings when matching to mappings / keys
+set timeoutlen=300
+set ttimeoutlen=10
+
+" Use Matchit.vim
+runtime macros/matchit.vim
 
 " Update the path to provide search in subfolders
 set path+=**
 set path+=/usr/include
+
+""" END MISC EDITOR BEHAVIOR }}}
+""" TEMP FILES BEHAVIOR {{{
 
 if has("persistent_undo")
     set undofile
     set undodir=~/.vim/undodir
 endif
 
-if has("spell")
-    set spelllang=en_us
-    augroup MarkdownSpell
-        autocmd!
-        autocmd Filetype markdown setlocal spell
-    augroup END
-endif
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Colors and Fonts
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Enable syntax highlighting
-syntax enable
+""" END TEMP FILES BEHAVIOR }}}
+""" COLORS BEHAVIOR {{{
 
 " Fix the colorscheme as soon as the plugins have been installed by plug.vim (prevents warning at first startup)
 set background=dark
@@ -51,164 +49,10 @@ silent! colorscheme elflord
 silent! colorscheme apprentice
 silent! colorscheme gruvbox
 
-" Set utf8 as standard encoding and en_US as the standard language
-set encoding=utf8
+""" END COLORS BEHAVIOR }}}
+""" STATUSLINE BEHAVIOR {{{
 
-" Use Unix as the standard file type
-set ffs=unix,dos,mac
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Text, tab and indent related
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Use spaces instead of tabs
-set expandtab
-
-" Be smart when using tabs
-set smarttab
-
-" Round indent to multiple of 'shiftwidth'.
-set shiftround
-
-" 1 tab == 4 spaces
-set shiftwidth=4
-set tabstop=4
-set softtabstop=4
-
-" Automatically indent when opening a new line, smartindent might indent
-set autoindent
-set smartindent
-
-" Linebreak on 500 characters
-set linebreak
-set tw=500
-
-" Wrap lines
-set wrap
-
-" Change the timeout timings when matching to mappings / keys
-set timeoutlen=300
-set ttimeoutlen=10
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Search behavior {{{
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Show search results as we type
-set incsearch
-
-" Highlight search results
-set hlsearch
-
-" For regular expressions turn magic on
-set magic
-
-" Ignore case when searching
-set ignorecase
-
-" Don't ignore case if we have a capital letter
-set smartcase
-
-" Show matching brackets
-set showmatch
-
-" How many tenths of a second to blink when matching brackets
-set mat=2
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" END Search behavior }}}
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Moving around, tabs, windows and buffers
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Treat long lines as break lines (useful when moving around in them)
-noremap <silent> <expr> j (v:count == 0 ? 'gj' : 'j')
-noremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
-noremap <silent> $ g$
-" Remap VIM 0 to first non-blank character
-noremap <silent> 0 g^
-
-" Return to last edit position when opening files (You want this!)
-augroup LastBufferPosition
-    autocmd!
-    autocmd BufReadPost *
-        \ if line("'\"") > 0 && line("'\"") <= line("$") |
-        \   exe "normal! g`\"" |
-        \ endif
-augroup END
-
-" Automatically open cwindow or lwindow on :grep / :make / :lvimgrep / etc.
-augroup AutomaticQuickFix
-    autocmd!
-    autocmd QuickFixCmdPost [^l]* cwindow
-    autocmd QuickFixCmdPost    l* lwindow
-augroup END
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Visual settings / VIM user interface
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Set 3 lines to the cursor - when moving vertically using j/k
-set scrolloff=3
-
-" Configure backspace so it acts as it should act
-set backspace=indent,eol,start
-set whichwrap+=<,>,h,l
-
-" Don't redraw while executing macros (good performance config)
-set lazyredraw
-
-" Highlight the current line
-set cursorline
-
-augroup HighlightFollowsFocus
-    autocmd!
-    autocmd WinEnter,FocusGained * set cursorline
-    autocmd WinLeave,FocusLost * set nocursorline
-augroup END
-
-" Show (relative) line numbers
-set number
-if exists("&relativenumber")
-    set relativenumber
-endif
-
-augroup SmartNumbers
-    autocmd!
-     if exists("&relativenumber")
-         autocmd WinEnter,FocusGained * setlocal number relativenumber
-         autocmd WinLeave,FocusLost * setlocal number norelativenumber
-     endif
-augroup END
-
-" Highlight tabs and trailing spaces
-set listchars=tab:»\ ,trail:•
-
-" Make whitespace characters visible
-set list
-
-"""
-""" Fold settings
-"""
-
-" show fold column, fold by markers
-set foldcolumn=0            " Don't show the folding gutter/column
-set foldmethod=marker       " Fold on {{{ }}}
-set foldlevelstart=20       " Open 20 levels of folding when I open a file
-
-" Open folds under the following conditions
-set foldopen=block,hor,mark,percent,quickfix,search,tag,undo,jump
-
-"""
-""" Splits
-"""
-" Open new splits below
-set splitbelow
-" Open new vertical splits to the right
-set splitright
-
-
-"""
-""" Statusline Behavior {{{
-"""
-set ruler
+" Show the statusline at all times
 set laststatus=2
 
 "set statusline=\ %f\ %y\ %m\ %h\ %r\ %{winnr()}\%=L:\ %l/%L\ C:\ %v
@@ -240,117 +84,60 @@ set statusline+=\ \ C:\ %4v
 " Midline separator
 " set statusline+=%=
 
-hi ModeMsg ctermfg=31 ctermbg=none
+"hi ModeMsg ctermfg=31 ctermbg=none
+"
+""" END STATUSLINE BEHAVIOR }}}
+""" INDENT BEHAVIOR {{{
 
-""" END Statusline Behavior }}}
+" Use spaces instead of tabs
+set expandtab
 
+" Be smart when using tabs
+set smarttab
 
-"""
-""" Command Line Behavior {{{
-"""
+" Round indent to multiple of 'shiftwidth'.
+set shiftround
 
-set wildmenu
-set wildignore=*.o,*~,*.pyc
+" Set up indents to use 4 spaces
+set shiftwidth=4
+set softtabstop=-1
 
-" List all matches and complete till longest common string
-set wildmode=full
-"set wildmode=list:longest,full
-set wildmode=list:full
+" Make tab characters display as 8 characters wide
+set tabstop=8
 
-set wildcharm=<C-z>
+" Automatically indent when opening a new line
+set autoindent
 
-if exists("&wildignorecase")
-    set wildignorecase
-endif
+""" END INDENT BEHAVIOR }}}
+""" SEARCH BEHAVIOR {{{
 
-if &history < 1000
-    set history=1000
-endif
+" Show search results as we type
+set incsearch
 
-""" END Command line behavior }}}
+" Highlight search results
+set hlsearch
 
+" Ignore case when searching
+set ignorecase
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Editing mappings
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Don't ignore case if we have a capital letter
+set smartcase
 
-" Reselect visual block after indent/outdent: http://vimbits.com/bits/20
-vnoremap < <gv
-vnoremap > >gv
-vnoremap = =gv
+""" END SEARCH BEHAVIOR }}}
+""" INSERT MODE BEHAVIOR {{{
 
-" Disable "Ex" mode
-noremap Q <nop>
+" Configure backspace so it acts as it should act
+set backspace=indent,eol,start
 
-"""
-""" Trailing whitespace removal
-"""
-" Delete trailing white space on save, useful for Python and CoffeeScript ;)
-function! StripTrailingWhitespaces()
-  exe "normal mz"
-  %s/\s\+$//ge
-  exe "normal `z"
-endfunc
+""" END INSERT MODE BEHAVIOR }}}
+""" NORMAL MODE BEHAVIOR {{{
 
-"""
-""" Format Options
-"""
-" Character meaning when present in 'formatoptions'
-" ------ ---------------------------------------
-" c Auto-wrap comments using textwidth, inserting the current comment leader automatically.
-" q Allow formatting of comments with "gq".
-" r Automatically insert the current comment leader after hitting <Enter> in Insert mode.
-" t Auto-wrap text using textwidth (does not apply to comments)
-" n Recognize numbered lists
-" 1 Don't break line after one-letter words
-" a Automatically format paragraphs
-set formatoptions=cqrn1
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Custom mapping
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-nnoremap <leader>a :argadd <c-r>=fnameescape(expand('%:p:h'))<cr>/*<C-d>
-nnoremap <leader>b :b <C-d>
-nnoremap <leader>c :bd<cr>
-nnoremap <leader>e :e **/*
-"nnoremap <leader>E :e <C-R>=expand('%:h').'/*'<CR>
-nnoremap <leader>f :find *
-"nnoremap <leader>F :find <C-R>=expand('%:h').'/*'<CR>
-nnoremap <leader>s :sfind *
-"nnoremap <leader>S :sfind <C-R>=expand('%:h').'/*'<CR>
-nnoremap <leader>v :vert sfind *
-"nnoremap <leader>V :vert sfind <C-R>=expand('%:h').'/*'<CR>
-nnoremap <leader>z :b#<cr>
-
-nnoremap <leader>t :tjump /
-
-" Trim trailing white space
-nmap <silent> <leader>T :call StripTrailingWhitespaces()<CR>:retab<CR>
-
-nnoremap <leader>m :make<cr>
-
-"command! W w !sudo tee % > /dev/null
-cmap w!! w !sudo tee > /dev/null %
-cabbr <expr> %% expand('%:p:h')
-
-" Fast saving the file with sudo rights
-"nnoremap <silent> <leader>W :w !sudo tee % > /dev/null<cr>
-
-" Quit vim
-nnoremap <silent> <leader>q :quit<cr>
-"nnoremap <silent> <leader>Q :quit!<cr>
-
-" Fast saving
-"nnoremap <silent> <leader>w :w!<cr>
-
-" Combined saving and quitting
-"nnoremap <silent> <leader>wq :w!<cr>:quit<cr>
-"nnoremap <silent> <leader>Wq :w !sudo tee % > /dev/null<cr>:quit<cr>
-
-nnoremap <leader>/ :grep<space>
-
-" Disable highlight when <leader><space> is pressed
-nnoremap <silent> <leader><space> :nohlsearch<cr>
+" Treat long lines as break lines (useful when moving around in them)
+noremap <silent> <expr> j (v:count == 0 ? 'gj' : 'j')
+noremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
+noremap <silent> $ g$
+" Remap VIM 0 to first non-blank character
+noremap <silent> 0 g^
 
 " Navigate the vim splits with shortcuts
 if empty(glob("~/.vim/plugged/vim-tmux-navigator/"))
@@ -360,35 +147,145 @@ if empty(glob("~/.vim/plugged/vim-tmux-navigator/"))
     nnoremap <c-l> <c-w>l
 endif
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Machine local vim file
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-if filereadable(glob("$HOME/.vimrc.local"))
-    source $HOME/.vimrc.local
+" Map Y to y$, to be similar to D and C
+nnoremap Y y$
+
+""" END NORMAL MODE BEHAVIOR }}}
+""" VISUAL MODE BEHAVIOR {{{
+
+" Reselect visual block after indent/outdent: http://vimbits.com/bits/20
+vnoremap < <gv
+vnoremap > >gv
+vnoremap = =gv
+
+" Set 3 lines to the cursor - when moving vertically using j/k 
+set scrolloff=3
+
+" Highlight the current line
+set cursorline
+
+augroup HighlightFollowsFocus
+    autocmd!
+    autocmd WinEnter,FocusGained * set cursorline
+    autocmd WinLeave,FocusLost * set nocursorline
+augroup END
+
+" Show (relative) line numbers
+set number
+if exists("&relativenumber")
+    set relativenumber
 endif
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Grep and Vimgrep configuration
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+augroup SmartNumbers
+    autocmd!
+     if exists("&relativenumber")
+         autocmd WinEnter,FocusGained * setlocal number relativenumber
+         autocmd WinLeave,FocusLost * setlocal number norelativenumber
+     endif
+augroup END
+
+" Show a line break character
+set showbreak=↪\ 
+
+" Highlight tabs and trailing spaces
+set listchars=tab:»\ ,trail:•
+
+" Make whitespace characters visible
+set list
+
+""" END VISUAL BEHAVIOR }}}
+""" FOLD BEHAVIOR {{{
+
+" Fold by markers
+set foldmethod=marker
+
+" Open folds on jumps
+set foldopen+=jump
+
+""" END FOLD BEHAVIOR }}}
+""" WINDOW BEHAVIOR {{{
+
+" Open new splits below
+set splitbelow
+
+" Open new vertical splits to the right
+set splitright
+
+""" END WINDOW BEHAVIOR }}}
+""" COMMAND LINE BEHAVIOR {{{
+
+set wildmenu
+
+" Complete till longest string and list all matches
+set wildmode=longest,list
+
+if exists("&wildignorecase")
+    set wildignorecase
+endif
+
+if &history < 1000
+    set history=1000
+endif
+
+" Command line mapping to write with root permissions
+cmap w!! w !sudo tee > /dev/null %
+
+" Command line expansion for the current working directory
+cabbr <expr> %% expand('%:p:h')
+
+""" END COMMAND LINE BEHAVIOR }}}
+""" LEADER KEY BEHAVIOR {{{
+
+" Change the leader key to comma (,)
+let mapleader = ","
+
+" Delete trailing white space on save, useful for Python and CoffeeScript ;)
+function! StripTrailingWhitespaces()
+  exe "normal mz"
+  %s/\s\+$//ge
+  exe "normal `z"
+endfunc
+
+" Leader key mappnigs
+nnoremap          <leader>b       :b <C-d>
+nnoremap <silent> <leader>c       :bd<cr>
+nnoremap          <leader>e       :e **/*
+nnoremap          <leader>f       :find *
+nnoremap <silent> <leader>m       :make<cr>
+nnoremap <silent> <leader>q       :quit<cr>
+nnoremap          <leader>s       :sfind *
+nnoremap          <leader>t       :tjump /
+nmap     <silent> <leader>T       :call StripTrailingWhitespaces()<CR>:retab<CR>
+nnoremap          <leader>v       :vert sfind *
+nnoremap <silent> <leader>z       :b#<cr>
+nnoremap          <leader>/       :grep<space>
+nnoremap <silent> <leader><space> :nohlsearch<cr>
+
+""" END LEADER KEY BEHAVIOR }}}
+""" GREP AND VIMGREP BEHAVIOR {{{
 
 " Check for file_in_path error, due to incompatibility with Vim <7.3
 if executable('ag')
     set grepprg=ag\ --vimgrep\ $*
     set grepformat=%f:%l:%c:%m
-
-    silent! command! -nargs=+ -complete=file_in_path -bar Ag silent grep! <args>|cwindow|redraw!
 elseif executable('ack')
     set grepprg=ack\ --nogroup\ --column\ --smart-case\ --nocolor\ --follow\ $*
     set grepformat=%f:%l:%c:%m
-
-    silent! command! -nargs=+ -complete=file_in_path -bar Ack silent grep! <args>|cwindow|redraw!
 endif
 
 nnoremap <silent> K :grep! "\b<c-r><c-w>\b"<cr>:cwindow<cr>
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Custom Filetypes & Specific Commands
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""" END GREP AND VIMGREP BEHAVIOR }}}
+""" BUFFER SPECIFIC BEHAVIOR {{{
+
+" Automatically enable spell
+augroup FileTypeSpell
+    autocmd!
+    if has("spell")
+        autocmd Filetype markdown,gitcommit,todo setlocal spell
+    endif
+augroup END
+
 augroup AdditionalFileTypesCommands
     autocmd!
     autocmd BufRead,BufNewFile *.md,*.markdown set filetype=markdown
@@ -398,21 +295,36 @@ augroup AdditionalFileTypesCommands
     autocmd BufWrite *.coffee :call StripTrailingWhitespaces()
 
     autocmd Filetype c,cpp,cs,java  setlocal commentstring=//\ %s
+
+    autocmd FileType qf setlocal nowrap
 augroup END
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Code completion
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Return to last edit position when opening files
+augroup LastBufferPosition
+    autocmd!
+    autocmd BufReadPost *
+        \ if line("'\"") > 0 && line("'\"") <= line("$") |
+        \   exe "normal! g`\"" |
+        \ endif
+augroup END
+
+" Automatically open cwindow or lwindow on :grep / :make / :lvimgrep / etc.
+augroup AutomaticQuickFix
+    autocmd!
+    autocmd QuickFixCmdPost [^l]* cwindow
+    autocmd QuickFixCmdPost    l* lwindow
+augroup END
+
+""" END BUFFER SPECIFIC BEHAVIOR }}}
+""" CODE COMPLETION BEHAVIOR {{{
+
+" Enable omni completion by using <C-X><C-O> in insert mode
 set omnifunc=syntaxcomplete#Complete
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Matchit.vim
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-runtime macros/matchit.vim
+""" END CODE COMPLETION BEHAVIOR }}}
+""" C++ SPECIFIC BEHAVIOR {{{
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => C++ specific options
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Fix C indentation and make sure access specifiers are without indentation
 set cindent
 
@@ -421,3 +333,11 @@ set cinoptions+=g0
 " Do not indent after a namespace block
 set cinoptions+=N-s
 
+""" END C++ SPECIFIC BEHAVIOR }}}
+""" LOCAL VIMRC INCLUDE {{{
+
+if filereadable(glob("$HOME/.vimrc.local"))
+    source $HOME/.vimrc.local
+endif
+
+""" END LOCAL VIMRC INCLUDE }}}
