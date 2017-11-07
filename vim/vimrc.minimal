@@ -178,17 +178,23 @@ endif
 
 augroup SmartNumbers
     autocmd!
-     if exists("&relativenumber")
-         autocmd WinEnter,FocusGained * setlocal number relativenumber
-         autocmd WinLeave,FocusLost * setlocal number norelativenumber
-     endif
+    if exists("&relativenumber")
+        autocmd WinEnter,FocusGained *
+                    \ if &number |
+                    \   setlocal relativenumber |
+                    \ endif
+        autocmd WinLeave,FocusLost *
+                    \ if &number |
+                    \   setlocal norelativenumber |
+                    \ endif
+    endif
 augroup END
 
 " Show a line break character
 set showbreak=↪\ 
 
 " Highlight tabs and trailing spaces
-set listchars=tab:»\ ,trail:•
+set listchars=tab:»\ ,trail:•,precedes:<,extends:>
 
 " Make whitespace characters visible
 set list
