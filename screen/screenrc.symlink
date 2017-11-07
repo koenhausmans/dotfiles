@@ -141,6 +141,12 @@ chdir
 
 ################
 #
+# Change the terminal to 256 color support
+#
+term "screen-256color"
+
+################
+#
 # Load a local specific .screenrc file
 #
 source .screenrc.local
