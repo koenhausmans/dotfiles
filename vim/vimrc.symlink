@@ -1,10 +1,6 @@
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Plugin Manager (vim-plug)
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""" PLUGIN MANAGER (VIM-PLUG) {{{
 
-"""
-""" Auto-install vim-plug
-"""
+" Auto-install vim-plug
 if empty(glob('~/.vim/autoload/plug.vim'))
     silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     autocmd VimEnter * PlugInstall
@@ -12,91 +8,57 @@ endif
 
 call plug#begin('~/.vim/plugged')
 
-"""
-""" Colorschemes: Additional colorschemes that can be used
-"""
+" Colorschemes: Additional colorschemes that can be used
 Plug 'morhetz/gruvbox'
 Plug 'romainl/flattened'
 Plug 'romainl/apprentice'
 
-"""
-""" Syntax: Additional syntaxes that can be used
-"""
+" Syntax: Additional syntaxes that can be used
 Plug 'tpope/vim-git', { 'for': 'git' }
 Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
 
-"""
-""" FZF Vim: Fuzzy file openener vim extension
-"""
+" FZF Vim: Fuzzy file openener vim extension
 Plug 'junegunn/fzf', {'dir': '~/.fzf', 'frozen': 1}
 Plug 'junegunn/fzf.vim'
 
-"""
-""" Tmux: Loads the vim-tmux-navigator to allow tmux keyboard shortcuts to be used within vim
-"""
+" Tmux-Navigator: Allows tmux keyboard shortcuts to be used within vim
 Plug 'christoomey/vim-tmux-navigator'
 
-"""
-""" Git: Plugins for git usage
-""'
-" Fugitive: Git from within Vim
+" Git: Plugins for git usage
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 
-"""
-""" Bbye: Buffer Bye for Vim - Allows closing buffers without screwing up the window layout
-"""
+" Bbye: Buffer Bye for Vim - Allows closing buffers without screwing up the window layout
 Plug 'moll/vim-bbye', {'on': 'Bdelete'}
 
-"""
-""" surround.vim: quoting/parenthesizing made simple
-"""
+" surround.vim: quoting/parenthesizing made simple
 Plug 'tpope/vim-surround'
 
-"""
-""" repeat.vim: Enable repeating supported plugin maps with "."
-"""
+" repeat.vim: Enable repeating supported plugin maps with "."
 Plug 'tpope/vim-repeat'
 
-"""
-""" unimpaired.vim: Pair mapping for vim lists
-"""
+" unimpaired.vim: Pair mapping for vim lists
 Plug 'tpope/vim-unimpaired'
 
-"""
-""" vim-cool: Disable hlsearch when you are done searching
-"""
+" vim-cool: Disable hlsearch when you are done searching
 Plug 'romainl/vim-cool'
 
-"""
-""" ReplaceWithRegister: Replace text with the contents of a register
-"""
+" ReplaceWithRegister: Replace text with the contents of a register
 Plug 'vim-scripts/ReplaceWithRegister'
 
-"""
-""" vim-argwrap: Wrap and unwrap function arguments, lists and dictionaries
-"""
+" vim-argwrap: Wrap and unwrap function arguments, lists and dictionaries
 Plug 'FooSoft/vim-argwrap'
 
-"""
-""" ===== Programming Plugins =====
-"""
-
-"""
-""" vim-commentary: Commenting plugins
-"""
+" vim-commentary: Commenting plugins
 Plug 'tpope/vim-commentary'
 
-"""
-""" Auto Pairs: Provides automatic matching brackets / quotes
-"""
+" Auto Pairs: Provides automatic matching brackets / quotes
 Plug 'jiangmiao/auto-pairs'
 
 call plug#end()
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Load minimal vimrc file for common settings
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""" END PLUGIN MANAGER }}}
+""" LOAD MINIMAL VIMRC {{{
 
 if !empty($DOTFILES)
     let s:vimrc_root = $DOTFILES
@@ -105,16 +67,10 @@ else
 endif
 exec "source " . expand(s:vimrc_root . "/vim/vimrc.minimal")
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Plugin Setup
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""" END LOAD MINIMAL VIMRC }}}
+""" PLUGIN INTEGRATION {{{
 
-"""
-""" FZF Integration
-"""
-" {{{
-nnoremap <c-p> :FZF -m<cr>
-
+" FZF Integration: Add shortcuts for FZF usage
 function! s:find_git_root()
     return system('git rev-parse --show-toplevel 2> /dev/null')[:-2]
 endfunction
@@ -128,13 +84,8 @@ nnoremap <silent> <leader>f :Files<cr>
 nnoremap <silent> <leader>F :LocalFiles<cr>
 nnoremap <silent> <leader>t :Tags<cr>
 nnoremap <silent> <leader>/ :execute 'Ag ' . input('Ag/')<cr>
-"nnoremap <silent> <leader>g :GitRootFiles<cr>
-"nnoremap <silent> <leader>? :History<cr>
-"nnoremap <silent> <leader>m :Marks<cr>
-"nnoremap <silent> <leader>. :AgIn 
-
-nnoremap <silent> K :call SearchWordWithAg()<cr>
-vnoremap <silent> K :call SearchVisualSelectionWithAg()<cr>
+nnoremap <silent>         K :call SearchWordWithAg()<cr>
+vnoremap <silent>         K :call SearchVisualSelectionWithAg()<cr>
 
 function! SearchWordWithAg()
     execute 'Ag' expand('<cword>')
@@ -157,40 +108,17 @@ function! SearchWithAgInDirectory(...)
 endfunction
 command! -nargs=+ -complete=dir AgIn call SearchWithAgInDirectory(<f-args>)
 
-" }}}
-
-"""
-""" vim-argwrap
-"""
+" vim-argwrap
 nnoremap <silent> <leader>A :ArgWrap<cr>
 
-"""
-""" Bbye: Buffer Bye for Vim configuration
-"""
-" {{{
-
-" Close the current buffer
+" Bbye integration: Close the current buffer
 cabbrev bd Bdelete
 nnoremap <leader>c :Bdelete<cr>
 
-" }}}
-
-"""
-""" vim-surround
-"""
-" {{{
-
-" Allow the usage of * as a surround character for multiline C-style comments
+" Vim-surround integration: Allow the usage of * as a surround character for multiline C-style comments
 let g:surround_{char2nr("*")} = "/* \r */"
 
-" }}}
-
-"""
-""" Git-Gutter
-"""
-" {{{
-
+" Git-Gutter integration
 let g:gitgutter_map_keys = 0
 
-" }}}
-
+""" END PLUGIN INTEGRATION }}}
