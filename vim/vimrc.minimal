@@ -176,14 +176,8 @@ endif
 augroup SmartNumbers
     autocmd!
     if exists("&relativenumber")
-        autocmd WinEnter,FocusGained *
-                    \ if &number |
-                    \   setlocal relativenumber |
-                    \ endif
-        autocmd WinLeave,FocusLost *
-                    \ if &number |
-                    \   setlocal norelativenumber |
-                    \ endif
+        autocmd WinEnter,FocusGained * if &number | setlocal relativenumber | endif
+        autocmd WinLeave,FocusLost * if &number | setlocal norelativenumber | endif
     endif
 augroup END
 
