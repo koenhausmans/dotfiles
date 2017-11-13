@@ -147,9 +147,6 @@ if empty(glob("~/.vim/plugged/vim-tmux-navigator/"))
     nnoremap <c-l> <c-w>l
 endif
 
-" Map Y to y$, to be similar to D and C
-nnoremap Y y$
-
 """ END NORMAL MODE BEHAVIOR }}}
 """ VISUAL MODE BEHAVIOR {{{
 
