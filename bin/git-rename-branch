@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+OldBranch=${1:-}
+NewBranch=${2:-}
+
+if [[ $# -le 1 || -z "$OldBranch" || -z "$NewBranch" ]] ; then
+    echo -e "Usage: \e[1m`basename $0`\e[0m {oldbranch} {newbranch}"
+    exit 1
+fi
+
+set +e
+GitRootDirectory="$(git rev-parse --show-toplevel 2> /dev/null)"
+
+if [[ $? -ne 0 || -z "$GitRootDirectory" ]] ; then
+    echo -e "\e[31mNo git root directory found\e[0m"
+    exit 1
+fi
+set -e
+
+git checkout ${OldBranch}
+git branch -m ${NewBranch}
+git push --delete origin ${OldBranch}
+git push -u origin HEAD
+
+
