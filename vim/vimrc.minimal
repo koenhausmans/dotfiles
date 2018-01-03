@@ -42,7 +42,33 @@ endif
 """ END TEMP FILES BEHAVIOR }}}
 """ COLORS BEHAVIOR {{{
 
-" Fix the colorscheme as soon as the plugins have been installed by plug.vim (prevents warning at first startup)
+function! MyHighlights() abort
+    if g:colors_name == 'gruvbox'
+        "StatusLine     xxx term=bold,reverse cterm=reverse ctermfg=239 ctermbg=223 gui=reverse guifg=#504945 guibg=#ebdbb2
+        "StatusLineNC   xxx term=reverse cterm=reverse ctermfg=237 ctermbg=246 gui=reverse guifg=#3c3836 guibg=#a89984
+        highlight User1 cterm=bold ctermfg=239 ctermbg=223 gui=bold guifg=#504945 guibg=#ebdbb2
+    elseif g:colors_name == 'apprentice'
+        "SatusLine     xxx term=bold,reverse ctermfg=235 ctermbg=101 guifg=#262626 guibg=#87875f
+        "StatusLineNC   xxx term=reverse ctermfg=101 ctermbg=238 guifg=#87875f guibg=#444444
+        highlight User1 cterm=bold,reverse ctermfg=235 ctermbg=101 gui=bold,reverse guifg=#662626 guibg=#87875f
+    else
+        redir => l:current
+            silent highlight StatusLine
+        redir END
+
+        if l:current =~# 'cterm=\S*\(inverse\|reverse\)'
+            highlight User1 l:current cterm=bold gui=bold
+        else
+            highlight User1 l:current cterm=bold,reverse gui=bold,reverse
+        endif
+    endif
+endfunction
+
+augroup MyColors
+    autocmd!
+    autocmd ColorScheme * call MyHighlights()
+augroup END
+
 set background=dark
 
 silent! colorscheme elflord
@@ -69,37 +95,23 @@ endif
 " Show the statusline at all times
 set laststatus=2
 
-"set statusline=\ %f\ %y\ %m\ %h\ %r\ %{winnr()}\%=L:\ %l/%L\ C:\ %v
-" Define statusline items
+" Based on: https://gist.github.com/ericbn/f2956cd9ec7d6bff8940c2087247b132
 set statusline=
-" Filename
-set statusline+=%f
-" File type, Window Type (help, preview, qlist)
-set statusline+=\ [%Y%H]
-" Modified flag
-set statusline+=\ %m
-" Midline separator
-set statusline+=%=
-" Line indicator
-set statusline+=L:\ %3l\ /\ %3L
-" Column indicator
-set statusline+=\ \ C:\ %4v
+set statusline+=%1*
+set statusline+=\ %(%{&filetype!='help'?bufnr('%'):''}\ \ %)
+set statusline+=%< " Where to truncate line
+set statusline+=%f " Path to the file in the buffer, as typed or relative to current directory
+set statusline+=\ %* " Restore normal highlight
+set statusline+=\ %{&modified?'+':''}
+set statusline+=%{&readonly?'':''}
+set statusline+=\ %= " Separation point between left and right aligned items
+set statusline+=\ %{&filetype!=#''?&filetype:'none'}
+set statusline+=\ \ %{&number?'':printf('%3d:',line('.'))} " Line number
+set statusline+=%-2v " Virtual column number
+set statusline+=\ │\ %2p%%\  " Percentage through file
+set statusline+=%{fugitive#head()!=''?'':''}
+set statusline+=%1*%{fugitive#head()!=''?'\ \ \ '.fugitive#head().'\ ':''}
 
-" Define statusline
-" set statusline=
-" Filename
-" set statusline+=%*%f
-" Window type (help, preview, qlist)
-" set statusline+=%*%(%h%w%)
-" Modified flag
-" set statusline+=%3*%(%m%)
-" Readonly flag
-" set statusline+=%1*%(%r%)
-" Midline separator
-" set statusline+=%=
-
-"hi ModeMsg ctermfg=31 ctermbg=none
-"
 """ END STATUSLINE BEHAVIOR }}}
 """ INDENT BEHAVIOR {{{
 
