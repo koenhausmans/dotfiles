@@ -235,7 +235,7 @@ set splitright
 set wildmenu
 
 " Complete till longest string and list all matches
-set wildmode=longest,list
+set wildmode=longest:list,full
 
 if exists("&wildignorecase")
     set wildignorecase
