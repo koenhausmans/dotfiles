@@ -43,24 +43,19 @@ endif
 """ COLORS BEHAVIOR {{{
 
 function! MyHighlights() abort
+    " Based on: https://gist.github.com/ericbn/f2956cd9ec7d6bff8940c2087247b132
     if g:colors_name == 'gruvbox'
         "StatusLine     xxx term=bold,reverse cterm=reverse ctermfg=239 ctermbg=223 gui=reverse guifg=#504945 guibg=#ebdbb2
         "StatusLineNC   xxx term=reverse cterm=reverse ctermfg=237 ctermbg=246 gui=reverse guifg=#3c3836 guibg=#a89984
         highlight User1 cterm=bold ctermfg=239 ctermbg=223 gui=bold guifg=#504945 guibg=#ebdbb2
+        :call StatuslineHighlightGroups()
     elseif g:colors_name == 'apprentice'
         "SatusLine     xxx term=bold,reverse ctermfg=235 ctermbg=101 guifg=#262626 guibg=#87875f
         "StatusLineNC   xxx term=reverse ctermfg=101 ctermbg=238 guifg=#87875f guibg=#444444
         highlight User1 cterm=bold,reverse ctermfg=235 ctermbg=101 gui=bold,reverse guifg=#662626 guibg=#87875f
+        :call StatuslineHighlightGroups()
     else
-        redir => l:current
-            silent highlight StatusLine
-        redir END
-
-        if l:current =~# 'cterm=\S*\(inverse\|reverse\)'
-            highlight User1 l:current cterm=bold gui=bold
-        else
-            highlight User1 l:current cterm=bold,reverse gui=bold,reverse
-        endif
+        :call StatuslineMain()
     endif
 endfunction
 
@@ -95,22 +90,40 @@ endif
 " Show the statusline at all times
 set laststatus=2
 
-" Based on: https://gist.github.com/ericbn/f2956cd9ec7d6bff8940c2087247b132
-set statusline=
-set statusline+=%1*
-set statusline+=\ %(%{&filetype!='help'?bufnr('%'):''}\ \ %)
-set statusline+=%< " Where to truncate line
-set statusline+=%f " Path to the file in the buffer, as typed or relative to current directory
-set statusline+=\ %* " Restore normal highlight
-set statusline+=\ %{&modified?'+':''}
-set statusline+=%{&readonly?'':''}
-set statusline+=\ %= " Separation point between left and right aligned items
-set statusline+=\ %{&filetype!=#''?&filetype:'none'}
-set statusline+=\ \ %{&number?'':printf('%3d:',line('.'))} " Line number
-set statusline+=%-2v " Virtual column number
-set statusline+=\ │\ %2p%%\  " Percentage through file
-set statusline+=%{fugitive#head()!=''?'':''}
-set statusline+=%1*%{fugitive#head()!=''?'\ \ \ '.fugitive#head().'\ ':''}
+function! StatuslineMain() abort
+    " Based on: https://gist.github.com/ericbn/f2956cd9ec7d6bff8940c2087247b132
+    set statusline=
+    set statusline+=\ %(%{&filetype!='help'?bufnr('%'):''}\ \ %)
+    set statusline+=%< " Where to truncate line
+    set statusline+=%f " Path to the file in the buffer, as typed or relative to current directory
+    set statusline+=\ %{&modified?'+':''}
+    set statusline+=%{&readonly?'':''}
+    set statusline+=\ %= " Separation point between left and right aligned items
+    set statusline+=\ %{&filetype!=#''?&filetype:'none'}
+    set statusline+=\ \ %{&number?'':printf('%3d:',line('.'))} " Line number
+    set statusline+=%-2v " Virtual column number
+    set statusline+=\ │\ %2p%%\  " Percentage through file
+    set statusline+=%{fugitive#head()!=''?'\ \ '.fugitive#head().'\ ':''}
+endfunction
+
+function! StatuslineHighlightGroups() abort
+    " Based on: https://gist.github.com/ericbn/f2956cd9ec7d6bff8940c2087247b132
+    set statusline=
+    set statusline+=%1*
+    set statusline+=\ %(%{&filetype!='help'?bufnr('%'):''}\ \ %)
+    set statusline+=%< " Where to truncate line
+    set statusline+=%f " Path to the file in the buffer, as typed or relative to current directory
+    set statusline+=\ %* " Restore normal highlight
+    set statusline+=\ %{&modified?'+':''}
+    set statusline+=%{&readonly?'':''}
+    set statusline+=\ %= " Separation point between left and right aligned items
+    set statusline+=\ %{&filetype!=#''?&filetype:'none'}
+    set statusline+=\ \ %{&number?'':printf('%3d:',line('.'))} " Line number
+    set statusline+=%-2v " Virtual column number
+    set statusline+=\ │\ %2p%%\  " Percentage through file
+    set statusline+=%{fugitive#head()!=''?'':''}
+    set statusline+=%1*%{fugitive#head()!=''?'\ \ \ '.fugitive#head().'\ ':''}
+endfunction
 
 """ END STATUSLINE BEHAVIOR }}}
 """ INDENT BEHAVIOR {{{
