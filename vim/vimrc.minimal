@@ -207,14 +207,9 @@ augroup SmartNumbers
     endif
 augroup END
 
-" Show a line break character
 set showbreak=↪\ 
-
-" Highlight tabs and trailing spaces
-set listchars=tab:»\ ,trail:•,precedes:<,extends:>
-
-" Make whitespace characters visible
 set list
+set listchars=tab:→\ ,trail:•,nbsp:␣,precedes:⟨,extends:⟩
 
 """ END VISUAL BEHAVIOR }}}
 """ FOLD BEHAVIOR {{{
