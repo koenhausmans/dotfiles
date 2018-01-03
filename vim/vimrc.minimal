@@ -100,7 +100,7 @@ set shiftround
 
 " Set up indents to use 4 spaces
 set shiftwidth=4
-set softtabstop=-1
+set softtabstop=4
 
 " Make tab characters display as 8 characters wide
 set tabstop=8
