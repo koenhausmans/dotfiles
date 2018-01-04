@@ -40,51 +40,6 @@ if has("persistent_undo")
 endif
 
 """ END TEMP FILES BEHAVIOR }}}
-""" COLORS BEHAVIOR {{{
-
-function! MyHighlights() abort
-    " Based on: https://gist.github.com/ericbn/f2956cd9ec7d6bff8940c2087247b132
-    if g:colors_name == 'gruvbox'
-        "StatusLine     xxx term=bold,reverse cterm=reverse ctermfg=239 ctermbg=223 gui=reverse guifg=#504945 guibg=#ebdbb2
-        "StatusLineNC   xxx term=reverse cterm=reverse ctermfg=237 ctermbg=246 gui=reverse guifg=#3c3836 guibg=#a89984
-        highlight User1 cterm=bold ctermfg=239 ctermbg=223 gui=bold guifg=#504945 guibg=#ebdbb2
-        :call StatuslineHighlightGroups()
-    elseif g:colors_name == 'apprentice'
-        "SatusLine     xxx term=bold,reverse ctermfg=235 ctermbg=101 guifg=#262626 guibg=#87875f
-        "StatusLineNC   xxx term=reverse ctermfg=101 ctermbg=238 guifg=#87875f guibg=#444444
-        highlight User1 cterm=bold,reverse ctermfg=235 ctermbg=101 gui=bold,reverse guifg=#662626 guibg=#87875f
-        :call StatuslineHighlightGroups()
-    else
-        :call StatuslineMain()
-    endif
-endfunction
-
-augroup MyColors
-    autocmd!
-    autocmd ColorScheme * call MyHighlights()
-augroup END
-
-set background=dark
-
-silent! colorscheme elflord
-silent! colorscheme apprentice
-silent! colorscheme gruvbox
-
-""" END COLORS BEHAVIOR }}}
-""" CURSOR BEHAVIOR {{{
-
-" Change the cursors dependent on the mode
-if exists('$TMUX')
-    let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1;BlinkingCursorEnabled=1\x7\<Esc>\\"
-    let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2;BlinkingCursorEnabled=1\x7\<Esc>\\"
-    let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0;BlinkingCursorEnabled=0\x7\<Esc>\\"
-else
-    let &t_SI = "\<Esc>]50;CursorShape=1;BlinkingCursorEnabled=1\x7"
-    let &t_SR = "\<Esc>]50;CursorShape=2;BlinkingCursorEnabled=1\x7"
-    let &t_EI = "\<Esc>]50;CursorShape=0;BlinkingCursorEnabled=0\x7"
-endif
-
-""" CURSOR BEHAVIOR }}}
 """ STATUSLINE BEHAVIOR {{{
 
 " Show the statusline at all times
@@ -126,6 +81,49 @@ function! StatuslineHighlightGroups() abort
 endfunction
 
 """ END STATUSLINE BEHAVIOR }}}
+""" COLORS BEHAVIOR {{{
+
+function! MyHighlights() abort
+    " Based on: https://gist.github.com/ericbn/f2956cd9ec7d6bff8940c2087247b132
+    if g:colors_name == 'gruvbox'
+        "StatusLine     xxx term=bold,reverse cterm=reverse ctermfg=239 ctermbg=223 gui=reverse guifg=#504945 guibg=#ebdbb2
+        highlight User1 cterm=bold ctermfg=239 ctermbg=223 gui=bold guifg=#504945 guibg=#ebdbb2
+        :call StatuslineHighlightGroups()
+    elseif g:colors_name == 'apprentice'
+        "SatusLine     xxx term=bold,reverse ctermfg=235 ctermbg=101 guifg=#262626 guibg=#87875f
+        highlight User1 cterm=bold,reverse ctermfg=235 ctermbg=101 gui=bold,reverse guifg=#262626 guibg=#87875f
+        :call StatuslineHighlightGroups()
+    else
+        :call StatuslineMain()
+    endif
+endfunction
+
+augroup MyColors
+    autocmd!
+    autocmd ColorScheme * call MyHighlights()
+augroup END
+
+set background=dark
+
+silent! colorscheme elflord
+silent! colorscheme apprentice
+silent! colorscheme gruvbox
+
+""" END COLORS BEHAVIOR }}}
+""" CURSOR BEHAVIOR {{{
+
+" Change the cursors dependent on the mode
+if exists('$TMUX')
+    let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1;BlinkingCursorEnabled=1\x7\<Esc>\\"
+    let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2;BlinkingCursorEnabled=1\x7\<Esc>\\"
+    let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0;BlinkingCursorEnabled=0\x7\<Esc>\\"
+else
+    let &t_SI = "\<Esc>]50;CursorShape=1;BlinkingCursorEnabled=1\x7"
+    let &t_SR = "\<Esc>]50;CursorShape=2;BlinkingCursorEnabled=1\x7"
+    let &t_EI = "\<Esc>]50;CursorShape=0;BlinkingCursorEnabled=0\x7"
+endif
+
+""" CURSOR BEHAVIOR }}}
 """ INDENT BEHAVIOR {{{
 
 " Use spaces instead of tabs
