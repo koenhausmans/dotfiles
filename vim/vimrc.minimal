@@ -363,10 +363,3 @@ set cinoptions+=g0
 set cinoptions+=N-s
 
 """ END C++ SPECIFIC BEHAVIOR }}}
-""" LOCAL VIMRC INCLUDE {{{
-
-if filereadable(glob("$HOME/.vimrc.local"))
-    source $HOME/.vimrc.local
-endif
-
-""" END LOCAL VIMRC INCLUDE }}}
