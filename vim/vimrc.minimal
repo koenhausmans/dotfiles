@@ -108,6 +108,7 @@ set background=dark
 silent! colorscheme elflord
 silent! colorscheme apprentice
 silent! colorscheme gruvbox
+silent! colorscheme neodark
 
 """ END COLORS BEHAVIOR }}}
 """ CURSOR BEHAVIOR {{{
