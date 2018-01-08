@@ -12,6 +12,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'morhetz/gruvbox'
 Plug 'romainl/flattened'
 Plug 'romainl/apprentice'
+Plug 'KeitaNakamura/neodark.vim'
 
 " Syntax: Additional syntaxes that can be used
 Plug 'tpope/vim-git', { 'for': 'git' }
