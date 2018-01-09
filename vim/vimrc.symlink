@@ -13,6 +13,7 @@ Plug 'morhetz/gruvbox'
 Plug 'romainl/flattened'
 Plug 'romainl/apprentice'
 Plug 'KeitaNakamura/neodark.vim'
+Plug 'sjl/badwolf'
 
 " Syntax: Additional syntaxes that can be used
 Plug 'tpope/vim-git', { 'for': 'git' }
