@@ -42,75 +42,84 @@ endif
 """ END TEMP FILES BEHAVIOR }}}
 """ STATUSLINE BEHAVIOR {{{
 
+function! ActiveStatusline()
+    " Based on: https://gist.github.com/ericbn/f2956cd9ec7d6bff8940c2087247b132
+    let statusline=""
+    let statusline.="%1*"
+    let statusline.="%(%{&filetype!='help'?'\ \ '.bufnr('%'):''}\ %)"
+    let statusline.="\ %<"
+    let statusline.="%f"
+    let statusline.="\ %*"
+    let statusline.="\ %{&modified?'+':''}"
+    let statusline.="%{&readonly?'':''}"
+    let statusline.="\ %="
+    let statusline.="\ %{&filetype!=#''?&filetype:'none'}"
+    let statusline.="\ \ Ln\ %3l,\ "
+    let statusline.="Col\ %-2v"
+    let statusline.="\ \ %2p%%\ "
+    let statusline.="%{fugitive#head()!=''?'':''}"
+    let statusline.="%1*%{fugitive#head()!=''?'\ \ \ '.fugitive#head().'\ ':''}"
+    return statusline
+endfunction
+
+" Currently not used, might use in the future
+"function! InactiveStatusline()
+"    let statusline=""
+"    let statusline.="%(%{&filetype!='help'?'\ \ '.bufnr('%'):''}\ \ %)"
+"    let statusline.="%<"
+"    let statusline.="%f"
+"    let statusline.="\ "
+"    let statusline.="\ %{&modified?'+':''}"
+"    let statusline.="%{&readonly?'':''}"
+"    let statusline.="\ %="
+"    let statusline.="\ %{&filetype!=#''?&filetype:'none'}"
+"    let statusline.="\ \ %{&number?'':printf('Ln\ %3d,\ ',line('.'))}"
+"    let statusline.="Col\ %-2v"
+"    let statusline.="\ │\ %2p%%\ "
+"    let statusline.="%{fugitive#head()!=''?'\ \ '.fugitive#head().'\ ':''}"
+"    return statusline
+"endfunction
+
 " Show the statusline at all times
 set laststatus=2
-
-function! StatuslineMain() abort
-    " Based on: https://gist.github.com/ericbn/f2956cd9ec7d6bff8940c2087247b132
-    set statusline=
-    set statusline+=\ %(%{&filetype!='help'?bufnr('%'):''}\ \ %)
-    set statusline+=%< " Where to truncate line
-    set statusline+=%f " Path to the file in the buffer, as typed or relative to current directory
-    set statusline+=\ %{&modified?'+':''}
-    set statusline+=%{&readonly?'':''}
-    set statusline+=\ %= " Separation point between left and right aligned items
-    set statusline+=\ %{&filetype!=#''?&filetype:'none'}
-    set statusline+=\ \ %{&number?'':printf('%3d:',line('.'))} " Line number
-    set statusline+=%-2v " Virtual column number
-    set statusline+=\ │\ %2p%%\  " Percentage through file
-    set statusline+=%{fugitive#head()!=''?'\ \ '.fugitive#head().'\ ':''}
-endfunction
-
-function! StatuslineHighlightGroups() abort
-    " Based on: https://gist.github.com/ericbn/f2956cd9ec7d6bff8940c2087247b132
-    set statusline=
-    set statusline+=%1*
-    set statusline+=\ %(%{&filetype!='help'?bufnr('%'):''}\ \ %)
-    set statusline+=%< " Where to truncate line
-    set statusline+=%f " Path to the file in the buffer, as typed or relative to current directory
-    set statusline+=\ %* " Restore normal highlight
-    set statusline+=\ %{&modified?'+':''}
-    set statusline+=%{&readonly?'':''}
-    set statusline+=\ %= " Separation point between left and right aligned items
-    set statusline+=\ %{&filetype!=#''?&filetype:'none'}
-    set statusline+=\ \ %{&number?'':printf('%3d:',line('.'))} " Line number
-    set statusline+=%-2v " Virtual column number
-    set statusline+=\ │\ %2p%%\  " Percentage through file
-    set statusline+=%{fugitive#head()!=''?'':''}
-    set statusline+=%1*%{fugitive#head()!=''?'\ \ \ '.fugitive#head().'\ ':''}
-endfunction
+set statusline=%!ActiveStatusline()
 
 """ END STATUSLINE BEHAVIOR }}}
-""" COLORS BEHAVIOR {{{
+""" COLORSCHEME SETTINGS {{{
 
-function! MyHighlights() abort
-    " Based on: https://gist.github.com/ericbn/f2956cd9ec7d6bff8940c2087247b132
+function! CustomStatuslineColors() abort
+    " Gruvbox statusline colors
     if g:colors_name == 'gruvbox'
-        "StatusLine     xxx term=bold,reverse cterm=reverse ctermfg=239 ctermbg=223 gui=reverse guifg=#504945 guibg=#ebdbb2
-        highlight User1 cterm=bold ctermfg=239 ctermbg=223 gui=bold guifg=#504945 guibg=#ebdbb2
-        :call StatuslineHighlightGroups()
+        highlight StatusLine   cterm=reverse ctermfg=239 ctermbg=223 gui=reverse guifg=#504945 guibg=#ebdbb2
+        highlight StatusLineNC cterm=reverse ctermfg=237 ctermbg=246 gui=reverse guifg=#3c3836 guibg=#a89984
+        highlight User1        cterm=NONE    ctermfg=235 ctermbg=223 gui=NONE    guifg=#504945 guibg=#ebdbb2
+    " Blue statusline colors based on apprentice colors
     elseif g:colors_name == 'apprentice'
-        "SatusLine     xxx term=bold,reverse ctermfg=235 ctermbg=101 guifg=#262626 guibg=#87875f
-        highlight User1 cterm=bold,reverse ctermfg=235 ctermbg=101 gui=bold,reverse guifg=#262626 guibg=#87875f
-        :call StatuslineHighlightGroups()
+        highlight StatusLine   cterm=NONE         ctermfg=252 ctermbg=67
+        highlight StatusLineNC cterm=NONE         ctermfg=243 ctermbg=237
+        highlight User1        cterm=bold,reverse ctermfg=252 ctermbg=67
+    " Visual Studio Code inspired statusline colors
     else
-        :call StatuslineMain()
+        highlight StatusLine   cterm=NONE         ctermfg=253 ctermbg=54  gui=NONE         guifg=#dadada guibg=#5f0087
+        highlight StatusLineNC cterm=NONE         ctermfg=243 ctermbg=237 gui=NONE         guifg=#949494 guibg=#3a3a3a
+        highlight User1        cterm=bold,reverse ctermfg=253 ctermbg=54  gui=bold,reverse guifg=#dadada guibg=#5f0087
     endif
 endfunction
 
-augroup MyColors
+augroup CustomStatusline
     autocmd!
-    autocmd ColorScheme * call MyHighlights()
+    autocmd ColorScheme * call CustomStatuslineColors()
+    "autocmd WinEnter * setlocal statusline=%!ActiveStatusline()
+    "autocmd WinLeave * setlocal statusline=%!InactiveStatusline()
 augroup END
 
 set background=dark
 
 silent! colorscheme elflord
-silent! colorscheme apprentice
 silent! colorscheme gruvbox
-silent! colorscheme neodark
+silent! colorscheme apprentice
 
-""" END COLORS BEHAVIOR }}}
+""" END COLORSCHEME SETTINGS }}}
 """ CURSOR BEHAVIOR {{{
 
 " Change the cursors dependent on the mode
