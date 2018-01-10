@@ -119,6 +119,26 @@ silent! colorscheme elflord
 silent! colorscheme gruvbox
 silent! colorscheme apprentice
 
+function! SaveColorscheme() abort
+    let l:vimhome_plugin_folder = $HOME . "/.vim/plugin"
+    let l:last_used_file = l:vimhome_plugin_folder . "/last-used-colorscheme.vim"
+
+    let l:contents = [
+        \   'silent! colorscheme ' . g:colors_name
+        \ ]
+
+    if !isdirectory(l:vimhome_plugin_folder)
+        call mkdir(l:vimhome_plugin_folder, 'p')
+    endif
+
+    call writefile(l:contents, l:last_used_file)
+endfunction
+
+augroup SaveColorscheme
+    autocmd!
+    autocmd ColorScheme * call SaveColorscheme()
+augroup END
+
 """ END COLORSCHEME SETTINGS }}}
 """ CURSOR BEHAVIOR {{{
 
