@@ -95,9 +95,9 @@ function! CustomStatuslineColors() abort
         highlight User1        cterm=NONE    ctermfg=235 ctermbg=223 gui=NONE    guifg=#504945 guibg=#ebdbb2
     " Blue statusline colors based on apprentice colors
     elseif g:colors_name == 'apprentice'
-        highlight StatusLine   cterm=NONE         ctermfg=252 ctermbg=67
-        highlight StatusLineNC cterm=NONE         ctermfg=243 ctermbg=237
-        highlight User1        cterm=bold,reverse ctermfg=252 ctermbg=67
+        highlight StatusLine   cterm=NONE         ctermfg=252 ctermbg=67  gui=NONE         guifg=#d0d0d0 guibg=#5f87af
+        highlight StatusLineNC cterm=NONE         ctermfg=243 ctermbg=237 gui=NONE         guifg=#949494 guibg=#3a3a3a
+        highlight User1        cterm=bold,reverse ctermfg=252 ctermbg=67  gui=NONE,reverse guifg=#d0d0d0 guibg=#5f87af
     " Visual Studio Code inspired statusline colors
     else
         highlight StatusLine   cterm=NONE         ctermfg=253 ctermbg=54  gui=NONE         guifg=#dadada guibg=#5f0087
