@@ -250,7 +250,7 @@ augroup END
 
 set showbreak=↪\ 
 set list
-set listchars=tab:→\ ,trail:•,nbsp:␣,precedes:⟨,extends:⟩
+set listchars=tab:»\ ,trail:•,nbsp:␣,precedes:⟨,extends:⟩
 
 """ END VISUAL BEHAVIOR }}}
 """ FOLD BEHAVIOR {{{
