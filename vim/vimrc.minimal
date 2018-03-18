@@ -279,9 +279,6 @@ cabbr <expr> %% expand('%:p:h')
 """ END COMMAND LINE BEHAVIOR }}}
 """ LEADER KEY BEHAVIOR {{{
 
-" Change the leader key to comma (,)
-let mapleader = ","
-
 " Delete trailing white space on save, useful for Python and CoffeeScript ;)
 function! StripTrailingWhitespaces()
   exe "normal mz"
@@ -290,19 +287,19 @@ function! StripTrailingWhitespaces()
 endfunc
 
 " Leader key mappnigs
-nnoremap          <leader>b       :b <C-d>
-nnoremap <silent> <leader>c       :bd<cr>
-nnoremap          <leader>e       :e **/*
-nnoremap          <leader>f       :find *
-nnoremap <silent> <leader>m       :make<cr>
-nnoremap <silent> <leader>q       :quit<cr>
-nnoremap          <leader>s       :sfind *
-nnoremap          <leader>t       :tjump /
-nmap     <silent> <leader>T       :call StripTrailingWhitespaces()<CR>:retab<CR>
-nnoremap          <leader>v       :vert sfind *
-nnoremap <silent> <leader>z       :b#<cr>
-nnoremap          <leader>/       :grep<space>
-nnoremap <silent> <leader><space> :nohlsearch<cr>
+nnoremap          ,b       :b <C-d>
+nnoremap <silent> ,c       :bd<cr>
+nnoremap          ,e       :e **/*
+nnoremap          ,f       :find *
+nnoremap <silent> ,m       :make<cr>
+nnoremap <silent> ,q       :quit<cr>
+nnoremap          ,s       :sfind *
+nnoremap          ,t       :tjump /
+nmap     <silent> ,T       :call StripTrailingWhitespaces()<CR>:retab<CR>
+nnoremap          ,v       :vert sfind *
+nnoremap <silent> ,z       :b#<cr>
+nnoremap          ,/       :grep<space>
+nnoremap <silent> ,<space> :nohlsearch<cr>
 
 """ END LEADER KEY BEHAVIOR }}}
 """ GREP AND VIMGREP BEHAVIOR {{{

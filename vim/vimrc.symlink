@@ -80,14 +80,14 @@ endfunction
 command! GitRootFiles execute 'Files' s:find_git_root()
 command! LocalFiles execute 'Files' expand('%:h')
 
-nnoremap <silent> <leader>b :Buffers<cr>
-nnoremap <silent> <leader>G :GitFiles<cr>
-nnoremap <silent> <leader>f :Files<cr>
-nnoremap <silent> <leader>F :LocalFiles<cr>
-nnoremap <silent> <leader>t :Tags<cr>
-nnoremap <silent> <leader>/ :execute 'Ag ' . input('Ag/')<cr>
-nnoremap <silent>         K :call SearchWordWithAg()<cr>
-vnoremap <silent>         K :call SearchVisualSelectionWithAg()<cr>
+nnoremap <silent> ,b :Buffers<cr>
+nnoremap <silent> ,G :GitFiles<cr>
+nnoremap <silent> ,f :Files<cr>
+nnoremap <silent> ,F :LocalFiles<cr>
+nnoremap <silent> ,t :Tags<cr>
+nnoremap <silent> ,/ :execute 'Ag ' . input('Ag/')<cr>
+nnoremap <silent>  K :call SearchWordWithAg()<cr>
+vnoremap <silent>  K :call SearchVisualSelectionWithAg()<cr>
 
 function! SearchWordWithAg()
     execute 'Ag' expand('<cword>')
@@ -111,11 +111,11 @@ endfunction
 command! -nargs=+ -complete=dir AgIn call SearchWithAgInDirectory(<f-args>)
 
 " vim-argwrap
-nnoremap <silent> <leader>A :ArgWrap<cr>
+nnoremap <silent> ,A :ArgWrap<cr>
 
 " Bbye integration: Close the current buffer
 cabbrev bd Bdelete
-nnoremap <leader>c :Bdelete<cr>
+nnoremap ,c :Bdelete<cr>
 
 " Vim-surround integration: Allow the usage of * as a surround character for multiline C-style comments
 let g:surround_{char2nr("*")} = "/* \r */"
