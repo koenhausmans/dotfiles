@@ -2,6 +2,16 @@
 ### General
 ### ---------------------------------------------------------------------------
 
+# Source bash aliases
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+    . /etc/bashrc
+fi
+
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
@@ -30,10 +40,9 @@ bind "set completion-map-case on"
 bind "set show-all-if-ambiguous on"
 
 # Load bash_completion (including git support)
+
 [[ -f /etc/bash_completion ]] && . /etc/bash_completion
-[[ -f /etc/bash_completion.d/git-prompt ]] && . /etc/bash_completion.d/git-prompt
 [[ -f /etc/bash_completion.d/git ]] && . /etc/bash_completion.d/git
-[[ -f /usr/share/git/completion/git-prompt.sh ]] && . /usr/share/git/completion/git-prompt.sh
 [[ -f /usr/share/bash-completion/bash_completion ]] && . /usr/share/bash-completion/bash_completion
 
 ### ---------------------------------------------------------------------------
@@ -114,23 +123,28 @@ alias week="date +%V"
 ### Customization
 ### ---------------------------------------------------------------------------
 
-# Add user and hostname if there is a SSH connection
-PREPEND_HOSTNAME=""
-[[ -n "$SSH_CONNECTION" ]] && PREPEND_HOSTNAME="\[\033[01;33m\]\u@\h "
+[[ -f "$DOTFILES/bash/git_prompt.bash" ]] && . "$DOTFILES/bash/git_prompt.bash"
 
-# Add the selective colors for the working folder in case the previous command failed
-SELECT="if [[ \$? != 0 ]]; then echo -e \"\[\033[01;31m\]\"; else echo -e \"\[\033[01;34m\]\" ; fi"
+function _prompt_command {
+    local _exit_status="$?"
 
-if [[ $(type __git_ps1 2> /dev/null) ]] ; then
-    export GIT_PS1_SHOWDIRTYSTATE=1
-    export GIT_PS1_SHOWUPSTREAM="auto"
-    export GIT_PS1_SHOWCOLORHINTS=1
+    local _red="\[\e[01;31m\]"
+    local _yellow="\[\e[01;33m\]"
+    local _blue="\[\e[01;34m\]"
+    local _rst="\[\e[0m\]"
 
-    PROMPT_COMMAND='__git_ps1 "$PREPEND_HOSTNAME\`${SELECT}\`\w\[\033[0m\]" "\[\033[01;34m\] \\\$ \[\033[0m\]" " (\[\033[1m\]%s\[\033[0m\])"'
-else
-    export PS1="$PREPEND_HOSTNAME\`${SELECT}\`\w \[\033[01;34m\]\$\[\033[00m\] "
-fi
+    [[ -n "$SSH_CONNECTION" ]] && local _HOST="$_yellow\u@\h "
+    local _GIT=$(_git_prompt)
 
+    PS1="$_HOST$_blue\w $_GIT"
+
+    if [[ $_exit_status != 0 ]] ; then
+        PS1+="${_red}\$${_rst} "
+    else
+        PS1+="${_blue}\$${_rst} "
+    fi
+}
+PROMPT_COMMAND=_prompt_command
 
 ### ---------------------------------------------------------------------------
 ### History
@@ -149,7 +163,7 @@ HISTFILESIZE=2000
 ### FZF Plugin
 ### ---------------------------------------------------------------------------
 
-if [[ -d "$HOME/.fzf" ]] ; then
+if [[ -x "$(command -v fzf)" && -d "$HOME/.fzf" ]] ; then
     export PATH="$PATH:$HOME/.fzf/bin"
     export MANPATH="$MANPATH:$HOME/.fzf/man"
 
@@ -171,15 +185,6 @@ fi
 ### ---------------------------------------------------------------------------
 ### Load machine-specific config files
 ### ---------------------------------------------------------------------------
-
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
-
-# Source global definitions
-if [ -f /etc/bashrc ]; then
-    . /etc/bashrc
-fi
 
 # Customize to your needs...
 if [ -f $HOME/.bashrc.local ]; then
