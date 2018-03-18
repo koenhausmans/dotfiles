@@ -85,6 +85,9 @@ function! CustomStatuslineColors() abort
         highlight StatusLine   cterm=NONE         ctermfg=253 ctermbg=54  gui=NONE         guifg=#dadada guibg=#5f0087
         highlight StatusLineNC cterm=NONE         ctermfg=243 ctermbg=237 gui=NONE         guifg=#949494 guibg=#3a3a3a
         highlight User1        cterm=bold,reverse ctermfg=253 ctermbg=54  gui=bold,reverse guifg=#dadada guibg=#5f0087
+
+        highlight ModeMsg cterm=NONE ctermbg=green ctermfg=black
+        highlight Visual cterm=NONE ctermbg=white ctermfg=darkblue
     endif
 endfunction
 
