@@ -62,24 +62,6 @@ function! ActiveStatusline()
     return statusline
 endfunction
 
-" Currently not used, might use in the future
-"function! InactiveStatusline()
-"    let statusline=""
-"    let statusline.="%(%{&filetype!='help'?'\ \ '.bufnr('%'):''}\ \ %)"
-"    let statusline.="%<"
-"    let statusline.="%f"
-"    let statusline.="\ "
-"    let statusline.="\ %{&modified?'+':''}"
-"    let statusline.="%{&readonly?'':''}"
-"    let statusline.="\ %="
-"    let statusline.="\ %{&filetype!=#''?&filetype:'none'}"
-"    let statusline.="\ \ %{&number?'':printf('Ln\ %3d,\ ',line('.'))}"
-"    let statusline.="Col\ %-2v"
-"    let statusline.="\ │\ %2p%%\ "
-"    let statusline.="%{fugitive#head()!=''?'\ \ '.fugitive#head().'\ ':''}"
-"    return statusline
-"endfunction
-
 " Show the statusline at all times
 set laststatus=2
 set statusline=%!ActiveStatusline()
