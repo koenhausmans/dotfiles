@@ -94,8 +94,6 @@ endfunction
 augroup CustomStatusline
     autocmd!
     autocmd ColorScheme * call CustomStatuslineColors()
-    "autocmd WinEnter * setlocal statusline=%!ActiveStatusline()
-    "autocmd WinLeave * setlocal statusline=%!InactiveStatusline()
 augroup END
 
 set background=dark
