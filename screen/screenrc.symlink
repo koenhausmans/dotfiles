@@ -117,7 +117,7 @@ bind - resize -1
 bind _ resize max
 
 # Kill shortcut
-bindkey ^c kill
+#bindkey ^c kill
 
 ################
 #
