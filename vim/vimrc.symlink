@@ -20,8 +20,10 @@ Plug 'tpope/vim-git', { 'for': 'git' }
 Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
 
 " FZF Vim: Fuzzy file openener vim extension
-Plug 'junegunn/fzf', {'dir': '~/.fzf', 'frozen': 1}
-Plug 'junegunn/fzf.vim'
+if executable('fzf')
+    Plug 'junegunn/fzf', {'dir': '~/.fzf', 'frozen': 1}
+    Plug 'junegunn/fzf.vim'
+endif
 
 " Tmux-Navigator: Allows tmux keyboard shortcuts to be used within vim
 Plug 'christoomey/vim-tmux-navigator'
@@ -77,38 +79,20 @@ function! s:find_git_root()
     return system('git rev-parse --show-toplevel 2> /dev/null')[:-2]
 endfunction
 
-command! GitRootFiles execute 'Files' s:find_git_root()
-command! LocalFiles execute 'Files' expand('%:h')
+if executable('fzf')
+    command! GitRootFiles execute 'Files' s:find_git_root()
+    command! LocalFiles execute 'Files' expand('%:h')
 
-nnoremap <silent> ,b :Buffers<cr>
-nnoremap <silent> ,G :GitFiles<cr>
-nnoremap <silent> ,f :Files<cr>
-nnoremap <silent> ,F :LocalFiles<cr>
-nnoremap <silent> ,t :Tags<cr>
-nnoremap <silent> ,/ :execute 'Ag ' . input('Ag/')<cr>
-nnoremap <silent>  K :call SearchWordWithAg()<cr>
-vnoremap <silent>  K :call SearchVisualSelectionWithAg()<cr>
+    nnoremap <silent> ,b :Buffers<cr>
+    nnoremap <silent> ,G :GitFiles<cr>
+    nnoremap <silent> ,f :Files<cr>
+    nnoremap <silent> ,F :LocalFiles<cr>
+    nnoremap <silent> ,t :Tags<cr>
+endif
 
-function! SearchWordWithAg()
-    execute 'Ag' expand('<cword>')
-endfunction
-
-function! SearchVisualSelectionWithAg() range
-    let old_reg = getreg('"')
-    let old_regtype = getregtype('"')
-    let old_clipboard = &clipboard
-    set clipboard&
-    normal! ""gvy
-    let selection = getreg('"')
-    call setreg('"', old_reg, old_regtype)
-    let &clipboard = old_clipboard
-    execute 'Ag' selection
-endfunction
-
-function! SearchWithAgInDirectory(...)
-    call fzf#vim#ag(join(a:000[1:], ' '), extend({'dir': a:1}, g:fzf#vim#default_layout))
-endfunction
-command! -nargs=+ -complete=dir AgIn call SearchWithAgInDirectory(<f-args>)
+if executable('ag')
+    nnoremap <silent> ,/ :execute 'Ag ' . input('Ag/')<cr>
+endif
 
 " vim-argwrap
 nnoremap <silent> ,A :ArgWrap<cr>
