@@ -113,8 +113,16 @@ alias gl='git log --stat'
 alias gpush='git push'
 alias gpull='git pull --rebase'
 alias gr='git remote'
-alias gs='git status -sb'
 
+function version_gt() { test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$1";  }
+
+_git_version=$(git --version 2>/dev/null | awk '{ printf $3  }')
+# Option "--branch" is only supported from version 1.7.2 and higher
+if version_gt $_git_version "1.7.1" ; then
+    alias gs='git status -sb'
+else
+    alias gs='git status -s'
+fi
 
 # Output the week number
 alias week="date +%V"
