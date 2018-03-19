@@ -314,7 +314,10 @@ elseif executable('ack')
     set grepformat=%f:%l:%c:%m
 endif
 
-nnoremap <silent> K :grep! "\b<c-r><c-w>\b"<cr>:cwindow<cr>
+command! -nargs=+ -complete=file_in_path -bar Grep silent! grep! <args> | redraw!
+
+nnoremap <silent> K :grep! <cword> -r *<cr>
+vnoremap <silent> K y:grep! <c-r>" -r *<cr>
 
 """ END GREP AND VIMGREP BEHAVIOR }}}
 """ BUFFER SPECIFIC BEHAVIOR {{{
