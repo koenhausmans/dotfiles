@@ -1,13 +1,13 @@
 ######################################################
 ######################################################
-# 
-# Screen Configuration   
+#
+# Screen Configuration
 # Version: 0.6
 #
 # by Koen Hausmans (KH) (koen@hausmans.nl)
 #
 ######################################################
-# 
+#
 # Changelog
 # =========
 # 2014-10-10 KH : Initial version 0.2
@@ -43,10 +43,10 @@
 # Ctrl+a k          Kill window
 # Ctrl+a :number *  Changes window to have index *
 # Ctrl+a A          Renames window title
-# 
+#
 # Region management:
 # ------------------
-# Ctrl+a s          New region by splitting horizontal          
+# Ctrl+a s          New region by splitting horizontal
 # Ctrl+a |          New region by splitting vertical
 # Ctrl+a :resize    Resizes region by specified value
 # Ctrl+a :fit       Changes region to fit the terminal
@@ -64,9 +64,9 @@
 #
 # Multi user:
 # -----------
-# Ctrl+a :multiuser on	    Enables multi user support
-# Ctrl+a :acladd *user*	    Allows *user* to connect to the shared screen 
-# 
+# Ctrl+a :multiuser on      Enables multi user support
+# Ctrl+a :acladd *user*     Allows *user* to connect to the shared screen
+#
 ######################################################
 ######################################################
 
@@ -78,9 +78,6 @@ vbell_msg ""
 # Don't display the copyright page
 startup_message off
 
-# Make the shell in every window a zsh shell
-#shell zsh
-
 # Keep 1000 scrollback lines
 defscrollback 1000
 
@@ -91,9 +88,7 @@ altscreen on
 #
 # Custom Keybindings
 #
-# Remove some stupid / dangerous key bindings
-#bind ^k
-#bind ^\
+
 # Make them better
 bind \\ quit
 bind K kill
@@ -101,43 +96,18 @@ bind I login on
 bind O login off
 bind } history
 
-# Faster switching of tabs
-#bindkey "^[[D" prev
-#bindkey "^[[1;2D" prev
-#bindkey "^[[1;2C" next
-#bindkey "^[[C" next
-
-#bindkey "^[0d" prev #ctrl-left
-#bindkey "^[0c" next #ctrl-right
-
 # Resize vertical / horizontal views
 bind = resize =
 bind + resize +1
 bind - resize -1
 bind _ resize max
 
-# Kill shortcut
-#bindkey ^c kill
-
 ################
 #
 # Change the status line
 #
 hardstatus alwaysignore
-caption always '%{= Kw}%-w%{= gk}%n %t%{-}%+w %-= %c' 
-
-################
-# Default working directory
-#
-
-# $HOME
-chdir
-
-################
-#
-# Default windows
-#
-#screen 0
+caption always '%{= Kw}%-w%{= gk}%n %t%{-}%+w %-= %c'
 
 ################
 #
