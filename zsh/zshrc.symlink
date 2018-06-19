@@ -1,18 +1,24 @@
-##
-## Environment variables
-##
+### ---------------------------------------------------------------------------
+### Environment variables
+### ---------------------------------------------------------------------------
+
+if [[ $TERM == xterm ]] ; then
+    TERM=xterm-256color
+fi
 
 export DOTFILES="$HOME/.dotfiles"
 
-# Set the PATH environment variable
 export PATH="$HOME/bin:$DOTFILES/bin:$HOME/.local/bin/:$PATH"
 
 # Zplug directory
 export ZPLUG_HOME="$HOME/.local/share/zplug/"
 
-##
-## Plugins
-##
+export VISUAL="vim"
+export EDITOR="$VISUAL"
+
+### ---------------------------------------------------------------------------
+### Plugins
+### ---------------------------------------------------------------------------
 
 # Automaticall load zplug if it doesn't exist
 if [[ ! -d $ZPLUG_HOME ]] ; then
@@ -32,9 +38,6 @@ source $ZPLUG_HOME/init.zsh
 zplug "zsh-users/zsh-completions"
 zplug "zsh-users/zsh-autosuggestions", defer:2
 zplug "zsh-users/zsh-syntax-highlighting", defer:3
-
-zplug "felixr/docker-zsh-completion"
-
 zplug "agnoster/agnoster-zsh-theme", as:theme
 
 zplug "$Z_HOME", from:local, use:z.sh
@@ -48,12 +51,207 @@ fi
 
 zplug load
 
-##
-## Load zsh files in the dotfiles repository
-##
-for file ($DOTFILES/zsh/*.zsh(N)); do
-    source $file
-done
+
+### ---------------------------------------------------------------------------
+### Key bindings
+### ---------------------------------------------------------------------------
+
+# Enable emacs mode
+# Use <C-x><C-v> to access vim mode while using emacs mode
+bindkey -e
+
+# Use <C-x><C-e> for editing command line in vim
+# Also possible to use v in vi-mode
+autoload -U edit-command-line
+zle -N edit-command-line
+bindkey '^X^E' edit-command-line
+bindkey -M vicmd v edit-command-line
+
+# Enable going into vi-mode using <C-[>
+bindkey -M emacs '^[' vi-cmd-mode
+
+# Enable history expansion using the <space> key
+bindkey -M emacs ' ' magic-space
+bindkey -M viins ' ' magic-space
+
+# Reduce the key timeout in zsh to 100ms
+export KEYTIMEOUT=1
+
+
+### ---------------------------------------------------------------------------
+### Aliases
+### ---------------------------------------------------------------------------
+
+alias ls='ls --color=tty'
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+# Remove shortcuts
+alias rr="rm -rf"
+
+# Output the week number
+alias week="date +%V"
+
+# Git aliases / shortcuts
+alias g='git'
+alias ga='git add'
+alias gc='git commit'
+alias gca='git commit -a'
+alias gcam='git commit -a -m'
+alias gcm='git commit -m'
+alias gd='git diff'
+alias gdc='git diff --cached'
+alias gdt='git diff-tree --no-commit-id --name-only -r'
+alias gl='git log --stat'
+alias gpush='git push'
+alias gpull='git pull --rebase'
+alias gs='git status -sb'
+
+
+### ---------------------------------------------------------------------------
+### Directories
+### ---------------------------------------------------------------------------
+
+# Automatically navigate into directory if an invalid command is given and the command is the name of a directory
+setopt auto_cd
+
+# Make cd push the old directory onto the directory stack
+setopt auto_pushd
+
+# Don't push duplicate folders onto the directory stack
+setopt pushd_ignore_dups
+
+# Exchange the meanings of + and - when used with a number to specify a directory in the stack
+setopt pushdminus
+
+# Ls colors
+autoload -U colors && colors
+
+# Aliases
+alias -g ...='../..'
+alias -g ....='../../..'
+alias -g .....='../../../..'
+alias -g ......='../../../../..'
+
+alias -- -='cd -'
+alias 1='cd -'
+alias 2='cd -2'
+alias 3='cd -3'
+alias 4='cd -4'
+alias 5='cd -5'
+alias 6='cd -6'
+alias 7='cd -7'
+alias 8='cd -8'
+alias 9='cd -9'
+
+alias d='dirs -v | head -10'
+
+# List directory contents
+alias lsa='ls -lah'
+alias l='ls -lh'
+alias ll='ls -lh'
+alias la='ls -lAh'
+
+
+### ---------------------------------------------------------------------------
+### History
+### ---------------------------------------------------------------------------
+HISTSIZE=10000
+SAVEHIST=$HISTSIZE
+# HISTIGNORE="l:ls:cd:cd -:pwd:exit"
+HISTFILE=~/.zsh_history
+
+# Write to the history file immediately, not when the shell exist
+setopt inc_append_history
+
+# Share history between all sessions
+setopt share_history
+
+# Expire a duplicate event first when trimming history
+setopt hist_expire_dups_first
+
+# Do not record an event that was just recorded again
+setopt hist_ignore_dups
+
+# Do not execute immediately upon history expansion
+setopt hist_verify
+
+
+### ---------------------------------------------------------------------------
+### Completion
+### ---------------------------------------------------------------------------
+zmodload -i zsh/complist
+
+WORDCHARS=''
+
+# Disable start/stop characters
+unsetopt flowcontrol
+
+# The cursor stays and completion is done from both ends
+setopt complete_in_word
+
+# Use menu completion after the second consecutive request for completion
+setopt auto_menu
+
+# Move the cursor to the end of the word when a full completion is inserted
+setopt always_to_end
+
+# On an ambiguous completion, insert the first match immediately
+unsetopt menu_complete
+
+zstyle ':completion:*:*:*:*:*' menu select
+
+# Allow for case insensitive and hyphen insensitive matching
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z-_}={A-Za-z_-}' 'r:|=*' 'l:|=* r:|=*'
+
+zstyle ':completion:*' list-colors ''
+# zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
+
+# zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
+
+# disable named-directories autocompletion
+zstyle ':completion:*:cd:*' tag-order local-directories directory-stack path-directories
+
+# Use caching so that commands like apt and dpkg complete are useable
+zstyle ':completion::complete:*' use-cache 1
+zstyle ':completion::complete:*' cache-path $ZSH_CACHE_DIR
+
+# ... unless we really want to.
+zstyle '*' single-ignored show
+
+
+### ---------------------------------------------------------------------------
+### Auto correction
+### ---------------------------------------------------------------------------
+
+# Disable auto correction for these commands
+alias man='nocorrect man'
+alias mkdir='nocorrect mkdir'
+alias mv='nocorrect mv'
+alias sudo='nocorrect sudo'
+alias vim='nocorrect vim'
+
+# Enable auto correction
+setopt correct_all
+
+
+### ---------------------------------------------------------------------------
+### Auto correction
+### ---------------------------------------------------------------------------
+if [[ -d "$HOME/.fzf/bin" && ! "$PATH" == *$HOME/.fzf/bin/* ]]; then
+    export PATH="$PATH:$HOME/.fzf/bin"
+fi
+
+if [[ ! "$MANPATH" == *$HOME/.fzf/man* && -d "$HOME/.fzf/man" ]]; then
+    export MANPATH="$MANPATH:$HOME/.fzf/man"
+fi
+
+[[ $- == *i* ]] && source "$HOME/.fzf/shell/completion.zsh" 2> /dev/null
+
+FZF_TMUX=1
+[[ -f "$HOME/.fzf/shell/key-bindings.zsh" ]] && source "$HOME/.fzf/shell/key-bindings.zsh"
+
 
 ##
 ## Allow for machine-specific local changes
