@@ -32,9 +32,9 @@ function _git_prompt() {
     local _rst="\[\e[0m\]"
     local _green="\[\e[32m\]"
 
-    local branch=$(_git_branch)
+    local branch="$(_git_branch)"
     if [[ "$branch" != "" ]] ; then
-        local status=$(_git_status)
+        local status="$(_git_status)"
         echo "$_rst($_green$branch$_rst$status) "
     fi
 }
