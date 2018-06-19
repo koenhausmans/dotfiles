@@ -187,11 +187,14 @@ fi
 ### ---------------------------------------------------------------------------
 ### Z Plugin
 ### ---------------------------------------------------------------------------
-Z_HOME="$HOME/.local/share/z/"
-if [[ ! -d "$Z_HOME" ]] ; then
-    git clone https://github.com/rupa/z $Z_HOME
-fi
-. $Z_HOME/z.sh
+load_z() {
+    local Z_HOME="$HOME/.local/share/z/"
+    if [[ ! -d "$Z_HOME" ]] ; then
+        git clone https://github.com/rupa/z $Z_HOME
+    fi
+    . $Z_HOME/z.sh
+}
+load_z
 
 ### ---------------------------------------------------------------------------
 ### Load machine-specific config files
