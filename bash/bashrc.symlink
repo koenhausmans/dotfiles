@@ -201,7 +201,7 @@ load_z
 ### ---------------------------------------------------------------------------
 
 # Customize to your needs...
-if [ -f $HOME/.bashrc.local ]; then
+if [[ -f $HOME/.bashrc.local ]]; then
     source $HOME/.bashrc.local
 fi
 
