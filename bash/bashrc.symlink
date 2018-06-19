@@ -171,14 +171,17 @@ HISTFILESIZE=2000
 ### FZF Plugin
 ### ---------------------------------------------------------------------------
 
-if [[ -x "$(command -v fzf)" && -d "$HOME/.fzf" ]] ; then
+if [[ -d "$HOME/.fzf" ]] ;then
     export PATH="$PATH:$HOME/.fzf/bin"
-    export MANPATH="$MANPATH:$HOME/.fzf/man"
 
-    FZF_TMUX=1
-    [[ $- == *i* ]] && source "$HOME/.fzf/shell/completion.bash" 2> /dev/null
+    if [[ -x "$(command -v fzf)" && -d "$HOME/.fzf" ]] ; then
+        export MANPATH="$MANPATH:$HOME/.fzf/man"
 
-    source "$HOME/.fzf/shell/key-bindings.bash"
+        FZF_TMUX=1
+        [[ $- == *i* ]] && source "$HOME/.fzf/shell/completion.bash" 2> /dev/null
+
+        source "$HOME/.fzf/shell/key-bindings.bash"
+    fi
 fi
 
 ### ---------------------------------------------------------------------------
