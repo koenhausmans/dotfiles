@@ -10,47 +10,26 @@ export DOTFILES="$HOME/.dotfiles"
 
 export PATH="$HOME/bin:$DOTFILES/bin:$HOME/.local/bin/:$PATH"
 
-# Zplug directory
-export ZPLUG_HOME="$HOME/.local/share/zplug/"
-
 export VISUAL="vim"
 export EDITOR="$VISUAL"
+
+export SHELL="$(command -v zsh)"
 
 ### ---------------------------------------------------------------------------
 ### Plugins
 ### ---------------------------------------------------------------------------
 
-# Automaticall load zplug if it doesn't exist
-if [[ ! -d $ZPLUG_HOME ]] ; then
-    echo "Installing zplug..."
-    git clone --quiet https://github.com/zplug/zplug $ZPLUG_HOME
-fi
+ZSH_PLUGIN_FOLDER="$HOME/.local/share/zsh-plugins/"
+source $ZSH_PLUGIN_FOLDER/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $ZSH_PLUGIN_FOLDER/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $HOME/.local/share/z/z.sh
 
-# Download z plugin
-Z_HOME="$HOME/.local/share/z/"
-if [[ ! -d "$Z_HOME" ]] ; then
-    echo "Installing z.sh..."
-    git clone --quiet https://github.com/rupa/z $Z_HOME
-fi
+### ---------------------------------------------------------------------------
+### Theming
+### ---------------------------------------------------------------------------
 
-source $ZPLUG_HOME/init.zsh
-
-zplug "zsh-users/zsh-completions"
-zplug "zsh-users/zsh-autosuggestions", defer:2
-zplug "zsh-users/zsh-syntax-highlighting", defer:3
-zplug "agnoster/agnoster-zsh-theme", as:theme
-
-zplug "$Z_HOME", from:local, use:z.sh
-
-if ! zplug check --verbose ; then
-    printf "Install zplug plugins? [y/N]: "
-    if read -q ; then
-        echo ; zplug install
-    fi
-fi
-
-zplug load
-
+source $ZSH_PLUGIN_FOLDER/agnoster-zsh-theme/agnoster.zsh-theme
+setopt prompt_subst
 
 ### ---------------------------------------------------------------------------
 ### Key bindings
@@ -157,9 +136,9 @@ alias la='ls -lAh'
 ### ---------------------------------------------------------------------------
 ### History
 ### ---------------------------------------------------------------------------
+
 HISTSIZE=10000
 SAVEHIST=$HISTSIZE
-# HISTIGNORE="l:ls:cd:cd -:pwd:exit"
 HISTFILE=~/.zsh_history
 
 # Write to the history file immediately, not when the shell exist
@@ -181,6 +160,14 @@ setopt hist_verify
 ### ---------------------------------------------------------------------------
 ### Completion
 ### ---------------------------------------------------------------------------
+
+autoload -Uz compinit
+if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
+    compinit;
+else
+    compinit -C;
+fi;
+
 zmodload -i zsh/complist
 
 WORDCHARS=''
