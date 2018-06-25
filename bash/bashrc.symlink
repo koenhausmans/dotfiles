@@ -138,7 +138,7 @@ function _prompt_command {
     local _rst="\[\e[0m\]"
 
     [[ -n "$SSH_CONNECTION" ]] && local _HOST="$_yellow\u@\h "
-    local _GIT=$(_git_prompt)
+    local _GIT="$(_git_prompt)"
 
     PS1="$_HOST$_blue\w $_GIT"
 
