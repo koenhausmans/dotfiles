@@ -28,8 +28,56 @@ source $HOME/.local/share/z/z.sh
 ### Theming
 ### ---------------------------------------------------------------------------
 
-source $ZSH_PLUGIN_FOLDER/agnoster-zsh-theme/agnoster.zsh-theme
+# Based on https://github.com/jackharrisonsherlock/common
 setopt prompt_subst
+
+PROMPT='$(theme_host)$(theme_pwd)$(theme_bg_jobs)$(theme_return_status)'
+RPROMPT='$(theme_git_status)'
+
+theme_host() {
+    if [[ -n $SSH_CONNECTION ]]; then
+        me="%n@%m"
+    elif [[ $LOGNAME != $USER ]]; then
+        me="%n"
+    fi
+    if [[ -n $me ]]; then
+        echo "%{$fg[green]%}$me%{$reset_color%}:"
+    fi
+}
+
+theme_pwd() {
+    echo -n "%{$fg[blue]%}%~ "
+}
+
+theme_bg_jobs() {
+    echo -n "%{$fg[red]%}%(1j.↓%j .)"
+}
+
+theme_return_status() {
+    local common_prompt_symbol="❯"
+    echo -n "%(?.%F{magenta}.%F{red})$common_prompt_symbol%f "
+}
+
+theme_git_status() {
+    local message=""
+    local message_color="%F{green}"
+
+    local staged=$(git status --porcelain 2>/dev/null | grep -e "^M " -e "^A ")
+    local unstaged=$(git status --porcelain 2>/dev/null | grep -e "^ M" -e "^??")
+
+    if [[ -n ${staged} ]]; then
+        message_color="%F{red}"
+    elif [[ -n ${unstaged} ]]; then
+        message_color="%F{yellow}"
+    fi
+
+    local branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+    if [[ -n ${branch} ]]; then
+        message+="${message_color}${branch}%f"
+    fi
+
+    echo -n "${message}"
+}
 
 ### ---------------------------------------------------------------------------
 ### Key bindings
