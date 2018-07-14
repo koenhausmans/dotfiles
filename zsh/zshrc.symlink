@@ -76,7 +76,7 @@ theme_git_status() {
         message+="${message_color}${branch}%f"
     fi
 
-    echo -n "${message}"
+    echo -n "\u27EE ${message} \u27EF"
 }
 
 ### ---------------------------------------------------------------------------
