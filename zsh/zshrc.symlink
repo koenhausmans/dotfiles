@@ -54,7 +54,7 @@ theme_bg_jobs() {
 }
 
 theme_return_status() {
-    local common_prompt_symbol="❯"
+    local common_prompt_symbol="\u276F"
     echo -n "%(?.%F{magenta}.%F{red})$common_prompt_symbol%f "
 }
 
