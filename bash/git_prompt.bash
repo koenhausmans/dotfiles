@@ -2,16 +2,32 @@
 
 function _git_prompt() {
     local _rst="\[\e[0m\]"
+    local _red="\[\e[31m\]"
     local _green="\[\e[32m\]"
+    local _yellow="\[\e[33m\]"
 
     # -- Finds and outputs the current branch name by parsing the list of
     #    all branches
     # -- Current branch is identified by an asterisk at the beginning
     # -- If not in a Git repository, error message goes to /dev/null and
     #    no output is produced
-    local branch="$(git branch --no-color 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')"
+    local branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
 
     if [[ "$branch" != "" ]] ; then
+        local git_status="$(git status --porcelain 2>/dev/null)"
+
+        ##
+        ## Determine the color of the git branch
+        ##
+        local branch_color="$_green"
+        # Check for staged commits
+        if [[ -n $(egrep '^[MADRC]' <<<"$git_status") ]]; then
+            local branch_color="$_red"
+        # Check for unstaged commits
+        elif [[ -n $(egrep '^.[MD]' <<<"$git_status") ]]; then
+            local branch_color="$_yellow"
+        fi
+
         # Outputs a series of indicators based on the status of the
         # working directory:
         # + changes are staged and ready to commit
@@ -19,18 +35,16 @@ function _git_prompt() {
         # ? untracked files are present
         # S changes have been stashed
         # P local commits need to be pushed to the remote
-        # local status="$(git status --porcelain 2>/dev/null)"
-        local status_output=''
+        local flags=''
 
-        local status="$(git status --porcelain 2>/dev/null)"
-        [[ -n $(egrep '^[MADRC]' <<<"$status") ]] && status_output="$status_output+"
-        [[ -n $(egrep '^.[MD]' <<<"$status") ]] && status_output="$status_output!"
-        [[ -n $(egrep '^\?\?' <<<"$status") ]] && status_output="$status_output?"
-        [[ -n $(git stash list) ]] && status_output="${status_output}S"
-        [[ -n $(git log --branches --not --remotes) ]] && status_output="${status_output}P"
-        [[ -n $status_output ]] && status_output="|$status_output"  # separate from branch name
+        [[ -n $(egrep '^[MADRC]' <<<"$git_status") ]] && flags+="+"
+        [[ -n $(egrep '^.[MD]' <<<"$git_status") ]] && flags+="!"
+        [[ -n $(egrep '^\?\?' <<<"$git_status") ]] && flags+="?"
+        [[ -n $(git stash list) ]] && flags+="S"
+        [[ -n $(git log --branches --not --remotes) ]] && flags+="P"
+        [[ -n $flags ]] && flags="|$flags"  # separate from branch name
 
-        echo "$_rst($_green$branch$_rst$status_output) "
+        echo "$_rst(${branch_color}$branch$_rst$flags) "
     fi
 }
 
