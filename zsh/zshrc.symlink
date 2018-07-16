@@ -59,24 +59,44 @@ theme_return_status() {
 }
 
 theme_git_status() {
-    local message=""
-    local message_color="%F{green}"
-
-    local staged=$(git status --porcelain 2>/dev/null | grep -e "^M " -e "^A ")
-    local unstaged=$(git status --porcelain 2>/dev/null | grep -e "^ M" -e "^??")
-
-    if [[ -n ${staged} ]]; then
-        message_color="%F{red}"
-    elif [[ -n ${unstaged} ]]; then
-        message_color="%F{yellow}"
-    fi
-
     local branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
     if [[ -n ${branch} ]]; then
-        message+="${message_color}${branch}%f"
-    fi
 
-    echo -n "\u27EE ${message} \u27EF"
+        local git_status=$(git status --porcelain 2>/dev/null)
+        # local staged=$(git status --porcelain 2>/dev/null | grep -e "^M " -e "^A ")
+        # local unstaged=$(git status --porcelain 2>/dev/null | grep -e "^ M" -e "^??")
+
+        ##
+        ## Determine the color of the git branch
+        ##
+        local branch_color="%F{green}"
+        # Check for staged commits
+        if [[ -n $(egrep '^[MADRC]' <<<"$git_status") ]]; then
+            branch_color="%F{red}"
+        # Check for unstaged commits
+        elif [[ -n $(egrep '^.[MD]' <<<"$git_status") ]]; then
+            branch_color="%F{yellow}"
+        fi
+
+        ##
+        ## Determine the git flags that should be shown
+        ##
+        # + changes are staged and ready to commit
+        # ! unstaged changes are present
+        # ? untracked files are present
+        # S changes have been stashed
+        # P local commits need to be pushed to the remote
+        local flags=""
+
+        [[ -n $(egrep '^[MADRC]' <<<"$git_status") ]] && flags+="+"
+        [[ -n $(egrep '^.[MD]' <<<"$git_status") ]] && flags+="!"
+        [[ -n $(egrep '^\?\?' <<<"$git_status") ]] && flags+="?"
+        [[ -n $(git stash list) ]] && flags+="S"
+        [[ -n $(git log --branches --not --remotes) ]] && flags+="P"
+        [[ -n $flags ]] && flags=" | $flags"
+
+        echo "\u27EE ${branch_color}${branch}%f$flags \u27EF"
+    fi
 }
 
 ### ---------------------------------------------------------------------------
