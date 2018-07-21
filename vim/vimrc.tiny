@@ -23,6 +23,13 @@ Plug 'airblade/vim-gitgutter'
 
 Plug 'jiangmiao/auto-pairs'
 
+if executable('fzf')
+    Plug 'junegunn/fzf', {'dir': '~/.fzf', 'frozen': 1}
+    Plug 'junegunn/fzf.vim'
+endif
+
+Plug 'moll/vim-bbye', {'on': 'Bdelete'}
+
 Plug 'christoomey/vim-tmux-navigator'
 
 call plug#end()
@@ -34,6 +41,12 @@ let g:surround_{char2nr("*")} = "/* \r */"
 
 let g:gitgutter_map_keys = 0
 
+let g:tmux_navigator_disable_when_zoomed = 1
+
+let g:AutoPairsMultilineClose = 0
+
+cabbrev bd Bdelete
+
 """ END PLUGIN INTEGRATION }}}
 """ MISC EDITOR BEHAVIOR {{{
 
@@ -41,6 +54,14 @@ set encoding=utf-8
 set hidden
 set formatoptions+=n
 set path+=**
+
+function! StripTrailingWhitespaces()
+    exe "normal mz"
+    %s/\s\+$//ge
+    exe "normal `z"
+endfunc
+
+command! StripTrailingWhitespaces call StripTrailingWhitespaces()
 
 """ END MISC EDITOR BEHAVIOR }}}
 """ TEMP FILES BEHAVIOR {{{
@@ -220,18 +241,19 @@ cnoremap <M-f> <S-Right>
 """ END COMMAND LINE BEHAVIOR }}}
 """ LEADER KEY BEHAVIOR {{{
 
-function! StripTrailingWhitespaces()
-    exe "normal mz"
-    %s/\s\+$//ge
-    exe "normal `z"
-endfunc
 
-command! StripTrailingWhitespaces call StripTrailingWhitespaces()
+if executable('fzf')
+    nnoremap <silent> ,b :Buffers<cr>
+    nnoremap <silent> ,f :Files<cr>
+    nnoremap <silent> ,t :Tags<cr>
+else
+    nnoremap          ,b :b <C-d>
+    nnoremap          ,f :find *
+    nnoremap          ,t :tjump /
+endif
 
-nnoremap          ,b       :b <C-d>
-nnoremap <silent> ,c       :bd<cr>
+nmap     <silent> ,c       :bd<cr>
 nnoremap          ,e       :e **/*
-nnoremap          ,f       :find *
 nnoremap <silent> ,m       :make<cr>
 nnoremap <silent> ,q       :quit<cr>
 "nnoremap          ,s       :sfind *
