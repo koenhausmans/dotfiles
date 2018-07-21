@@ -1,0 +1,300 @@
+""" PLUGIN MANAGER (VIM-PLUG) {{{
+
+if empty(glob('~/.vim/autoload/plug.vim'))
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall
+endif
+
+call plug#begin('~/.vim/plugged')
+
+Plug 'morhetz/gruvbox'
+Plug 'romainl/apprentice'
+
+Plug 'tpope/vim-sensible'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-unimpaired'
+Plug 'tpope/vim-commentary'
+
+Plug 'romainl/vim-cool'
+
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+
+Plug 'jiangmiao/auto-pairs'
+
+Plug 'christoomey/vim-tmux-navigator'
+
+call plug#end()
+
+""" END PLUGIN MANAGER }}}
+""" PLUGIN INTEGRATION {{{
+
+let g:surround_{char2nr("*")} = "/* \r */"
+
+let g:gitgutter_map_keys = 0
+
+""" END PLUGIN INTEGRATION }}}
+""" MISC EDITOR BEHAVIOR {{{
+
+set encoding=utf-8
+set hidden
+set formatoptions+=n
+set path+=**
+
+""" END MISC EDITOR BEHAVIOR }}}
+""" TEMP FILES BEHAVIOR {{{
+
+if has("persistent_undo")
+    set undofile
+    set undodir=$HOME/.vim/undodir//
+endif
+
+""" END TEMP FILES BEHAVIOR }}}
+""" STATUSLINE BEHAVIOR {{{
+
+function! ActiveStatusline()
+    " Based on: https://gist.github.com/ericbn/f2956cd9ec7d6bff8940c2087247b132
+    let statusline="%1*"
+    let statusline.="%(%{&filetype!='help'?'\ \ '.bufnr('%'):''}\ │%)"
+    let statusline.="\ %<"
+    let statusline.="%f\ "
+    let statusline.="%*"
+    let statusline.="\ %{&modified?'[+]':''}"
+    let statusline.="%{&readonly?'[ro]':''}"
+    let statusline.="\ %="
+    let statusline.="\ %{&filetype!=#''?&filetype:'none'}"
+    let statusline.="\ │\ Ln:\ %3l,\ "
+    let statusline.="Col:\ %-2v"
+    let statusline.="\ │\ %2p%%\ "
+    let statusline.="%1*%{fugitive#head()!=''?' '.fugitive#head().'\ ':''}"
+    return statusline
+endfunction
+
+set statusline=%!ActiveStatusline()
+
+""" END STATUSLINE BEHAVIOR }}}
+""" COLORSCHEME SETTINGS {{{
+
+function! CustomStatuslineColors() abort
+    " Gruvbox statusline colors
+    if g:colors_name == 'gruvbox'
+        highlight StatusLine   cterm=reverse ctermfg=239 ctermbg=223 gui=reverse guifg=#504945 guibg=#ebdbb2
+        highlight StatusLineNC cterm=reverse ctermfg=237 ctermbg=246 gui=reverse guifg=#3c3836 guibg=#a89984
+        highlight User1        cterm=NONE    ctermfg=235 ctermbg=223 gui=NONE    guifg=#504945 guibg=#ebdbb2
+    " Blue statusline colors based on apprentice colors
+    elseif g:colors_name == 'apprentice'
+        highlight StatusLine   cterm=NONE         ctermfg=252 ctermbg=67  gui=NONE         guifg=#d0d0d0 guibg=#5f87af
+        highlight StatusLineNC cterm=NONE         ctermfg=243 ctermbg=237 gui=NONE         guifg=#949494 guibg=#3a3a3a
+        highlight User1        cterm=bold,reverse ctermfg=252 ctermbg=67  gui=NONE,reverse guifg=#d0d0d0 guibg=#5f87af
+    " Visual Studio Code inspired statusline colors
+    else
+        highlight StatusLine   cterm=NONE         ctermfg=253 ctermbg=54  gui=NONE         guifg=#dadada guibg=#5f0087
+        highlight StatusLineNC cterm=NONE         ctermfg=243 ctermbg=237 gui=NONE         guifg=#949494 guibg=#3a3a3a
+        highlight User1        cterm=bold,reverse ctermfg=253 ctermbg=54  gui=bold,reverse guifg=#dadada guibg=#5f0087
+    endif
+    highlight ModeMsg cterm=NONE ctermbg=green ctermfg=black
+    highlight Visual cterm=NONE ctermbg=white ctermfg=darkblue
+endfunction
+
+augroup CustomStatusline
+    autocmd!
+    autocmd ColorScheme * call CustomStatuslineColors()
+augroup END
+
+set background=dark
+set cursorline
+
+silent! colorscheme elflord
+silent! colorscheme gruvbox
+silent! colorscheme apprentice
+
+function! SaveColorscheme() abort
+    let l:vimhome_plugin_folder = $HOME . "/.vim/plugin"
+    let l:last_used_file = l:vimhome_plugin_folder . "/last-used-colorscheme.vim"
+    let l:contents = [ 'silent! colorscheme ' . g:colors_name ]
+    if !isdirectory(l:vimhome_plugin_folder)
+        call mkdir(l:vimhome_plugin_folder, 'p')
+    endif
+    call writefile(l:contents, l:last_used_file)
+endfunction
+
+augroup SaveColorscheme
+    autocmd!
+    autocmd ColorScheme * call SaveColorscheme()
+augroup END
+
+""" END COLORSCHEME SETTINGS }}}
+""" INDENT BEHAVIOR {{{
+
+set expandtab
+set shiftround
+set shiftwidth=4
+set softtabstop=4
+set tabstop=4
+
+""" END INDENT BEHAVIOR }}}
+""" SEARCH BEHAVIOR {{{
+
+set hlsearch
+set ignorecase
+set smartcase
+
+""" END SEARCH BEHAVIOR }}}
+""" NORMAL MODE BEHAVIOR {{{
+
+noremap <silent> <expr> j (v:count == 0 ? 'gj' : 'j')
+noremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
+noremap <silent> $ g$
+noremap <silent> 0 g^
+
+if empty(glob("~/.vim/plugged/vim-tmux-navigator/"))
+    nnoremap <c-j> <c-w>j
+    nnoremap <c-k> <c-w>k
+    nnoremap <c-h> <c-w>h
+    nnoremap <c-l> <c-w>l
+endif
+
+""" END NORMAL MODE BEHAVIOR }}}
+""" VISUAL MODE BEHAVIOR {{{
+
+vnoremap < <gv
+vnoremap > >gv
+vnoremap = =gv
+
+augroup HighlightFollowsFocus
+    autocmd!
+    autocmd WinEnter,FocusGained * set cursorline
+    autocmd WinLeave,FocusLost * set nocursorline
+augroup END
+
+set number
+if exists("&relativenumber")
+    set relativenumber
+endif
+
+augroup SmartNumbers
+    autocmd!
+    if exists("&relativenumber")
+        autocmd WinEnter,FocusGained * if &number | setlocal relativenumber | endif
+        autocmd WinLeave,FocusLost * if &number | setlocal norelativenumber | endif
+    endif
+augroup END
+
+set showbreak=↪\
+set list
+set listchars=tab:»\ ,trail:•,nbsp:␣,precedes:⟨,extends:⟩
+
+""" END VISUAL BEHAVIOR }}}
+""" FOLD BEHAVIOR {{{
+
+set foldmethod=marker
+set foldopen+=jump
+
+""" END FOLD BEHAVIOR }}}
+""" WINDOW BEHAVIOR {{{
+
+set splitbelow
+set splitright
+
+""" END WINDOW BEHAVIOR }}}
+""" COMMAND LINE BEHAVIOR {{{
+
+set wildmode=longest:list,full
+if exists("&wildignorecase")
+    set wildignorecase
+endif
+
+cmap w!! w !sudo tee > /dev/null %
+cabbr <expr> %% expand('%:p:h')
+
+" cnoremap <C-a> <Home>
+" cnoremap <C-e> <End>
+" cnoremap <C-p> <Up>
+" cnoremap <C-n> <Down>
+" cnoremap <C-b> <Left>
+" cnoremap <C-f> <Right>
+cnoremap <M-b> <S-Left>
+cnoremap <M-f> <S-Right>
+
+""" END COMMAND LINE BEHAVIOR }}}
+""" LEADER KEY BEHAVIOR {{{
+
+function! StripTrailingWhitespaces()
+    exe "normal mz"
+    %s/\s\+$//ge
+    exe "normal `z"
+endfunc
+
+command! StripTrailingWhitespaces call StripTrailingWhitespaces()
+
+nnoremap          ,b       :b <C-d>
+nnoremap <silent> ,c       :bd<cr>
+nnoremap          ,e       :e **/*
+nnoremap          ,f       :find *
+nnoremap <silent> ,m       :make<cr>
+nnoremap <silent> ,q       :quit<cr>
+"nnoremap          ,s       :sfind *
+"nmap     <silent> ,T       :call StripTrailingWhitespaces()<CR>:retab<CR>
+"nnoremap          ,v       :vert sfind *
+nnoremap <silent> ,z       :b#<cr>
+nnoremap          ,/       :grep<space>
+"nnoremap <silent> ,<space> :nohlsearch<cr>
+
+""" END LEADER KEY BEHAVIOR }}}
+""" GREP AND VIMGREP BEHAVIOR {{{
+
+if executable('ag')
+    set grepprg=ag\ --vimgrep\ $*
+    set grepformat=%f:%l:%c:%m
+endif
+
+command! -nargs=+ -complete=file_in_path -bar Grep silent! grep! <args> | redraw!
+
+nnoremap <silent> K :grep! <cword> -r *<cr>
+vnoremap <silent> K y:grep! <c-r>" -r *<cr>
+
+""" END GREP AND VIMGREP BEHAVIOR }}}
+""" BUFFER SPECIFIC BEHAVIOR {{{
+
+augroup FileTypeSpell
+    autocmd!
+    if has("spell")
+        autocmd Filetype markdown,gitcommit,todo setlocal spell
+    endif
+augroup END
+
+augroup AdditionalFileTypesCommands
+    autocmd!
+    autocmd BufWrite *.py :call StripTrailingWhitespaces()
+    autocmd BufWrite *.coffee :call StripTrailingWhitespaces()
+    autocmd Filetype c,cpp,cs,java  setlocal commentstring=//\ %s
+augroup END
+
+augroup LastBufferPosition
+    autocmd!
+    autocmd BufReadPost *
+        \ if line("'\"") > 0 && line("'\"") <= line("$") |
+        \   exe "normal! g`\"" |
+        \ endif
+augroup END
+
+augroup AutomaticQuickFix
+    autocmd!
+    autocmd QuickFixCmdPost [^l]* cwindow
+    autocmd QuickFixCmdPost    l* lwindow
+augroup END
+
+""" END BUFFER SPECIFIC BEHAVIOR }}}
+""" CODE COMPLETION BEHAVIOR {{{
+
+set omnifunc=syntaxcomplete#Complete
+
+""" END CODE COMPLETION BEHAVIOR }}}
+""" C++ SPECIFIC BEHAVIOR {{{
+
+set cindent
+set cinoptions+=g0
+set cinoptions+=N-s
+
+""" END C++ SPECIFIC BEHAVIOR }}}
