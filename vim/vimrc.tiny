@@ -113,9 +113,9 @@ function! CustomStatuslineColors() abort
         highlight StatusLine   cterm=NONE         ctermfg=253 ctermbg=54  gui=NONE         guifg=#dadada guibg=#5f0087
         highlight StatusLineNC cterm=NONE         ctermfg=243 ctermbg=237 gui=NONE         guifg=#949494 guibg=#3a3a3a
         highlight User1        cterm=bold,reverse ctermfg=253 ctermbg=54  gui=bold,reverse guifg=#dadada guibg=#5f0087
+        highlight Visual cterm=NONE ctermbg=white ctermfg=darkblue
     endif
     highlight ModeMsg cterm=NONE ctermbg=green ctermfg=black
-    highlight Visual cterm=NONE ctermbg=white ctermfg=darkblue
 endfunction
 
 augroup CustomStatusline
@@ -164,10 +164,11 @@ set smartcase
 """ END SEARCH BEHAVIOR }}}
 """ NORMAL MODE BEHAVIOR {{{
 
-noremap <silent> <expr> j (v:count == 0 ? 'gj' : 'j')
-noremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
-noremap <silent> $ g$
-noremap <silent> 0 g^
+nnoremap <silent> <expr> j (v:count == 0 ? 'gj' : 'j')
+nnoremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
+nnoremap <silent> $ g$
+nnoremap <silent> 0 g^
+nnoremap ' `
 
 if empty(glob("~/.vim/plugged/vim-tmux-navigator/"))
     nnoremap <c-j> <c-w>j
@@ -229,18 +230,8 @@ endif
 cmap w!! w !sudo tee > /dev/null %
 cabbr <expr> %% expand('%:p:h')
 
-" cnoremap <C-a> <Home>
-" cnoremap <C-e> <End>
-" cnoremap <C-p> <Up>
-" cnoremap <C-n> <Down>
-" cnoremap <C-b> <Left>
-" cnoremap <C-f> <Right>
-cnoremap <M-b> <S-Left>
-cnoremap <M-f> <S-Right>
-
 """ END COMMAND LINE BEHAVIOR }}}
 """ LEADER KEY BEHAVIOR {{{
-
 
 if executable('fzf')
     nnoremap <silent> ,b :Buffers<cr>
@@ -261,7 +252,6 @@ nnoremap <silent> ,q       :quit<cr>
 "nnoremap          ,v       :vert sfind *
 nnoremap <silent> ,z       :b#<cr>
 nnoremap          ,/       :grep<space>
-"nnoremap <silent> ,<space> :nohlsearch<cr>
 
 """ END LEADER KEY BEHAVIOR }}}
 """ GREP AND VIMGREP BEHAVIOR {{{
@@ -270,8 +260,6 @@ if executable('ag')
     set grepprg=ag\ --vimgrep\ $*
     set grepformat=%f:%l:%c:%m
 endif
-
-command! -nargs=+ -complete=file_in_path -bar Grep silent! grep! <args> | redraw!
 
 nnoremap <silent> K :grep! <cword> -r *<cr>
 vnoremap <silent> K y:grep! <c-r>" -r *<cr>
