@@ -35,3 +35,7 @@
     email = koen@hausmans.nl
     name = Koen Hausmans
 
+[merge]
+    tool = vimdiff
+    conflictstyle = diff3
+
