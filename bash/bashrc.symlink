@@ -185,7 +185,7 @@ fi
 ### ---------------------------------------------------------------------------
 load_z() {
     local Z_HOME="$HOME/.local/share/z/"
-    . $Z_HOME/z.sh
+    [[ -f "$Z_HOME/z.sh" ]] && . $Z_HOME/z.sh
 }
 load_z
 
