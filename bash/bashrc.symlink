@@ -34,11 +34,6 @@ shopt -s globstar 2>/dev/null
 shopt -s hostcomplete 2>/dev/null
 shopt -s nocaseglob 2>/dev/null
 
-bind "TAB:menu-complete"
-bind "set completion-ignore-case on"
-bind "set completion-map-case on"
-bind "set show-all-if-ambiguous on"
-
 # Load bash_completion (including git support)
 
 [[ -f /etc/bash_completion ]] && . /etc/bash_completion
