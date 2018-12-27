@@ -4,7 +4,7 @@
 # Screen like binding (remap prefix to Control + a)
 set -g prefix C-a
 unbind C-b
-bind C-a send-prefix
+bind-key -n C-M-A send-prefix
 
 ###
 ### Change the default shell
