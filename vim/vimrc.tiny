@@ -304,7 +304,8 @@ set omnifunc=syntaxcomplete#Complete
 """ C++ SPECIFIC BEHAVIOR {{{
 
 set cindent
-set cinoptions+=g0
-set cinoptions+=N-s
+set cinoptions+=g0 " Place C++ scope declarations (public/private/protected) on the same indentation as the parent
+set cinoptions+=N-s " Do not indent after namespace definitions
+set cinoptions+=:0 " Do not indent switch cases compared to the switch()-statement
 
 """ END C++ SPECIFIC BEHAVIOR }}}
