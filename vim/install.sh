@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 set -e
 
 MODE_ARGUMENT=${1:-}
