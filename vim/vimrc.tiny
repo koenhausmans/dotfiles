@@ -37,8 +37,6 @@ call plug#end()
 """ END PLUGIN MANAGER }}}
 """ PLUGIN INTEGRATION {{{
 
-let g:surround_{char2nr("*")} = "/* \r */"
-
 let g:gitgutter_map_keys = 0
 
 let g:tmux_navigator_disable_when_zoomed = 1
