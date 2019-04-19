@@ -245,9 +245,6 @@ nmap     <silent> ,c       :bd<cr>
 nnoremap          ,e       :e **/*
 nnoremap <silent> ,m       :make<cr>
 nnoremap <silent> ,q       :quit<cr>
-"nnoremap          ,s       :sfind *
-"nmap     <silent> ,T       :call StripTrailingWhitespaces()<CR>:retab<CR>
-"nnoremap          ,v       :vert sfind *
 nnoremap <silent> ,z       :b#<cr>
 nnoremap          ,/       :grep<space>
 
