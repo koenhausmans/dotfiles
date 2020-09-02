@@ -31,6 +31,10 @@ runtime macros/matchit.vim
 set path+=**
 set path+=/usr/include
 
+" Update the ctags path
+set tags+=./.tags
+set tags+=.tags
+
 """ END MISC EDITOR BEHAVIOR }}}
 """ TEMP FILES BEHAVIOR {{{
 

@@ -13,6 +13,7 @@
 *.swp
 *~
 .tags
+tags
 
 # Logs and databases #
 ######################
