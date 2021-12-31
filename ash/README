@@ -1,0 +1,10 @@
+How to use:
+===========
+
+The `ash` shell expects the configuration file to be placed in `/etc/profile` or `$HOME/.profile`.
+This dotfiles will place the configuration file under `$HOME/.ashrc`, therefore a manual step is necessary:
+
+```
+ln -s ~/.ashrc ~/.profile
+```
+

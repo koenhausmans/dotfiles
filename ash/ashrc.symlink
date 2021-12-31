@@ -1,0 +1,68 @@
+### ---------------------------------------------------------------------------
+### Environment variables
+### ---------------------------------------------------------------------------
+
+export DOTFILES="$HOME/.dotfiles"
+
+export PATH="$HOME/bin:$DOTFILES/bin:$HOME/.local/bin/:$PATH"
+
+export VISUAL="vim"
+export EDITOR="$VISUAL"
+
+
+### ---------------------------------------------------------------------------
+### Directories
+### ---------------------------------------------------------------------------
+alias ls='ls --color=auto'
+
+alias grep='grep --color=auto'
+
+### ---------------------------------------------------------------------------
+### Aliases
+### ---------------------------------------------------------------------------
+
+# Remove shortcuts
+alias rr="rm -rf"
+
+# Directory navigation aliases
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+alias ......="cd ../../../../.."
+
+alias --='cd -'
+
+# Ls aliases
+alias lsa='ls -lah'
+alias l='ls -lh'
+alias ll='ls -lh'
+alias la='ls -lAh'
+
+# Git alias
+alias ga='git add'
+alias gc='git commit'
+alias gca='git commit -a'
+alias gcam='git commit -a -m'
+alias gcm='git commit -m'
+alias gd='git diff'
+alias gdc='git diff --cached'
+alias gdt='git diff-tree --no-commit-id --name-only -r'
+alias gl='git log --stat'
+alias gpush='git push'
+alias gpull='git pull --rebase'
+
+alias gs='git status -sb'
+
+alias week="date +%V"
+
+
+### ---------------------------------------------------------------------------
+### Customization
+### ---------------------------------------------------------------------------
+_yellow="\[\e[01;33m\]"
+_blue="\[\e[01;34m\]"
+_reset="\[\e[0m\]"
+export PS1="$_yellow\u@\h $_blue\w \$$_reset "
+
+
