@@ -14,10 +14,10 @@ git_clone_or_pull () {
     fi
 }
 
-git_clone_or_pull "$ZSH_PLUGIN_FOLDER/zsh-autosuggestions" "git://github.com/zsh-users/zsh-autosuggestions"
-git_clone_or_pull "$ZSH_PLUGIN_FOLDER/zsh-syntax-highlighting" "git://github.com/zsh-users/zsh-syntax-highlighting"
-git_clone_or_pull "$ZSH_PLUGIN_FOLDER/agnoster-zsh-theme" "git://github.com/agnoster/agnoster-zsh-theme"
+git_clone_or_pull "$ZSH_PLUGIN_FOLDER/zsh-autosuggestions" "https://github.com/zsh-users/zsh-autosuggestions"
+git_clone_or_pull "$ZSH_PLUGIN_FOLDER/zsh-syntax-highlighting" "https://github.com/zsh-users/zsh-syntax-highlighting"
+git_clone_or_pull "$ZSH_PLUGIN_FOLDER/agnoster-zsh-theme" "https://github.com/agnoster/agnoster-zsh-theme"
 
 Z_HOME="$HOME/.local/share/z/"
-git_clone_or_pull "$Z_HOME" "git://github.com/rupa/z"
+git_clone_or_pull "$Z_HOME" "https://github.com/rupa/z"
 
