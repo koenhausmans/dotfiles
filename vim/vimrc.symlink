@@ -19,6 +19,7 @@ Plug 'joshdick/onedark.vim'
 " Syntax: Additional syntaxes that can be used
 Plug 'tpope/vim-git', { 'for': 'git' }
 Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
+Plug 'rust-lang/rust.vim'
 
 " FZF Vim: Fuzzy file openener vim extension
 if executable('fzf')

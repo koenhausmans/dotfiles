@@ -60,7 +60,7 @@ function! ActiveStatusline()
     let statusline.="\ │\ Ln:\ %3l,\ "
     let statusline.="Col:\ %-2v"
     let statusline.="\ │\ %2p%%\ "
-    let statusline.="%1*%{fugitive#head()!=''?' '.fugitive#head().'\ ':''}"
+    " let statusline.="%1*%{fugitive#head()!=''?' '.fugitive#head().'\ ':''}"
     return statusline
 endfunction
 
