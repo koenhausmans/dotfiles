@@ -77,6 +77,8 @@ exec "source " . expand(s:vimrc_root . "/vim/vimrc.minimal")
 """ PLUGIN INTEGRATION {{{
 
 " FZF Integration: Add shortcuts for FZF usage
+let $FZF_DEFAULT_COMMAND = 'ag -g ""'
+
 function! s:find_git_root()
     return system('git rev-parse --show-toplevel 2> /dev/null')[:-2]
 endfunction
