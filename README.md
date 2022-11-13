@@ -61,3 +61,8 @@ Required packages(Arch Linux):
  * bash-git-prompt
  * wget
 
+Required packages (Nvim):
+-------------------------
+ * nvim
+
+
