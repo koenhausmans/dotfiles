@@ -11,5 +11,5 @@ git_clone_or_pull () {
 }
 
 Z_HOME="$HOME/.local/share/z/"
-git_clone_or_pull "$Z_HOME" "git://github.com/rupa/z"
+git_clone_or_pull "$Z_HOME" "https://github.com/rupa/z"
 
