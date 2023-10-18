@@ -86,8 +86,18 @@ cabbrev bd Bdelete
 
 set encoding=utf-8
 set hidden
+" Recognize numbered lists
 set formatoptions+=n
+" Delete comment character when joining lines
+set formatoptions+=j
+
+" Update the path to provide search in subfolders
 set path+=**
+set path+=/usr/include
+
+" Update the ctags path
+set tags+=./.tags
+set tags+=.tags
 
 function! StripTrailingWhitespaces()
     exe "normal mz"
