@@ -32,7 +32,8 @@ set path+=**
 set path+=/usr/include
 
 " Update the ctags path
-set tags+=./.tags
+set tags+=./.tags; " Recursively search for .tags up till root folder
+set tags+=./.git/tags; " Recursively search for .git/tags up till root folder (Source: https://github.com/tpope/vim-fugitive/blob/1d8c0a38b2fc4ce9ca4204676573b6335725ff75/autoload/fugitive.vim#L5862C70-L5862C70)
 set tags+=.tags
 
 """ END MISC EDITOR BEHAVIOR }}}
