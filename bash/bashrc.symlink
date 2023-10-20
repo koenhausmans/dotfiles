@@ -64,8 +64,8 @@ shopt -s cdable_vars 2>/dev/null
 shopt -s dirspell 2>/dev/null
 
 alias ls='ls --color=auto'
-
 alias grep='grep --color=auto'
+alias ip='ip --color=auto'
 
 ### ---------------------------------------------------------------------------
 ### Aliases
