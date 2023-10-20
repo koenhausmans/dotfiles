@@ -11,6 +11,7 @@ call plug#begin()
 Plug 'morhetz/gruvbox'
 Plug 'romainl/apprentice'
 Plug 'joshdick/onedark.vim'
+Plug 'tanvirtin/monokai.nvim'
 " Plug 'itchyny/lightline.vim'
 " Plug 'shinchu/lightline-gruvbox.vim'
 
@@ -149,6 +150,14 @@ function! CustomStatuslineColors() abort
         highlight User1        cterm=NONE    ctermfg=235 ctermbg=223 gui=NONE    guifg=#504945 guibg=#ebdbb2
     " Blue statusline colors based on apprentice colors
     elseif g:colors_name == 'apprentice'
+        highlight StatusLine   cterm=NONE         ctermfg=252 ctermbg=67  gui=NONE         guifg=#d0d0d0 guibg=#5f87af
+        highlight StatusLineNC cterm=NONE         ctermfg=243 ctermbg=237 gui=NONE         guifg=#949494 guibg=#3a3a3a
+        highlight User1        cterm=bold,reverse ctermfg=252 ctermbg=67  gui=NONE,reverse guifg=#d0d0d0 guibg=#5f87af
+    elseif g:colors_name == 'apprentice'
+        highlight StatusLine   cterm=NONE         ctermfg=252 ctermbg=67  gui=NONE         guifg=#d0d0d0 guibg=#5f87af
+        highlight StatusLineNC cterm=NONE         ctermfg=243 ctermbg=237 gui=NONE         guifg=#949494 guibg=#3a3a3a
+        highlight User1        cterm=bold,reverse ctermfg=252 ctermbg=67  gui=NONE,reverse guifg=#d0d0d0 guibg=#5f87af
+    elseif stridx(g:colors_name, 'monokai') >= 0
         highlight StatusLine   cterm=NONE         ctermfg=252 ctermbg=67  gui=NONE         guifg=#d0d0d0 guibg=#5f87af
         highlight StatusLineNC cterm=NONE         ctermfg=243 ctermbg=237 gui=NONE         guifg=#949494 guibg=#3a3a3a
         highlight User1        cterm=bold,reverse ctermfg=252 ctermbg=67  gui=NONE,reverse guifg=#d0d0d0 guibg=#5f87af
