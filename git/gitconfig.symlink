@@ -21,10 +21,6 @@
 [help]
     autocorrect = 1
 
-# Allow local customizations in the .gitconfig.local file
-[include]
-    path = ~/.gitconfig.local
-
 [init]
     templatedir = ~/.dotfiles/git/git-template
 
@@ -38,4 +34,8 @@
 [merge]
     tool = vimdiff
     conflictstyle = diff3
+
+# Allow local customizations in the .gitconfig.local file
+[include]
+    path = ~/.gitconfig.local
 
