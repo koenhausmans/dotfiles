@@ -37,13 +37,13 @@ Required packages (Ubuntu):
  * git
  * bash
  * python python-pip python-setuptools
- * vim vim-nox
+ * vim
  * zsh
  * tmux
  * exuberant-ctags
  * g++
  * build-essential
- * silversearcher-ag-el
+ * silversearcher-ag
 
 Required packages(Arch Linux):
 ------------------------------
@@ -63,6 +63,6 @@ Required packages(Arch Linux):
 
 Required packages (Nvim):
 -------------------------
- * nvim
+ * neovim
 
 
