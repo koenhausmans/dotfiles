@@ -18,9 +18,9 @@ Plug 'tanvirtin/monokai.nvim'
 " Syntax: Additional syntaxes that can be used
 Plug 'tpope/vim-git', { 'for': 'git' }
 Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
-Plug 'rust-lang/rust.vim'
-Plug 'nvim-lua/plenary.nvim'
-Plug 'akinsho/flutter-tools.nvim'
+" Plug 'rust-lang/rust.vim'
+" Plug 'nvim-lua/plenary.nvim'
+" Plug 'akinsho/flutter-tools.nvim'
 
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-surround'
@@ -447,8 +447,6 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   }
 )
 
-local rt = require("rust-tools")
-
 -- Setup lspconfig.
 local on_attach = function(client, bufnr)
   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
@@ -475,10 +473,6 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
   buf_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.set_loclist()<CR>', opts)
   buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
-  -- Hover actions
-  vim.keymap.set("n", "<C-space>", rt.hover_actions.hover_actions, { buffer = bufnr })
-  -- Code action groups
-  vim.keymap.set("n", "<Leader>a", rt.code_action_group.code_action_group, { buffer = bufnr })
 
   -- Get signatures (and _only_ signatures) when in argument lists.
   require "lsp_signature".on_attach({
@@ -488,21 +482,9 @@ local on_attach = function(client, bufnr)
     },
   })
 end
-
-rt.setup({
-  tools = {
-    inlay_hints = {
-      only_current_line = true,
-    },
-  },
-  server = {
-    on_attach = on_attach,
-  },
-})
-
-require("flutter-tools").setup{}
-
 END
+
+"require("flutter-tools").setup{}
 
 
 "lua << END
