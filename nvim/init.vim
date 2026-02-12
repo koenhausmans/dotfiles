@@ -97,8 +97,7 @@ set path+=**
 set path+=/usr/include
 
 " Update the ctags path
-set tags+=./.tags
-set tags+=.tags
+set tags=./.tags;,tags
 
 function! StripTrailingWhitespaces()
     exe "normal mz"
