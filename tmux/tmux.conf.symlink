@@ -1,11 +1,57 @@
+
+##
+## tmux-sensible settings
+##
+## Source: https://github.com/tmux-plugins/tmux-sensible/blob/master/sensible.tmux
+##
+
+# Address vim mode switching delay (http://superuser.com/a/252717/65504)
+set -s escape-time 50
+
+# Bigger history, increase scrollback buffer size
+set -g history-limit 50000
+
+# Tmux messages are displayed for 4 seconds
+set -g display-time 4000
+
+# Refresh 'status-left' and 'status-right' more often
+set -g status-interval 5
+
+# Default termtype. If the rcfile sets $TERM, that overrides this value.
+# set -g default-terminal "screen-256color"
+set -s default-terminal "screen-256color"
+
+# emacs key bindings in tmux command prompt (prefix + :) are better than
+# vi keys, even for vim users
+set -g status-keys emacs
+
+# focus events enabled for terminals that support them
+set -g focus-events on
+
+# Super useful when using "grouped sessions" and multi-monitor setup
+set-window-option -g aggressive-resize on
+
 ###
 ### Change the default prefix key for Tmux
 ###
+
 # Screen like binding (remap prefix to Control + a)
 set -g prefix C-a
+
+# Unbind obsolete default binding
 unbind C-b
-bind-key -n C-M-A send-prefix
-bind-key -n C-B send-prefix
+
+# Pressing `prefix + prefix` sends <prefix> to the shell
+bind-key C-a send-prefix
+
+# `Ctrl-a + a` switches between alternate windows.
+bind-key a last-window
+
+###
+### Window Shortcuts
+###
+bind C-p previous-window
+bind C-n next-window
 
 ###
 ### Change the default shell
@@ -15,15 +61,6 @@ set-option -g default-shell "$SHELL"
 
 # Ring the bell if any background window rang a bell
 set -g bell-action any
-
-# Default termtype. If the rcfile sets $TERM, that overrides this value.
-set -g default-terminal "screen-256color"
-
-###
-### Window Shortcuts
-###
-bind C-p previous-window
-bind C-n next-window
 
 bind c new-window -c "#{pane_current_path}"
 
@@ -68,7 +105,7 @@ bind-key -n C-l if-shell "$is_vim" "send-keys C-l"  "select-pane -R"
 setw -g mode-keys vi
 
 # set first window to index 1 (not 0) to map more to the keyboard layout...
-set-option -g base-index 1
+set -g base-index 1
 set-window-option -g pane-base-index 1
 set -g renumber-windows on
 
@@ -76,8 +113,6 @@ set -g renumber-windows on
 unbind ^A
 bind ^A select-pane -t :.+
 
-# Bigger history
-set -g history-limit 10000
 
 ###
 ### Set default tmux theme
