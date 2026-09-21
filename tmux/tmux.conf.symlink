@@ -1,23 +1,74 @@
+
 ###
-### Change the default prefix key for Tmux
+### tmux-sensible settings
 ###
-# Screen like binding (remap prefix to Control + a)
-set -g prefix C-a
-unbind C-b
-bind-key -n C-M-A send-prefix
-bind-key -n C-B send-prefix
+### Source: https://github.com/tmux-plugins/tmux-sensible/blob/master/sensible.tmux
+###
+
+# Address vim mode switching delay (http://superuser.com/a/252717/65504)
+set -s escape-time 50
+# Bigger history, increase scrollback buffer size
+set -g history-limit 50000
+# Tmux messages are displayed for 4 seconds
+set -g display-time 4000
+# Refresh 'status-left' and 'status-right' more often
+set -g status-interval 5
+# Default termtype. If the rcfile sets $TERM, that overrides this value.
+# set -g default-terminal "screen-256color"
+set -s default-terminal "screen-256color"
+# emacs key bindings in tmux command prompt (prefix + :) are better than
+# vi keys, even for vim users
+set -g status-keys emacs
+# Use vi keybindings in copy and choice modes
+setw -g mode-keys vi
+# focus events enabled for terminals that support them
+set -g focus-events on
+# Super useful when using "grouped sessions" and multi-monitor setup
+setw -g aggressive-resize on
+# set first window to index 1 (not 0) to map more to the keyboard layout...
+set -g base-index 1
+setw -g pane-base-index 1
+set -g renumber-windows on
 
 ###
 ### Change the default shell
 ###
-set-option -g default-command "$SHELL"
-set-option -g default-shell "$SHELL"
+set -g default-command "$SHELL"
+set -g default-shell "$SHELL"
 
 # Ring the bell if any background window rang a bell
 set -g bell-action any
 
-# Default termtype. If the rcfile sets $TERM, that overrides this value.
-set -g default-terminal "screen-256color"
+###
+### Copying to system clipboard (via OSC 52)
+###
+# Send copies to the system clipboard via OSC 52
+set -s set-clipboard on
+# Enable mouse support
+set -g mouse on
+# Tell tmux your outer terminal supports it (needed if its terminfo lacks the Ms capability)
+set -as terminal-features ',xterm*:clipboard'
+# Vi-style copy mode bindings
+bind -T copy-mode-vi v send -X begin-selection
+bind -T copy-mode-vi C-v send -X rectangle-toggle
+bind -T copy-mode-vi y send -X copy-selection-and-cancel
+# Do not clear selection when releasing mouse drag
+bind -T copy-mode-vi MouseDragEnd1Pane send -X copy-selection-no-clear
+
+###
+### Change the default prefix key for Tmux
+###
+
+# Screen like binding (remap prefix to Control + a)
+set -g prefix C-a
+# Unbind obsolete default binding
+unbind C-b
+# Pressing `prefix + prefix` sends <prefix> to the shell
+bind C-a send-prefix
+# `Ctrl-a + a` switches between alternate windows.
+bind a last-window
+# Quick pane cycling
+bind A select-pane -t :.+
 
 ###
 ### Window Shortcuts
@@ -25,6 +76,7 @@ set -g default-terminal "screen-256color"
 bind C-p previous-window
 bind C-n next-window
 
+# Open new window in same directory as current pane
 bind c new-window -c "#{pane_current_path}"
 
 ###
@@ -35,15 +87,17 @@ bind ^V split-window -h -p 50 -c "#{pane_current_path}"
 bind  s split-window -v -p 50 -c "#{pane_current_path}"
 bind ^S split-window -v -p 50 -c "#{pane_current_path}"
 bind  | split-window -h -c '#{pane_current_path}'
-# bind  \ split-window -h -c '#{pane_current_path}'
 bind  - split-window -v -c '#{pane_current_path}'
 bind  _ split-window -v -c '#{pane_current_path}'
 
 ###
 ### Pane switch shortcuts
 ###
-# Pane resize in all four directions using vi bindings.
-# Can use these raw but I map them to shift-ctrl-<h,j,k,l> in iTerm.
+### Pane resize in all four directions using vi bindings.
+###
+### `Prefix E` is evenly space
+### `Prefix Z` is zoom
+###
 bind -r H resize-pane -L 5
 bind -r J resize-pane -D 5
 bind -r K resize-pane -U 5
@@ -58,60 +112,66 @@ bind -r l resize-pane -R 1
 # Source: https://github.com/christoomey/vim-tmux-navigator
 is_vim="ps -o state= -o comm= -t '#{pane_tty}' \
     | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|n?vim?x?)(diff)?$'"
-bind-key -n C-h if-shell "$is_vim" "send-keys C-h"  "select-pane -L"
-bind-key -n C-j if-shell "$is_vim" "send-keys C-j"  "select-pane -D"
-bind-key -n C-k if-shell "$is_vim" "send-keys C-k"  "select-pane -U"
-bind-key -n C-l if-shell "$is_vim" "send-keys C-l"  "select-pane -R"
-# bind-key -n C-\ if-shell "$is_vim" "send-keys C-\\" "select-pane -l"
-
-# Use vi keybindings in copy and choice modes
-setw -g mode-keys vi
-
-# set first window to index 1 (not 0) to map more to the keyboard layout...
-set-option -g base-index 1
-set-window-option -g pane-base-index 1
-set -g renumber-windows on
-
-# Quick pane cycling
-unbind ^A
-bind ^A select-pane -t :.+
-
-# Bigger history
-set -g history-limit 10000
+bind -n C-h if-shell "$is_vim" "send-keys C-h" "select-pane -L"
+bind -n C-j if-shell "$is_vim" "send-keys C-j" "select-pane -D"
+bind -n C-k if-shell "$is_vim" "send-keys C-k" "select-pane -U"
+bind -n C-l if-shell "$is_vim" "send-keys C-l" "select-pane -R"
 
 ###
 ### Set default tmux theme
 ### Source: https://gist.github.com/gchiam/4606522f513cc64b79ce
 ###
-#
-# This tmux statusbar config was created based on gruvbox colorscheme
-set  -g status "on"
-set  -g status-justify "centre"
-# set  -g pane-border-fg "colour238"
-set  -g pane-border-style fg="colour238"
-# set  -g pane-active-border-fg "colour109"
-# set  -g pane-active-border-bg "colour109"
-set  -g pane-active-border-style fg="colour109",bg="colour109"
-set  -g status-bg "colour237"
-set  -g status-style bg="colour237"
-# set  -g message-fg "colour237"
-# set  -g message-bg "colour109"
-set  -g message-style fg="colour237",bg="colour109"
-# set  -g message-command-fg "colour237"
-# set  -g message-command-bg "colour248"
-set  -g message-command-style fg="colour237",bg="colour248"
-# setw -g window-status-fg "colour223"
-# setw -g window-status-bg "colour239"
-setw -g window-status-style fg="colour223",bg="colour239"
-# setw -g window-status-current-fg "colour237"
-# setw -g window-status-current-bg "colour109"
-setw -g window-status-current-style fg="colour237",bg="colour109"
-setw -g window-status-separator " "
+set  -g status-justify centre
+set  -g status-style 'fg=colour223,bg=colour237'
+set  -g pane-border-style 'fg=colour238'
+set  -g pane-active-border-style 'fg=colour109'
+set  -g pane-border-lines heavy
+set  -g message-style 'fg=colour237,bg=colour109'
+set  -g message-command-style 'fg=colour237,bg=colour248'
+set  -g mode-style 'fg=colour237,bg=colour214'
+set  -g clock-mode-colour colour109
 
-set  -g status-left '#{?client_prefix,#[fg=colour16]#[bg=colour109],#[fg=colour16]#[bg=colour248]}#[bold] #S #[nobold]'
-set  -g status-right "#[fg=colour246,bg=colour239] %Y-%m-%d │ wk %V │ %H:%M #[fg=colour237,bg=colour248] #h "
+setw -g window-status-style 'fg=colour223,bg=colour239'
+setw -g window-status-current-style 'fg=colour237,bg=colour109'
+setw -g window-status-activity-style 'fg=colour237,bg=colour208'
+setw -g window-status-bell-style 'fg=colour237,bg=colour167'
+setw -g window-status-separator ' '
+
+set  -g status-left '#[fg=colour237,bg=colour248] #[bold]#S#[nobold] │ #h '
+set  -g status-left-length 40
+set  -g status-right '#{E:@mode_indicator}'
 setw -g window-status-format " #I#{?window_flags,#{window_flags}, } │ #W "
 setw -g window-status-current-format " #I#{?window_flags,#{window_flags}, } │ #[bold]#W#[nobold] "
+
+###
+### tmux-mode-indicator
+###
+### Based on: https://github.com/MunifTanjim/tmux-mode-indicator
+###
+# Default mode_style colors
+# set -g @mode_style "#{?#{==:#{client_key_table},suspended},#[bg=brightblack fg=black],#{?client_prefix,#[bg=blue fg=black],#{?pane_in_mode,#[bg=yellow fg=black],#{?pane_synchronized,#[bg=red fg=black],#[bg=cyan fg=black]}}}}"
+# Mode indicator in gruvbox colours: suspended grey, prefix blue, copy yellow, sync red, normal green
+set  -g @mode_style "#{?#{==:#{client_key_table},suspended},#[bg=colour245 fg=colour237],#{?client_prefix,#[bg=colour109 fg=colour237],#{?pane_in_mode,#[bg=colour214 fg=colour237],#{?pane_synchronized,#[bg=colour167 fg=colour237],#[bg=colour142 fg=colour237]}}}}"
+set -g @mode_prompt "#{?#{==:#{client_key_table},suspended}, ---- ,#{?client_prefix, WAIT ,#{?pane_in_mode, COPY ,#{?pane_synchronized, SYNC , TMUX }}}}"
+set -g @mode_indicator '#[default]#{E:@mode_style}#{E:@mode_prompt}#[default]'
+
+###
+### tmux-suspend
+###
+### Based on: https://github.com/MunifTanjim/tmux-suspend/blob/main/suspend.tmux
+###
+bind -T root F12 {
+  set -q prefix none
+  set key-table suspended
+  if -F '#{pane_in_mode}' { send -X cancel }
+  if -F '#{pane_synchronized}' { set synchronize-panes off }
+  refresh-client -S
+}
+bind -T suspended F12 {
+  set -u prefix
+  set -u key-table
+  refresh-client -S
+}
 
 ###
 ### Local config
