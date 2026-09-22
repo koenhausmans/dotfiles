@@ -96,7 +96,7 @@ bind  _ split-window -v -c '#{pane_current_path}'
 ### Pane resize in all four directions using vi bindings.
 ###
 ### `Prefix E` is evenly space
-### `Prefix Z` is zoom
+### `Prefix z` is zoom
 ###
 bind -r H resize-pane -L 5
 bind -r J resize-pane -D 5
@@ -148,8 +148,6 @@ setw -g window-status-current-format " #I#{?window_flags,#{window_flags}, } │ 
 ###
 ### Based on: https://github.com/MunifTanjim/tmux-mode-indicator
 ###
-# Default mode_style colors
-# set -g @mode_style "#{?#{==:#{client_key_table},suspended},#[bg=brightblack fg=black],#{?client_prefix,#[bg=blue fg=black],#{?pane_in_mode,#[bg=yellow fg=black],#{?pane_synchronized,#[bg=red fg=black],#[bg=cyan fg=black]}}}}"
 # Mode indicator in gruvbox colours: suspended grey, prefix blue, copy yellow, sync red, normal green
 set  -g @mode_style "#{?#{==:#{client_key_table},suspended},#[bg=colour245 fg=colour237],#{?client_prefix,#[bg=colour109 fg=colour237],#{?pane_in_mode,#[bg=colour214 fg=colour237],#{?pane_synchronized,#[bg=colour167 fg=colour237],#[bg=colour142 fg=colour237]}}}}"
 set -g @mode_prompt "#{?#{==:#{client_key_table},suspended}, ---- ,#{?client_prefix, WAIT ,#{?pane_in_mode, COPY ,#{?pane_synchronized, SYNC , TMUX }}}}"
