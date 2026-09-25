@@ -82,3 +82,15 @@ The config uses [fzf](https://github.com/junegunn/fzf) for file selection and [A
 | `,t` | Search tags. |
 
 `Space` is the leader key. If fzf is unavailable, `,f`, `,b`, and `,t` use the existing Vim fallbacks. If fzf or Ag is unavailable, `,/` starts `:grep` instead. `:Files` uses fzf's file walker (which skips `.git` and `node_modules` by default); `:GFiles` uses Git's tracked-file list. An existing shell-level `FZF_DEFAULT_COMMAND` still takes precedence over fzf's walker.
+
+## Git views
+
+Run `:PlugInstall` after updating the config to install Diffview. Fugitive provides the status view; Diffview provides changes and history panes without an icon plugin. Open a file in a Git repository before using current-file history.
+
+| Keys | Action |
+| --- | --- |
+| `Space g s` | Open Fugitive status (`:Git`). |
+| `Space g d` | Open the Diffview changes pane (`:DiffviewOpen`). |
+| `Space g h` | Show the current file's history (`:DiffviewFileHistory %`). |
+
+Plain `gd` remains LSP go-to-definition. Use `:DiffviewClose` to leave a diff view; `:DiffviewFileHistory` without `%` shows repository history. These shortcuts only open views, but Diffview has its own actions for staging and restoring changes: consult `:help diffview` before using them.

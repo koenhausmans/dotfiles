@@ -34,6 +34,7 @@ Plug 'tpope/vim-commentary'
 Plug 'romainl/vim-cool'
 
 Plug 'tpope/vim-fugitive'
+Plug 'sindrets/diffview.nvim'
 Plug 'airblade/vim-gitgutter'
 
 Plug 'jiangmiao/auto-pairs'
@@ -76,6 +77,9 @@ call plug#end()
 """ PLUGIN INTEGRATION {{{
 
 let g:gitgutter_map_keys = 0
+
+" Keep Diffview usable without a Nerd Font or an icon plugin.
+lua require('diffview').setup({ use_icons = false })
 
 let g:tmux_navigator_disable_when_zoomed = 1
 
@@ -304,6 +308,10 @@ nnoremap          ,e       :e **/*
 nnoremap <silent> ,m       :make<cr>
 nnoremap <silent> ,q       :quit<cr>
 nnoremap <silent> ,z       :b#<cr>
+
+nnoremap <silent> <leader>gs :Git<cr>
+nnoremap <silent> <leader>gd :DiffviewOpen<cr>
+nnoremap <silent> <leader>gh :DiffviewFileHistory %<cr>
 
 if s:has_fzf && executable('ag')
     nnoremap ,/ :Ag<space>
