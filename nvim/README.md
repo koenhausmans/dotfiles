@@ -109,3 +109,11 @@ The existing statusline shows the branch and nonzero `+added ~changed -removed` 
 | `Space l d` / `Space l f` | Show diagnostics / format (only in attached buffers). |
 
 The existing comma shortcuts and `Space r`, `Space a`, and `Space e` LSP shortcuts remain available. Formatting moved from `Space f` to `Space l f`, so `Space f f`, `Space f g`, and `Space f b` do not wait to see whether you meant to format. `signcolumn=yes` keeps Git and diagnostic markers from shifting the text, `scrolloff=5` leaves context near the cursor, and `termguicolors` enables true colors in Windows Terminal. To compare the previous palette, run `:set notermguicolors`. Windows clipboard integration remains opt-in; check `:checkhealth vim.provider` before trying `"+y` or `"+p`.
+
+## Color schemes
+
+Run `:PlugInstall` to add Tokyo Night. Gruvbox is the fallback on a fresh setup, but `~/.config/nvim/plugin/last-used-colorscheme.vim` restores your previously chosen theme at startup. Updating the config does not overwrite that saved choice.
+
+Try `:colorscheme tokyonight-moon` (or `tokyonight-night`, `tokyonight-storm`, or `tokyonight-day`). Return with `:colorscheme monokai` or `:colorscheme gruvbox`. Changing schemes saves the choice for the next Neovim session. `:Colors` opens a scheme picker when fzf is installed. The statusline remains your existing hand-written one; Tokyo Night provides its colors.
+
+The unused cmp-buffer declaration and old commented-out plugin/LSP experiments have been removed from `init.vim`. Installed plugin directories are not deleted automatically; use `:PlugClean` only after reviewing its proposed removals.

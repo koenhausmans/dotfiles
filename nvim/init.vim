@@ -16,14 +16,11 @@ Plug 'morhetz/gruvbox'
 Plug 'romainl/apprentice'
 Plug 'joshdick/onedark.vim'
 Plug 'tanvirtin/monokai.nvim'
-" Plug 'itchyny/lightline.vim'
-" Plug 'shinchu/lightline-gruvbox.vim'
+Plug 'folke/tokyonight.nvim'
 
 " Syntax: Additional syntaxes that can be used
 Plug 'tpope/vim-git', { 'for': 'git' }
 Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
-" Plug 'nvim-lua/plenary.nvim'
-" Plug 'akinsho/flutter-tools.nvim'
 
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-surround'
@@ -51,9 +48,6 @@ Plug 'christoomey/vim-tmux-navigator'
 " Collection of common configurations for the Nvim LSP client
 Plug 'neovim/nvim-lspconfig'
 
-" Extensions to built-in LSP, for example, providing type inlay hints
-"Plug 'nvim-lua/lsp_extensions.nvim'
-
 " Autocompletion framework
 Plug 'hrsh7th/nvim-cmp', {'branch': 'main'}
 
@@ -61,13 +55,12 @@ Plug 'hrsh7th/nvim-cmp', {'branch': 'main'}
 Plug 'hrsh7th/cmp-nvim-lsp', {'branch': 'main'}
 
 " Path completion
-Plug 'hrsh7th/cmp-buffer', {'branch': 'main'}
 Plug 'hrsh7th/cmp-path', {'branch': 'main'}
 
 " Function signature as you type
 Plug 'ray-x/lsp_signature.nvim'
 
-" Only because nvim-cmp _requires_ snippets
+" Snippet expansion for nvim-cmp
 Plug 'hrsh7th/cmp-vsnip', {'branch': 'main'}
 Plug 'hrsh7th/vim-vsnip'
 
@@ -198,10 +191,9 @@ function! CustomStatuslineColors() abort
         highlight StatusLineNC cterm=reverse ctermfg=237 ctermbg=246 gui=reverse guifg=#3c3836 guibg=#a89984
         highlight User1        cterm=NONE    ctermfg=235 ctermbg=223 gui=NONE    guifg=#504945 guibg=#ebdbb2
     " Blue statusline colors based on apprentice colors
-    elseif g:colors_name == 'apprentice'
-        highlight StatusLine   cterm=NONE         ctermfg=252 ctermbg=67  gui=NONE         guifg=#d0d0d0 guibg=#5f87af
-        highlight StatusLineNC cterm=NONE         ctermfg=243 ctermbg=237 gui=NONE         guifg=#949494 guibg=#3a3a3a
-        highlight User1        cterm=bold,reverse ctermfg=252 ctermbg=67  gui=NONE,reverse guifg=#d0d0d0 guibg=#5f87af
+    elseif g:colors_name =~# '^tokyonight'
+        " Let Tokyo Night color the statusline in both dark and light styles.
+        highlight! link User1 StatusLine
     elseif g:colors_name == 'apprentice'
         highlight StatusLine   cterm=NONE         ctermfg=252 ctermbg=67  gui=NONE         guifg=#d0d0d0 guibg=#5f87af
         highlight StatusLineNC cterm=NONE         ctermfg=243 ctermbg=237 gui=NONE         guifg=#949494 guibg=#3a3a3a
@@ -228,8 +220,7 @@ augroup END
 set background=dark
 set cursorline
 
-silent! colorscheme elflord
-silent! colorscheme apprentice
+" The saved theme in plugin/last-used-colorscheme.vim overrides this fallback.
 silent! colorscheme gruvbox
 
 function! SaveColorscheme() abort
@@ -412,16 +403,11 @@ augroup END
 """ CODE COMPLETION BEHAVIOR {{{
 
 
-"set omnifunc=syntaxcomplete#Complete
-
-" Completion
 " Better completion
 " menuone: popup even when there's only one match
 " noinsert: Do not insert text until a selection is made
 " noselect: Do not select, force user to select one from the menu
 set completeopt=menuone,noinsert,noselect
-" Better display for messages
-" set cmdheight=2
 " You will have bad experience for diagnostic messages when it's default 4000.
 set updatetime=300
 " Avoid showing extra messages when using completion
@@ -446,7 +432,7 @@ local cmp = require'cmp'
 
 cmp.setup({
   snippet = {
-    -- REQUIRED by nvim-cmp. get rid of it once we can
+    -- Expand LSP snippets with vim-vsnip.
     expand = function(args)
       vim.fn["vsnip#anonymous"](args.body)
     end,
@@ -459,10 +445,6 @@ cmp.setup({
       select = true,
     }),
     ['<Tab>'] = cmp.mapping.confirm({ select = true })
---  ['<C-d>'] = cmp.mapping.scroll_docs(-4),
---  ['<C-f>'] = cmp.mapping.scroll_docs(4),
---  ['<C-Space>'] = cmp.mapping.complete(),
---  ['<C-e>'] = cmp.mapping.close(),
   },
   sources = cmp.config.sources({
     { name = 'nvim_lsp' },
@@ -526,12 +508,5 @@ vim.lsp.enable('basedpyright')
 vim.lsp.enable('rust_analyzer')
 vim.lsp.enable('clangd')
 END
-
-"require("flutter-tools").setup{}
-
-
-"lua << END
-"
-"END
 
 """ }}}
