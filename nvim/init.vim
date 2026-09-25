@@ -22,7 +22,6 @@ Plug 'tanvirtin/monokai.nvim'
 " Syntax: Additional syntaxes that can be used
 Plug 'tpope/vim-git', { 'for': 'git' }
 Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
-" Plug 'rust-lang/rust.vim'
 " Plug 'nvim-lua/plenary.nvim'
 " Plug 'akinsho/flutter-tools.nvim'
 
@@ -70,8 +69,6 @@ Plug 'ray-x/lsp_signature.nvim'
 " Only because nvim-cmp _requires_ snippets
 Plug 'hrsh7th/cmp-vsnip', {'branch': 'main'}
 Plug 'hrsh7th/vim-vsnip'
-
-Plug 'simrat39/rust-tools.nvim'
 
 call plug#end()
 
@@ -465,6 +462,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 })
 
 vim.lsp.enable('basedpyright')
+vim.lsp.enable('rust_analyzer')
 END
 
 "require("flutter-tools").setup{}
@@ -474,15 +472,4 @@ END
 "
 "END
 
-" Enable type inlay hints
-"autocmd CursorHold,CursorHoldI *.rs :RustEnableInlayHints
-"autocmd CursorMoved,CursorMovedI *.rs :RustDisableInlayHints
-
 """ }}}
-""" Rust specific {{{
-
-let g:rustfmt_autosave = 1
-let g:rustfmt_emit_files = 1
-let g:rustfmt_fail_silently = 0
-
-""" Rust specific }}}

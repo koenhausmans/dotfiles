@@ -8,7 +8,7 @@ Use Neovim 0.11 or newer for the planned built-in LSP configuration. Check the v
 
 ## Language servers
 
-These are prerequisites for the Python, Rust, C, and C++ configuration planned in later steps. Installing them alone does **not** enable language support in the current `init.vim`. Use a WSL shell to run the commands below.
+These are prerequisites for the Python and Rust configurations in `init.vim` and the C/C++ configuration planned in a later step. Installing a server alone does **not** enable it in Neovim. Use a WSL shell to run the commands below.
 
 ### Python: basedpyright
 
@@ -36,12 +36,14 @@ The config enables basedpyright for Python files. Open a `.py` file in a project
 With [rustup](https://rustup.rs/) installed inside WSL, add the language server and formatter for your active toolchain:
 
 ```sh
-rustup component add rust-analyzer rustfmt
+rustup component add rust-analyzer rustfmt rust-src
 rustup component list --installed
 rust-analyzer --version
 ```
 
-Having a `rust-analyzer` launcher on `PATH` is not enough: `rustup component list --installed` must include `rust-analyzer` for the selected toolchain. If a project pins a toolchain in `rust-toolchain.toml`, install the component for that toolchain as well.
+Having a `rust-analyzer` launcher on `PATH` is not enough: `rustup component list --installed` must include `rust-analyzer` for the selected toolchain. `rust-src` helps rust-analyzer navigate into the standard library. If a project pins a toolchain in `rust-toolchain.toml`, run the install command from that project to add the components to its toolchain too.
+
+The config enables rust-analyzer for Rust files. Open a `.rs` file in a Cargo project and run `:LspInfo` to confirm it attached. The shared LSP keys (`gd` for definition, `K` for hover, `Space r` for rename, `[d` / `]d` for diagnostics) work here as in Python. `Space f` requests formatting through rust-analyzer and rustfmt; formatting on save is not enabled.
 
 ### C and C++: clangd
 
