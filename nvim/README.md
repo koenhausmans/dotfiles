@@ -8,7 +8,7 @@ Use Neovim 0.11 or newer for the planned built-in LSP configuration. Check the v
 
 ## Language servers
 
-These are prerequisites for the Python and Rust configurations in `init.vim` and the C/C++ configuration planned in a later step. Installing a server alone does **not** enable it in Neovim. Use a WSL shell to run the commands below.
+These are prerequisites for the Python, Rust, C, and C++ configurations in `init.vim`. Installing a server alone does **not** enable it in Neovim. Use a WSL shell to run the commands below.
 
 ### Python: basedpyright
 
@@ -53,17 +53,20 @@ sudo apt install clangd
 clangd --version
 ```
 
-Both C and C++ use `clangd`. For project-specific include paths and compiler flags, provide a `compile_commands.json` compilation database. With CMake, generate one with:
+Both C and C++ use `clangd`. For project-specific include paths and compiler flags, provide a `compile_commands.json` compilation database. If your project uses CMake, install it with `sudo apt install cmake`, then generate a database with:
 
 ```sh
 cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+ln -s build/compile_commands.json compile_commands.json
 ```
 
-Check that `build/compile_commands.json` exists. For other build systems, follow their compilation-database instructions.
+Run these from the project root. Check that `build/compile_commands.json` exists before creating the link; skip `ln -s` if a root-level `compile_commands.json` already exists. Keep the link relative so it continues to work if the project moves. For other build systems, follow their compilation-database instructions. Without a compilation database, clangd may use incorrect include paths or compiler flags.
 
-## Verify in Neovim (after LSP configuration is added)
+The config enables clangd for both C and C++ files. Open a `.c` or `.cpp` file in a project and run `:LspInfo` to confirm it attached. The shared LSP keys (`gd`, `K`, `Space r`, `[d` / `]d`) work here too; `Space f` requests formatting from clangd. Use `:LspClangdSwitchSourceHeader` to switch between a source file and its header when clangd can identify the pair.
 
-Open a `.py`, `.rs`, `.c`, or `.cpp` file inside a project. Run `:checkhealth vim.lsp` and `:LspInfo` to check server attachment, then try `gd` for definition and `K` for hover. If no server starts, check its executable in the same WSL shell that launches Neovim and inspect `:messages`. These checks become applicable when the corresponding configuration steps are complete.
+## Verify in Neovim
+
+Open a `.py`, `.rs`, `.c`, or `.cpp` file inside a project. Run `:checkhealth vim.lsp` and `:LspInfo` to check server attachment, then try `gd` for definition and `K` for hover. If no server starts, check its executable in the same WSL shell that launches Neovim and inspect `:messages`.
 
 ## File and text search
 
