@@ -60,3 +60,18 @@ Check that `build/compile_commands.json` exists. For other build systems, follow
 ## Verify in Neovim (after LSP configuration is added)
 
 Open a `.py`, `.rs`, `.c`, or `.cpp` file inside a project. Run `:checkhealth vim.lsp` and `:LspInfo` to check server attachment, then try `gd` for definition and `K` for hover. If no server starts, check its executable in the same WSL shell that launches Neovim and inspect `:messages`. These checks become applicable when the corresponding configuration steps are complete.
+
+## File and text search
+
+The config uses [fzf](https://github.com/junegunn/fzf) for file selection and [Ag](https://github.com/ggreer/the_silver_searcher) for text search. Install Ag inside WSL with `sudo apt install silversearcher-ag`. The fzf binary can be on `PATH` or in `~/.fzf/bin/fzf`; keep the `fzf.vim` plugin installed with `:PlugInstall`.
+
+| Keys | Action |
+| --- | --- |
+| `Space f f` (or `,f`) | Fuzzy-find files in the current working directory. |
+| `Space f g` | Fuzzy-find Git-tracked files (`:GFiles`). |
+| `Space f b` (or `,b`) | Pick an open buffer. |
+| `Space s g` (or `,/`) | Enter an Ag text search, then press Enter. |
+| `Space s w` | Ag search for the literal whole word under the cursor. |
+| `,t` | Search tags. |
+
+`Space` is the leader key. If fzf is unavailable, `,f`, `,b`, and `,t` use the existing Vim fallbacks. If fzf or Ag is unavailable, `,/` starts `:grep` instead. `:Files` uses fzf's file walker (which skips `.git` and `node_modules` by default); `:GFiles` uses Git's tracked-file list. An existing shell-level `FZF_DEFAULT_COMMAND` still takes precedence over fzf's walker.

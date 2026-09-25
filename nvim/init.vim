@@ -1,5 +1,9 @@
 """ PLUGIN MANAGER (VIM-PLUG) {{{
 
+let mapleader = ' '
+" The fzf binary also works when Neovim is started without an interactive shell.
+let s:has_fzf = executable('fzf') || executable(expand('~/.fzf/bin/fzf'))
+
 if empty(glob('~/.config/nvim/autoload/plug.vim'))
     silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     autocmd VimEnter * PlugInstall
@@ -35,7 +39,7 @@ Plug 'airblade/vim-gitgutter'
 
 Plug 'jiangmiao/auto-pairs'
 
-if executable('fzf')
+if s:has_fzf
     Plug 'junegunn/fzf', {'dir': '~/.fzf', 'frozen': 1}
     Plug 'junegunn/fzf.vim'
 endif
@@ -285,10 +289,13 @@ cabbr <expr> %% expand('%:p:h')
 """ END COMMAND LINE BEHAVIOR }}}
 """ LEADER KEY BEHAVIOR {{{
 
-if executable('fzf')
+if s:has_fzf
     nnoremap <silent> ,b :Buffers<cr>
     nnoremap <silent> ,f :Files<cr>
     nnoremap <silent> ,t :Tags<cr>
+    nnoremap <silent> <leader>fb :Buffers<cr>
+    nnoremap <silent> <leader>ff :Files<cr>
+    nnoremap <silent> <leader>fg :GFiles<cr>
 else
     nnoremap          ,b :b <C-d>
     nnoremap          ,f :find *
@@ -300,20 +307,22 @@ nnoremap          ,e       :e **/*
 nnoremap <silent> ,m       :make<cr>
 nnoremap <silent> ,q       :quit<cr>
 nnoremap <silent> ,z       :b#<cr>
-nnoremap          ,/       :grep<space>
+
+if s:has_fzf && executable('ag')
+    nnoremap ,/ :Ag<space>
+    nnoremap <leader>sg :Ag<space>
+    nnoremap <silent> <leader>sw :call fzf#vim#ag(expand('<cword>'), '--literal --word-regexp', fzf#vim#with_preview())<cr>
+else
+    nnoremap ,/ :grep<space>
+endif
 
 """ END LEADER KEY BEHAVIOR }}}
 """ GREP AND VIMGREP BEHAVIOR {{{
-
-let $FZF_DEFAULT_COMMAND = 'ag -g ""'
 
 if executable('ag')
     set grepprg=ag\ --vimgrep\ $*
     set grepformat=%f:%l:%c:%m
 endif
-
-nnoremap <silent> K :grep! <cword> -r *<cr>
-vnoremap <silent> K y:grep! <c-r>" -r *<cr>
 
 """ END GREP AND VIMGREP BEHAVIOR }}}
 """ BUFFER SPECIFIC BEHAVIOR {{{
