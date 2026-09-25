@@ -27,7 +27,9 @@ command -v node npm basedpyright-langserver
 basedpyright --version
 ```
 
-`nvm` selects a Node.js version per shell. Ensure the version containing `basedpyright-langserver` is active when you launch Neovim.
+`nvm` selects a Node.js version per shell. Ensure the version containing `basedpyright-langserver` is active when you launch Neovim. If you want new shells to use LTS by default, run `nvm alias default 'lts/*'`; projects can still choose a different version with `nvm use`.
+
+The config enables basedpyright for Python files. Open a `.py` file in a project and run `:LspInfo` to confirm it attached. In that buffer, `gd` jumps to a definition, `K` shows hover help, `gr` finds references, `Space r` renames, and `[d` / `]d` move between diagnostics. These mappings are local to buffers with an attached language server. Basedpyright provides diagnostics and completion, not code formatting; `Space f` needs a formatting-capable server before it can format Python.
 
 ### Rust: rust-analyzer
 
