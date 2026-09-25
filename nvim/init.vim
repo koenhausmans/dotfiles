@@ -507,6 +507,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 vim.lsp.enable('basedpyright')
 vim.lsp.enable('rust_analyzer')
 vim.lsp.enable('clangd')
+vim.lsp.enable('tinymist')
 END
 
 """ }}}

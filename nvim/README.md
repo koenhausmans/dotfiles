@@ -8,7 +8,7 @@ Use Neovim 0.11 or newer for the built-in LSP configuration in `init.vim`. Check
 
 ## Language servers
 
-These are prerequisites for the Python, Rust, C, and C++ configurations in `init.vim`. Installing a server alone does **not** enable it in Neovim. Use a WSL shell to run the commands below.
+These are prerequisites for the Python, Rust, C, C++, and Typst configurations in `init.vim`. Installing a server alone does **not** enable it in Neovim. Use a WSL shell to run the commands below.
 
 ### Python: basedpyright
 
@@ -64,9 +64,20 @@ Run these from the project root. Check that `build/compile_commands.json` exists
 
 The config enables clangd for both C and C++ files. Open a `.c` or `.cpp` file in a project and run `:LspInfo` to confirm it attached. `Space l f` requests formatting from clangd. Use `:LspClangdSwitchSourceHeader` to switch between a source file and its header when clangd can identify the pair.
 
+### Typst: Tinymist
+
+Install [Tinymist](https://github.com/Myriad-Dreamin/tinymist/releases) for Linux inside WSL and put its `tinymist` executable on `PATH`. If you have Cargo installed, you can build it from source instead:
+
+```sh
+cargo install --git https://github.com/Myriad-Dreamin/tinymist --locked tinymist-cli
+command -v tinymist
+```
+
+Open a `.typ` file and run `:LspInfo` to confirm Tinymist attached. The shared LSP shortcuts work for diagnostics, completion, and navigation; `Space l f` formats through Tinymist's built-in formatter. Formatting on save is not enabled. Use `:LspTinymistExportPdf` to export the current document to PDF.
+
 ## Verify in Neovim
 
-Open a `.py`, `.rs`, `.c`, or `.cpp` file inside a project. Run `:checkhealth vim.lsp` and `:LspInfo` to check server attachment, then try `gd` for definition and `K` for hover. If no server starts, check its executable in the same WSL shell that launches Neovim and inspect `:messages`.
+Open a `.py`, `.rs`, `.c`, `.cpp`, or `.typ` file. Run `:checkhealth vim.lsp` and `:LspInfo` to check server attachment, then try `gd` for definition and `K` for hover. If no server starts, check its executable in the same WSL shell that launches Neovim and inspect `:messages`.
 
 ## File and text search
 
@@ -148,7 +159,7 @@ Use `:StripTrailingWhitespaces` to remove trailing whitespace from the current f
 
 ### LSP and completion
 
-The LSP shortcuts below apply only in buffers with an attached language server. The config enables basedpyright, rust-analyzer, and clangd.
+The LSP shortcuts below apply only in buffers with an attached language server. The config enables basedpyright, rust-analyzer, clangd, and Tinymist.
 
 | Keys | Action |
 | --- | --- |
