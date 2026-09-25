@@ -114,6 +114,9 @@ cabbrev bd Bdelete
 
 set encoding=utf-8
 set hidden
+set signcolumn=yes
+set scrolloff=5
+set termguicolors
 " Recognize numbered lists
 set formatoptions+=n
 " Delete comment character when joining lines
@@ -350,6 +353,9 @@ nnoremap          ,e       :e **/*
 nnoremap <silent> ,m       :make<cr>
 nnoremap <silent> ,q       :quit<cr>
 nnoremap <silent> ,z       :b#<cr>
+nnoremap <silent> <leader>w :write<cr>
+nnoremap <silent> <leader>bd :Bdelete<cr>
+nnoremap <silent> <leader>bp :b#<cr>
 
 nnoremap <silent> <leader>gs :Git<cr>
 nnoremap <silent> <leader>gd :DiffviewOpen<cr>
@@ -424,10 +430,12 @@ set shortmess+=c
 """ END CODE COMPLETION BEHAVIOR }}}
 """ C++ SPECIFIC BEHAVIOR {{{
 
-set cindent
-set cinoptions+=g0 " Place C++ scope declarations (public/private/protected) on the same indentation as the parent
-set cinoptions+=N-s " Do not indent after namespace definitions
-set cinoptions+=:0 " Do not indent switch cases compared to the switch()-statement
+" Scope our C/C++ indentation settings to those filetypes.
+" g0 aligns access labels, N-s avoids namespace indentation, :0 aligns cases.
+augroup CFamilyIndent
+    autocmd!
+    autocmd FileType c,cpp setlocal cindent cinoptions+=g0 cinoptions+=N-s cinoptions+=:0
+augroup END
 
 """ END C++ SPECIFIC BEHAVIOR }}}
 """ LSP configuration {{{
@@ -502,7 +510,10 @@ vim.api.nvim_create_autocmd('LspAttach', {
     vim.keymap.set('n', '[d', function() vim.diagnostic.jump({ count = -1 }) end, opts)
     vim.keymap.set('n', ']d', function() vim.diagnostic.jump({ count = 1 }) end, opts)
     vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, opts)
-    vim.keymap.set('n', '<space>f', function() vim.lsp.buf.format({ async = true }) end, opts)
+    vim.keymap.set('n', '<leader>lr', vim.lsp.buf.rename, opts)
+    vim.keymap.set('n', '<leader>la', vim.lsp.buf.code_action, opts)
+    vim.keymap.set('n', '<leader>ld', vim.diagnostic.open_float, opts)
+    vim.keymap.set('n', '<leader>lf', function() vim.lsp.buf.format({ async = true }) end, opts)
 
     require('lsp_signature').on_attach({
       doc_lines = 0,
