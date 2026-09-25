@@ -35,7 +35,7 @@ Plug 'romainl/vim-cool'
 
 Plug 'tpope/vim-fugitive'
 Plug 'sindrets/diffview.nvim'
-Plug 'airblade/vim-gitgutter'
+Plug 'lewis6991/gitsigns.nvim'
 
 Plug 'jiangmiao/auto-pairs'
 
@@ -76,10 +76,32 @@ call plug#end()
 """ END PLUGIN MANAGER }}}
 """ PLUGIN INTEGRATION {{{
 
-let g:gitgutter_map_keys = 0
-
 " Keep Diffview usable without a Nerd Font or an icon plugin.
 lua require('diffview').setup({ use_icons = false })
+
+lua << END
+require('gitsigns').setup({
+  on_attach = function(bufnr)
+    local gitsigns = require('gitsigns')
+    local opts = { buffer = bufnr, silent = true }
+
+    vim.keymap.set('n', ']h', function()
+      if vim.wo.diff then
+        vim.cmd.normal({ ']c', bang = true })
+      else
+        gitsigns.nav_hunk('next')
+      end
+    end, opts)
+    vim.keymap.set('n', '[h', function()
+      if vim.wo.diff then
+        vim.cmd.normal({ '[c', bang = true })
+      else
+        gitsigns.nav_hunk('prev')
+      end
+    end, opts)
+  end,
+})
+END
 
 let g:tmux_navigator_disable_when_zoomed = 1
 
@@ -123,12 +145,33 @@ endif
 """ END TEMP FILES BEHAVIOR }}}
 """ STATUSLINE BEHAVIOR {{{
 
+function! GitStatusline() abort
+    let l:changes = get(b:, 'gitsigns_status_dict', {})
+    let l:head = get(l:changes, 'head', '')
+    if empty(l:head)
+        let l:head = FugitiveHead(7)
+    endif
+    if empty(l:head)
+        return ''
+    endif
+
+    let l:summary = ' [' . substitute(l:head, '%', '%%', 'g')
+    for [l:sign, l:key] in [['+', 'added'], ['~', 'changed'], ['-', 'removed']]
+        let l:count = get(l:changes, l:key, 0)
+        if l:count > 0
+            let l:summary .= printf(' %s%d', l:sign, l:count)
+        endif
+    endfor
+    return l:summary . ']'
+endfunction
+
 function! ActiveStatusline()
     " Based on: https://gist.github.com/ericbn/f2956cd9ec7d6bff8940c2087247b132
     let statusline="%1*"
     let statusline.="%(%{&filetype!='help'?'\ \ '.bufnr('%'):''}\ │%)"
     let statusline.="\ %<"
     let statusline.="%f\ "
+    let statusline.=GitStatusline()
     let statusline.="%*"
     let statusline.="\ %{&modified?'[+]':''}"
     let statusline.="%{&readonly?'[ro]':''}"
@@ -137,7 +180,6 @@ function! ActiveStatusline()
     let statusline.="\ │\ Ln:\ %3l,\ "
     let statusline.="Col:\ %-2v"
     let statusline.="\ │\ %2p%%\ "
-    " let statusline.="%1*%{fugitive#head()!=''?' '.fugitive#head().'\ ':''}"
     return statusline
 endfunction
 

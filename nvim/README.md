@@ -85,12 +85,15 @@ The config uses [fzf](https://github.com/junegunn/fzf) for file selection and [A
 
 ## Git views
 
-Run `:PlugInstall` after updating the config to install Diffview. Fugitive provides the status view; Diffview provides changes and history panes without an icon plugin. Open a file in a Git repository before using current-file history.
+Run `:PlugInstall` after updating the config to install Diffview and gitsigns. Fugitive provides the status view; Diffview provides changes and history panes without an icon plugin. Gitsigns marks changed lines in the sign column. Open a file in a Git repository before using current-file history.
 
 | Keys | Action |
 | --- | --- |
 | `Space g s` | Open Fugitive status (`:Git`). |
 | `Space g d` | Open the Diffview changes pane (`:DiffviewOpen`). |
 | `Space g h` | Show the current file's history (`:DiffviewFileHistory %`). |
+| `[h` / `]h` | Jump to the previous / next changed hunk in a tracked file. |
 
 Plain `gd` remains LSP go-to-definition. Use `:DiffviewClose` to leave a diff view; `:DiffviewFileHistory` without `%` shows repository history. These shortcuts only open views, but Diffview has its own actions for staging and restoring changes: consult `:help diffview` before using them.
+
+The existing statusline shows the branch and nonzero `+added ~changed -removed` counts for the current file. It shows no Git section outside a repository and runs no `git status` command on redraw. `:PlugClean` can remove the old gitgutter plugin after you have reviewed the replacement; it is not needed to activate gitsigns.
