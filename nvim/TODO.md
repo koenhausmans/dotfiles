@@ -7,7 +7,6 @@ Neovim ToDo:
 [✓] Why not leader as , instead of <space>?
 
 [ ] Clean-up lightline
-[ ] Compare gruvbox.nvim vs gruvbox-material — both installed, use :colorscheme to switch
 
 [ ] Change to use a nerdfont / icon plugin for nice icons in nvim
 [ ] Run through the whole plugin list, is there stuff in there that can be removed?
@@ -15,9 +14,9 @@ Neovim ToDo:
 I like the view of the screenshots of gruvbox-material. It angled ends of boxes.
 [ ] Why is christoomey/vim-tmux-navigator necessary?
 [ ] Is there a way to yank vim text into the system clipboard?
-[ ] Can ,sg be removed? Isn't it replaced by ,/?
-[ ] Can ,sw be removed? Isn't it replaced by K?
-[ ] Missing is git blame shortcut. ,gb?
+[✓] Can ,sg be removed? Isn't it replaced by ,/? (removed ,sg)
+[✓] Can ,sw be removed? Isn't it replaced by K? (no — project word search, complement to gr)
+[✓] Missing is git blame shortcut. ,gb? (added ,gb and ,gl)
 [✓] Consider adding nnoremap <leader>, , to have the default comma behavior still present.
 [ ] What's treesitter and should I use this for nvim?
 [ ] Compare gruvbox.nvim vs gruvbox-material

@@ -351,10 +351,11 @@ nnoremap <silent> <leader>w :write<cr>
 nnoremap <silent> <leader>gs :Git<cr>
 nnoremap <silent> <leader>gd :DiffviewOpen<cr>
 nnoremap <silent> <leader>gh :DiffviewFileHistory %<cr>
+nnoremap <silent> <leader>gb :Git blame<cr>
+nnoremap <silent> <leader>gl :Git log<cr>
 
 if s:has_fzf && executable('ag')
     nnoremap          <leader>/ :Ag<space>
-    nnoremap          <leader>sg :Ag<space>
     nnoremap <silent> <leader>sw :call fzf#vim#ag(expand('<cword>'), '--literal --word-regexp', fzf#vim#with_preview())<cr>
 else
     nnoremap          <leader>/ :grep<space>
