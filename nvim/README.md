@@ -139,6 +139,7 @@ The window shortcuts use vim-tmux-navigator when it loads. Without it, `Ctrl-h/j
 
 | Keys | Action |
 | --- | --- |
+| `,,` | Repeat the last `f`/`F`/`t`/`T` motion in the reverse direction (`,` is the leader key; `,,` restores the built-in `,` behavior). |
 | `j` / `k` | Move by display line when no count is given. A count moves by file line. |
 | `0` / `$` | Move to the first nonblank / last character of the display line. |
 | `'` | Jump to an exact mark position, like Vim's backtick command. |

@@ -1,6 +1,7 @@
 """ PLUGIN MANAGER (VIM-PLUG) {{{
 
 let mapleader = ','
+nnoremap <leader>, ,
 " The fzf binary also works when Neovim is started without an interactive shell.
 let s:has_fzf = executable('fzf') || executable(expand('~/.fzf/bin/fzf'))
 
