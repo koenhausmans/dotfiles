@@ -1,6 +1,6 @@
 """ PLUGIN MANAGER (VIM-PLUG) {{{
 
-let mapleader = ' '
+let mapleader = ','
 " The fzf binary also works when Neovim is started without an interactive shell.
 let s:has_fzf = executable('fzf') || executable(expand('~/.fzf/bin/fzf'))
 
@@ -327,37 +327,33 @@ cabbr <expr> %% expand('%:p:h')
 """ LEADER KEY BEHAVIOR {{{
 
 if s:has_fzf
-    nnoremap <silent> ,b :Buffers<cr>
-    nnoremap <silent> ,f :Files<cr>
-    nnoremap <silent> ,t :Tags<cr>
-    nnoremap <silent> <leader>fb :Buffers<cr>
-    nnoremap <silent> <leader>ff :Files<cr>
-    nnoremap <silent> <leader>fg :GFiles<cr>
+    nnoremap <silent> <leader>b :Buffers<cr>
+    nnoremap <silent> <leader>f :Files<cr>
+    nnoremap <silent> <leader>t :Tags<cr>
+    nnoremap <silent> <leader>gf :GFiles<cr>
 else
-    nnoremap          ,b :b <C-d>
-    nnoremap          ,f :find *
-    nnoremap          ,t :tjump /
+    nnoremap          <leader>b :b <C-d>
+    nnoremap          <leader>f :find *
+    nnoremap          <leader>t :tjump /
 endif
 
-nmap     <silent> ,c       :bd<cr>
-nnoremap          ,e       :e **/*
-nnoremap <silent> ,m       :make<cr>
-nnoremap <silent> ,q       :quit<cr>
-nnoremap <silent> ,z       :b#<cr>
+nmap     <silent> <leader>c :bd<cr>
+nnoremap          <leader>e :e **/*
+nnoremap <silent> <leader>m :make<cr>
+nnoremap <silent> <leader>q :quit<cr>
+nnoremap <silent> <leader>z :b#<cr>
 nnoremap <silent> <leader>w :write<cr>
-nnoremap <silent> <leader>bd :Bdelete<cr>
-nnoremap <silent> <leader>bp :b#<cr>
 
 nnoremap <silent> <leader>gs :Git<cr>
 nnoremap <silent> <leader>gd :DiffviewOpen<cr>
 nnoremap <silent> <leader>gh :DiffviewFileHistory %<cr>
 
 if s:has_fzf && executable('ag')
-    nnoremap ,/ :Ag<space>
-    nnoremap <leader>sg :Ag<space>
+    nnoremap          <leader>/ :Ag<space>
+    nnoremap          <leader>sg :Ag<space>
     nnoremap <silent> <leader>sw :call fzf#vim#ag(expand('<cword>'), '--literal --word-regexp', fzf#vim#with_preview())<cr>
 else
-    nnoremap ,/ :grep<space>
+    nnoremap          <leader>/ :grep<space>
 endif
 
 """ END LEADER KEY BEHAVIOR }}}
