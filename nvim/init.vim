@@ -13,8 +13,8 @@ endif
 call plug#begin()
 
 " Colorschemes: Additional colorschemes that can be used
-Plug 'morhetz/gruvbox'
-Plug 'romainl/apprentice'
+Plug 'ellisonleao/gruvbox.nvim'
+Plug 'sainnhe/gruvbox-material'
 Plug 'joshdick/onedark.vim'
 Plug 'tanvirtin/monokai.nvim'
 Plug 'folke/tokyonight.nvim'
@@ -191,14 +191,14 @@ function! CustomStatuslineColors() abort
         highlight StatusLine   cterm=reverse ctermfg=239 ctermbg=223 gui=reverse guifg=#504945 guibg=#ebdbb2
         highlight StatusLineNC cterm=reverse ctermfg=237 ctermbg=246 gui=reverse guifg=#3c3836 guibg=#a89984
         highlight User1        cterm=NONE    ctermfg=235 ctermbg=223 gui=NONE    guifg=#504945 guibg=#ebdbb2
+    elseif g:colors_name == 'gruvbox-material'
+        highlight StatusLine   cterm=reverse ctermfg=239 ctermbg=223 gui=reverse guifg=#504945 guibg=#ebdbb2
+        highlight StatusLineNC cterm=reverse ctermfg=237 ctermbg=246 gui=reverse guifg=#3c3836 guibg=#a89984
+        highlight User1        cterm=NONE    ctermfg=235 ctermbg=223 gui=NONE    guifg=#504945 guibg=#ebdbb2
     " Blue statusline colors based on apprentice colors
     elseif g:colors_name =~# '^tokyonight'
         " Let Tokyo Night color the statusline in both dark and light styles.
         highlight! link User1 StatusLine
-    elseif g:colors_name == 'apprentice'
-        highlight StatusLine   cterm=NONE         ctermfg=252 ctermbg=67  gui=NONE         guifg=#d0d0d0 guibg=#5f87af
-        highlight StatusLineNC cterm=NONE         ctermfg=243 ctermbg=237 gui=NONE         guifg=#949494 guibg=#3a3a3a
-        highlight User1        cterm=bold,reverse ctermfg=252 ctermbg=67  gui=NONE,reverse guifg=#d0d0d0 guibg=#5f87af
     elseif stridx(g:colors_name, 'monokai') >= 0
         highlight StatusLine   cterm=NONE         ctermfg=252 ctermbg=67  gui=NONE         guifg=#d0d0d0 guibg=#5f87af
         highlight StatusLineNC cterm=NONE         ctermfg=243 ctermbg=237 gui=NONE         guifg=#949494 guibg=#3a3a3a
@@ -218,11 +218,14 @@ augroup CustomStatusline
     autocmd ColorScheme * call CustomStatuslineColors()
 augroup END
 
+let g:gruvbox_material_background = 'medium'
+let g:gruvbox_material_better_performance = 1
+
 set background=dark
 set cursorline
 
 " The saved theme in plugin/last-used-colorscheme.vim overrides this fallback.
-silent! colorscheme gruvbox
+silent! colorscheme gruvbox-material
 
 function! SaveColorscheme() abort
     let l:vimhome_plugin_folder = $HOME . "/.config/nvim/plugin"
