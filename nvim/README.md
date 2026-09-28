@@ -29,7 +29,7 @@ basedpyright --version
 
 `nvm` selects a Node.js version per shell. Ensure the version containing `basedpyright-langserver` is active when you launch Neovim. If you want new shells to use LTS by default, run `nvm alias default 'lts/*'`; projects can still choose a different version with `nvm use`.
 
-The config enables basedpyright for Python files. Open a `.py` file in a project and run `:LspInfo` to confirm it attached. Basedpyright provides diagnostics and completion, not code formatting. `Space l f` needs a formatting-capable server to format Python.
+The config enables basedpyright for Python files. Open a `.py` file in a project and run `:LspInfo` to confirm it attached. Basedpyright provides diagnostics and completion, not code formatting. `,lf` needs a formatting-capable server to format Python.
 
 ### Rust: rust-analyzer
 
@@ -43,7 +43,7 @@ rust-analyzer --version
 
 Having a `rust-analyzer` launcher on `PATH` is not enough: `rustup component list --installed` must include `rust-analyzer` for the selected toolchain. `rust-src` helps rust-analyzer navigate into the standard library. If a project pins a toolchain in `rust-toolchain.toml`, run the install command from that project to add the components to its toolchain too.
 
-The config enables rust-analyzer for Rust files. Open a `.rs` file in a Cargo project and run `:LspInfo` to confirm it attached. `Space l f` requests formatting through rust-analyzer and rustfmt. Formatting on save is not enabled.
+The config enables rust-analyzer for Rust files. Open a `.rs` file in a Cargo project and run `:LspInfo` to confirm it attached. `,lf` requests formatting through rust-analyzer and rustfmt. Formatting on save is not enabled.
 
 ### C and C++: clangd
 
@@ -62,7 +62,7 @@ ln -s build/compile_commands.json compile_commands.json
 
 Run these from the project root. Check that `build/compile_commands.json` exists before creating the link; skip `ln -s` if a root-level `compile_commands.json` already exists. Keep the link relative so it continues to work if the project moves. For other build systems, follow their compilation-database instructions. Without a compilation database, clangd may use incorrect include paths or compiler flags.
 
-The config enables clangd for both C and C++ files. Open a `.c` or `.cpp` file in a project and run `:LspInfo` to confirm it attached. `Space l f` requests formatting from clangd. Use `:LspClangdSwitchSourceHeader` to switch between a source file and its header when clangd can identify the pair.
+The config enables clangd for both C and C++ files. Open a `.c` or `.cpp` file in a project and run `:LspInfo` to confirm it attached. `,lf` requests formatting from clangd. Use `:LspClangdSwitchSourceHeader` to switch between a source file and its header when clangd can identify the pair.
 
 ### Typst: Tinymist
 
@@ -73,7 +73,7 @@ cargo install --git https://github.com/Myriad-Dreamin/tinymist --locked tinymist
 command -v tinymist
 ```
 
-Open a `.typ` file and run `:LspInfo` to confirm Tinymist attached. The shared LSP shortcuts work for diagnostics, completion, and navigation; `Space l f` formats through Tinymist's built-in formatter. Formatting on save is not enabled. Use `:LspTinymistExportPdf` to export the current document to PDF.
+Open a `.typ` file and run `:LspInfo` to confirm Tinymist attached. The shared LSP shortcuts work for diagnostics, completion, and navigation; `,lf` formats through Tinymist's built-in formatter. Formatting on save is not enabled. Use `:LspTinymistExportPdf` to export the current document to PDF.
 
 ## Verify in Neovim
 
@@ -85,14 +85,14 @@ The config uses [fzf](https://github.com/junegunn/fzf) for file selection and [A
 
 | Keys | Action |
 | --- | --- |
-| `Space f f` (or `,f`) | Fuzzy-find files in the current working directory. |
-| `Space f g` | Fuzzy-find Git-tracked files (`:GFiles`). |
-| `Space f b` (or `,b`) | Pick an open buffer. |
-| `Space s g` (or `,/`) | Enter an Ag text search, then press Enter. |
-| `Space s w` | Ag search for the literal whole word under the cursor. |
+| `,f` | Fuzzy-find files in the current working directory. |
+| `,gf` | Fuzzy-find Git-tracked files (`:GFiles`). |
+| `,b` | Pick an open buffer. |
+| `,/` | Enter an Ag text search, then press Enter. |
+| `,sw` | Ag search for the literal whole word under the cursor. |
 | `,t` | Search tags. |
 
-`Space` is the leader key. The `Space f` mappings need fzf. `Space s g` and `Space s w` need both fzf and Ag. Without fzf, `,f`, `,b`, and `,t` use Vim's file, buffer, and tag commands. If fzf or Ag is unavailable, `,/` starts `:grep` instead. `:Files` uses fzf's file walker (which skips `.git` and `node_modules` by default). `:GFiles` uses Git's tracked-file list. A shell-level `FZF_DEFAULT_COMMAND` takes precedence over fzf's walker.
+`,` is the leader key. `,f`, `,gf`, and `,b` need fzf. `,sw` needs both fzf and Ag. Without fzf, `,f`, `,b`, and `,t` use Vim's file, buffer, and tag commands. If fzf or Ag is unavailable, `,/` starts `:grep` instead. `:Files` uses fzf's file walker (which skips `.git` and `node_modules` by default). `:GFiles` uses Git's tracked-file list. A shell-level `FZF_DEFAULT_COMMAND` takes precedence over fzf's walker.
 
 In most fzf pickers, `Ctrl-t` opens a result in a new tab, `Ctrl-x` opens a split, and `Ctrl-v` opens a vertical split.
 
@@ -102,9 +102,11 @@ Fugitive provides the status view. Diffview provides changes and history panes. 
 
 | Keys | Action |
 | --- | --- |
-| `Space g s` | Open Fugitive status (`:Git`). |
-| `Space g d` | Open the Diffview changes pane (`:DiffviewOpen`). |
-| `Space g h` | Show the current file's history (`:DiffviewFileHistory %`). |
+| `,gs` | Open Fugitive status (`:Git`). |
+| `,gd` | Open the Diffview changes pane (`:DiffviewOpen`). |
+| `,gh` | Show the current file's history (`:DiffviewFileHistory %`). |
+| `,gb` | Show Git blame for the current file. |
+| `,gl` | Show the Git log. |
 | `[h` / `]h` | Jump to the previous / next changed hunk in a tracked file. |
 
 Use `:DiffviewClose` to leave a diff view. `:DiffviewFileHistory` without `%` shows repository history. See `:help diffview` for actions inside a diff view.
@@ -113,15 +115,15 @@ The statusline shows the branch and nonzero `+added ~changed -removed` counts fo
 
 ## Shortcut reference
 
-`Space` is the leader key. These shortcuts use normal mode unless a row says otherwise. Plugin shortcuts require the relevant plugin to load.
+`,` is the leader key. These shortcuts use normal mode unless a row says otherwise. Plugin shortcuts require the relevant plugin to load.
 
 ### Buffers, files, and windows
 
 | Keys | Action |
 | --- | --- |
-| `Space w` | Save the current file. |
-| `Space b d` / `,c` | Close the current buffer with `:Bdelete`, without closing its window. `,c` uses `:bd` as an abbreviation for `:Bdelete`. |
-| `Space b p` / `,z` | Switch to the alternate buffer. |
+| `,w` | Save the current file. |
+| `,c` | Close the current buffer with `:Bdelete`, without closing its window. `,c` uses `:bd` as an abbreviation for `:Bdelete`. |
+| `,z` | Switch to the alternate buffer. |
 | `,e` | Start `:e **/*` to open a file under the current directory. |
 | `,m` | Run `:make`. |
 | `,q` | Close the current window (`:quit`). |
@@ -145,6 +147,8 @@ The window shortcuts use vim-tmux-navigator when it loads. Without it, `Ctrl-h/j
 | `'` | Jump to an exact mark position, like Vim's backtick command. |
 | `<` / `>` (visual) | Decrease / increase indent and keep the selection. |
 | `=` (visual) | Reindent and keep the selection. |
+| `,y{motion}` / `,y` (visual) | Copy a motion or selection to the system clipboard; `,yy` copies the current line. |
+| `,p` | Paste from the system clipboard after the cursor. |
 | `gcc` / `gc{motion}` / `gc` (visual) | Toggle comments on a line, across a motion, or in the selection (vim-commentary). |
 | `gcu` | Uncomment the current and adjacent commented lines (vim-commentary). |
 | `ds{char}` / `cs{old}{new}` | Delete or change surrounding quotes, brackets, or tags (vim-surround). For example, `ds"` removes quotes. |
@@ -160,7 +164,7 @@ Use `:StripTrailingWhitespaces` to remove trailing whitespace from the current f
 
 ### LSP and completion
 
-The LSP shortcuts below apply only in buffers with an attached language server. The config enables basedpyright, rust-analyzer, clangd, and Tinymist.
+The LSP shortcuts below apply only in buffers with an attached language server. The config enables basedpyright, rust-analyzer, clangd, and Tinymist. The `Space` shortcuts here are explicitly mapped to Space, not to the leader key.
 
 | Keys | Action |
 | --- | --- |
@@ -168,18 +172,18 @@ The LSP shortcuts below apply only in buffers with an attached language server. 
 | `gi` / `gr` | Find implementations / references. |
 | `K` | Show hover information. |
 | `Space D` | Jump to the type definition. |
-| `Space r` / `Space l r` | Rename a symbol. |
-| `Space a` / `Space l a` | Show code actions. |
-| `Space e` / `Space l d` | Show diagnostics at the cursor. |
+| `Space r` / `,lr` | Rename a symbol. |
+| `Space a` / `,la` | Show code actions. |
+| `Space e` / `,ld` | Show diagnostics at the cursor. |
 | `[d` / `]d` | Jump to the previous / next diagnostic. |
 | `Space q` | Put diagnostics in the location list. |
-| `Space l f` | Request asynchronous formatting from the language server. |
+| `,lf` | Request asynchronous formatting from the language server. |
 | `Ctrl-p` / `Ctrl-n` (insert) | Select the previous / next completion item (nvim-cmp). |
 | `Enter` / `Tab` (insert) | Confirm the selected completion item, or the first item if none is selected (nvim-cmp). |
 
 Completion uses language-server results and file paths. `Ctrl-x Ctrl-o` requests LSP omni-completion in an attached buffer. Lsp_signature shows function signatures while you type arguments.
 
-`signcolumn=yes` keeps Git and diagnostic markers from shifting the text. `scrolloff=5` leaves context near the cursor. `termguicolors` enables true colors in Windows Terminal. To compare colors without true color, run `:set notermguicolors`. Windows clipboard integration is opt-in. Check `:checkhealth vim.provider` before using `"+y` or `"+p`.
+`signcolumn=yes` keeps Git and diagnostic markers from shifting the text. `scrolloff=5` leaves context near the cursor. `termguicolors` enables true colors in Windows Terminal. To compare colors without true color, run `:set notermguicolors`. The clipboard shortcuts use the `+` register; they do not change the default clipboard setting. Windows clipboard integration is opt-in. If `,y` or `,p` fails, check `:checkhealth vim.provider`.
 
 ## Color schemes
 

@@ -347,6 +347,9 @@ nnoremap <silent> <leader>m :make<cr>
 nnoremap <silent> <leader>q :quit<cr>
 nnoremap <silent> <leader>z :b#<cr>
 nnoremap <silent> <leader>w :write<cr>
+nnoremap          <leader>y "+y
+xnoremap          <leader>y "+y
+nnoremap          <leader>p "+p
 
 nnoremap <silent> <leader>gs :Git<cr>
 nnoremap <silent> <leader>gd :DiffviewOpen<cr>
