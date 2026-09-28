@@ -187,6 +187,6 @@ Completion uses language-server results and file paths. `Ctrl-x Ctrl-o` requests
 
 ## Color schemes
 
-Gruvbox is the default theme. Neovim saves theme changes in `~/.config/nvim/plugin/last-used-colorscheme.vim` and restores them at startup.
+Neovim saves theme changes in `~/.config/nvim/plugin/last-used-colorscheme.vim` and restores them at startup.
 
 Try `:colorscheme tokyonight-moon` (or `tokyonight-night`, `tokyonight-storm`, or `tokyonight-day`). Other configured themes include `gruvbox`, `apprentice`, `onedark`, and `monokai`. `:Colors` opens a scheme picker when fzf is available. The statusline uses the selected theme's colors.

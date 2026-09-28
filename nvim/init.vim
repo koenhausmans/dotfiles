@@ -19,11 +19,6 @@ Plug 'joshdick/onedark.vim'
 Plug 'tanvirtin/monokai.nvim'
 Plug 'folke/tokyonight.nvim'
 
-" Syntax: Additional syntaxes that can be used
-Plug 'tpope/vim-git', { 'for': 'git' }
-Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
-
-Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-unimpaired'
@@ -60,10 +55,6 @@ Plug 'hrsh7th/cmp-path', {'branch': 'main'}
 
 " Function signature as you type
 Plug 'ray-x/lsp_signature.nvim'
-
-" Snippet expansion for nvim-cmp
-Plug 'hrsh7th/cmp-vsnip', {'branch': 'main'}
-Plug 'hrsh7th/vim-vsnip'
 
 call plug#end()
 
@@ -110,6 +101,8 @@ set encoding=utf-8
 set hidden
 set signcolumn=yes
 set scrolloff=5
+set sidescrolloff=2
+set display+=truncate
 set termguicolors
 " Recognize numbered lists
 set formatoptions+=n
@@ -436,9 +429,9 @@ local cmp = require'cmp'
 
 cmp.setup({
   snippet = {
-    -- Expand LSP snippets with vim-vsnip.
+    -- Expand LSP snippets with Neovim's built-in snippet support.
     expand = function(args)
-      vim.fn["vsnip#anonymous"](args.body)
+      vim.snippet.expand(args.body)
     end,
   },
   mapping = {
