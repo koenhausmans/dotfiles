@@ -346,6 +346,7 @@ nnoremap          <leader>p "+p
 
 nnoremap <silent> <leader>gs :Git<cr>
 nnoremap <silent> <leader>gd :DiffviewOpen<cr>
+nnoremap <silent> <leader>gc :DiffviewClose<cr>
 nnoremap <silent> <leader>gh :DiffviewFileHistory %<cr>
 nnoremap <silent> <leader>gb :Git blame<cr>
 nnoremap <silent> <leader>gl :Git log<cr>

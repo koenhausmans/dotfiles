@@ -104,12 +104,13 @@ Fugitive provides the status view. Diffview provides changes and history panes. 
 | --- | --- |
 | `,gs` | Open Fugitive status (`:Git`). |
 | `,gd` | Open the Diffview changes pane (`:DiffviewOpen`). |
+| `,gc` | Close the current Diffview pane (`:DiffviewClose`). |
 | `,gh` | Show the current file's history (`:DiffviewFileHistory %`). |
 | `,gb` | Show Git blame for the current file. |
 | `,gl` | Show the Git log. |
 | `[h` / `]h` | Jump to the previous / next changed hunk in a tracked file. |
 
-Use `:DiffviewClose` to leave a diff view. `:DiffviewFileHistory` without `%` shows repository history. See `:help diffview` for actions inside a diff view.
+`:DiffviewFileHistory` without `%` shows repository history. See `:help diffview` for actions inside a diff view.
 
 The statusline shows the branch and nonzero `+added ~changed -removed` counts for the current file. It shows no Git section outside a repository.
 
