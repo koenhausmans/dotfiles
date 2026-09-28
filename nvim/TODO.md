@@ -1,25 +1,27 @@
 Neovim ToDo:
 ============
 
-[✓] Use , as leader. Are there any disadvantages of this? Can you give me a full map of all the shortcuts that will interfere with eachother so I can decide for each of these what to do. E.g. ,f vs ,fb.
-[ ] Typst: Support for terminal output instead of HTML / PDF
-[✓] Start optimising the <leader>fb settings to a more clean way
-[✓] Why not leader as , instead of <space>?
-
 [ ] Clean-up lightline
-
 [ ] Change to use a nerdfont / icon plugin for nice icons in nvim
-[ ] Run through the whole plugin list, is there stuff in there that can be removed?
-[ ] Fully improve the statusline, do a proposal. I like the look of the screenshots for adisen99/apprentice.nvim. It has a git branch icon for the branch name, python icon for the python language. It has a black on the left side with " NORMAL ", e.g. the mode VIM is in.
-I like the view of the screenshots of gruvbox-material. It angled ends of boxes.
-[ ] Why is christoomey/vim-tmux-navigator necessary?
-[ ] Is there a way to yank vim text into the system clipboard?
-[✓] Can ,sg be removed? Isn't it replaced by ,/? (removed ,sg)
-[✓] Can ,sw be removed? Isn't it replaced by K? (no — project word search, complement to gr)
-[✓] Missing is git blame shortcut. ,gb? (added ,gb and ,gl)
-[✓] Consider adding nnoremap <leader>, , to have the default comma behavior still present.
+[ ] Fully improve the statusline, do a proposal. I like the look of the screenshots for adisen99/apprentice.nvim. It has a git branch icon for the branch name, python icon for the python language. It has a black on the left side with " NORMAL ", e.g. the mode VIM is in. I like the view of the screenshots of gruvbox-material. It angled ends of boxes.
+
 [ ] What's treesitter and should I use this for nvim?
-[ ] Compare gruvbox.nvim vs gruvbox-material
-[ ] Remove? No longer necessary for nvim / lsp, better alternatives?
+
+[✓] Run through the whole plugin list, is there stuff in there that can be removed?
+[✓] Why is christoomey/vim-tmux-navigator necessary?
+[✓] Is there a way to yank vim text into the system clipboard?
+[✓] Remove? No longer necessary for nvim / lsp, better alternatives?
     Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
+
+[✓] With the last changes, from time to time I see a tabbar in nvim appearing. Where is this coming from?
+[✓] Update README, remove all unnecessary comments.
+
+[ ] Add https://github.com/sainnhe/everforest
+
+[ ] Update C++ specific configuration. Is there a more modern alternative? I want similar things for Rust, Python, etc...
+[ ] Bindings; ,/ vs ,sw. What's the different?
+
+[ ] Compare gruvbox.nvim vs gruvbox-material
+[ ] Typst: Support for terminal output instead of HTML / PDF
+
 
