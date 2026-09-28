@@ -164,19 +164,19 @@ Use `:StripTrailingWhitespaces` to remove trailing whitespace from the current f
 
 ### LSP and completion
 
-The LSP shortcuts below apply only in buffers with an attached language server. The config enables basedpyright, rust-analyzer, clangd, and Tinymist. The `Space` shortcuts here are explicitly mapped to Space, not to the leader key.
+The LSP shortcuts below apply only in buffers with an attached language server. The config enables basedpyright, rust-analyzer, clangd, and Tinymist.
 
 | Keys | Action |
 | --- | --- |
 | `gD` / `gd` | Jump to the declaration / definition. |
 | `gi` / `gr` | Find implementations / references. |
 | `K` | Show hover information. |
-| `Space D` | Jump to the type definition. |
-| `Space r` / `,lr` | Rename a symbol. |
-| `Space a` / `,la` | Show code actions. |
-| `Space e` / `,ld` | Show diagnostics at the cursor. |
+| `,lt` | Jump to the type definition. |
+| `,lr` | Rename a symbol. |
+| `,la` | Show code actions. |
+| `,ld` | Show diagnostics at the cursor. |
 | `[d` / `]d` | Jump to the previous / next diagnostic. |
-| `Space q` | Put diagnostics in the location list. |
+| `,lq` | Put diagnostics in the location list. |
 | `,lf` | Request asynchronous formatting from the language server. |
 | `Ctrl-p` / `Ctrl-n` (insert) | Select the previous / next completion item (nvim-cmp). |
 | `Enter` / `Tab` (insert) | Confirm the selected completion item, or the first item if none is selected (nvim-cmp). |
