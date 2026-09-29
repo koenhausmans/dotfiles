@@ -15,6 +15,9 @@ call plug#begin()
 " Colorschemes: Additional colorschemes that can be used
 Plug 'ellisonleao/gruvbox.nvim'
 Plug 'sainnhe/gruvbox-material'
+Plug 'sainnhe/everforest'
+Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
+Plug 'rebelot/kanagawa.nvim'
 Plug 'joshdick/onedark.vim'
 Plug 'tanvirtin/monokai.nvim'
 Plug 'folke/tokyonight.nvim'
