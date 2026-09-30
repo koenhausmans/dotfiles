@@ -13,14 +13,14 @@ endif
 call plug#begin()
 
 " Colorschemes: Additional colorschemes that can be used
-Plug 'ellisonleao/gruvbox.nvim'
 Plug 'sainnhe/gruvbox-material'
-Plug 'sainnhe/everforest'
-Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
 Plug 'rebelot/kanagawa.nvim'
-Plug 'joshdick/onedark.vim'
 Plug 'tanvirtin/monokai.nvim'
 Plug 'folke/tokyonight.nvim'
+
+" Treesitter: accurate syntax highlighting and structural text objects
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
@@ -66,6 +66,38 @@ call plug#end()
 
 " Keep Diffview usable without a Nerd Font or an icon plugin.
 lua require('diffview').setup({ use_icons = false })
+
+lua << END
+require('nvim-treesitter.configs').setup({
+  ensure_installed = {
+    'bash', 'c', 'cpp', 'lua', 'python', 'rust', 'toml', 'vim', 'vimdoc',
+  },
+  highlight = { enable = true },
+  indent    = { enable = true },
+  textobjects = {
+    select = {
+      enable    = true,
+      lookahead = true,
+      keymaps = {
+        ['af'] = '@function.outer',
+        ['if'] = '@function.inner',
+        ['ac'] = '@class.outer',
+        ['ic'] = '@class.inner',
+        ['aa'] = '@parameter.outer',
+        ['ia'] = '@parameter.inner',
+      },
+    },
+    move = {
+      enable              = true,
+      set_jumps           = true,
+      goto_next_start     = { [']f'] = '@function.outer' },
+      goto_next_end       = { [']F'] = '@function.outer' },
+      goto_previous_start = { ['[f'] = '@function.outer' },
+      goto_previous_end   = { ['[F'] = '@function.outer' },
+    },
+  },
+})
+END
 
 lua << END
 require('gitsigns').setup({
@@ -201,7 +233,7 @@ function! CustomStatuslineColors() abort
         highlight User1        cterm=bold,reverse ctermfg=252 ctermbg=67  gui=NONE,reverse guifg=#d0d0d0 guibg=#5f87af
     " Visual Studio Code inspired statusline colors
     else
-        highlight StatusLine   cterm=NONE         ctermfg=253 ctermbg=54  gui=NONE         guifg=#dadada guibg=#5f0087
+        highlight StatusLine   cterm=NONE         ctermfg=253 ctermbg=54  gui=NONE         guifg=#dadada guibg=#5f0088
         highlight StatusLineNC cterm=NONE         ctermfg=243 ctermbg=237 gui=NONE         guifg=#949494 guibg=#3a3a3a
         highlight User1        cterm=bold,reverse ctermfg=253 ctermbg=54  gui=bold,reverse guifg=#dadada guibg=#5f0087
         highlight Visual cterm=NONE ctermbg=white ctermfg=darkblue
@@ -215,13 +247,27 @@ augroup CustomStatusline
 augroup END
 
 let g:gruvbox_material_background = 'medium'
+let g:gruvbox_material_foreground = 'original'
+let g:gruvbox_material_enable_bold = 1
+let g:gruvbox_material_enable_italic = 1
 let g:gruvbox_material_better_performance = 1
 
 set background=dark
 set cursorline
 
+lua << END
+require('kanagawa').setup({
+    compile = true,
+    transparent = false,
+})
+END
+
 " The saved theme in plugin/last-used-colorscheme.vim overrides this fallback.
+" TODO: Test
+silent! colorscheme onedark
 silent! colorscheme gruvbox-material
+silent! colorscheme kanagawa-wave
+silent! colorscheme tokyonight-moon
 
 function! SaveColorscheme() abort
     let l:vimhome_plugin_folder = $HOME . "/.config/nvim/plugin"
