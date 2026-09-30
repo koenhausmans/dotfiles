@@ -68,9 +68,7 @@ call plug#end()
 lua require('diffview').setup({ use_icons = false })
 
 lua << END
-local ok, configs = pcall(require, 'nvim-treesitter.configs')
-if ok then
-  configs.setup({
+require('nvim-treesitter.configs').setup({
   ensure_installed = {
     'bash', 'c', 'cpp', 'lua', 'python', 'rust', 'toml', 'vim', 'vimdoc',
   },
@@ -97,8 +95,8 @@ if ok then
       goto_previous_start = { ['[f'] = '@function.outer' },
       goto_previous_end   = { ['[F'] = '@function.outer' },
     },
-  })
-end
+  },
+})
 END
 
 lua << END
