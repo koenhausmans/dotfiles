@@ -16,11 +16,12 @@ call plug#begin()
 Plug 'sainnhe/gruvbox-material'
 Plug 'rebelot/kanagawa.nvim'
 Plug 'tanvirtin/monokai.nvim'
+Plug 'loctvl842/monokai-pro.nvim'
 Plug 'folke/tokyonight.nvim'
 
 " Treesitter: accurate syntax highlighting and structural text objects
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'nvim-treesitter/nvim-treesitter-textobjects'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate', 'branch': 'master'}
+Plug 'nvim-treesitter/nvim-treesitter-textobjects', {'branch': 'master'}
 
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-repeat'
@@ -268,6 +269,7 @@ silent! colorscheme onedark
 silent! colorscheme gruvbox-material
 silent! colorscheme kanagawa-wave
 silent! colorscheme tokyonight-moon
+silent! colorscheme monokai-pro
 
 function! SaveColorscheme() abort
     let l:vimhome_plugin_folder = $HOME . "/.config/nvim/plugin"
