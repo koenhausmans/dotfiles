@@ -181,9 +181,9 @@ set noshowmode
 
 " Cursor shape per mode.
 " Non-blinking: steady block in normal/visual, bar in insert, underline in replace.
-"set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50
+"set guicursor=n-v-c:block,i-ci-ve:ver40,r-cr:hor20,o:hor50
 " Blinking in insert mode (700 ms delay before first blink, 400 ms on, 250 ms off).
-set guicursor=n-v-c:block,i-ci-ve:ver25-blinkwait700-blinkon400-blinkoff250,r-cr:hor20,o:hor50
+set guicursor=n-v-c:block,i-ci-ve:ver40-blinkwait700-blinkon400-blinkoff250,r-cr:hor20,o:hor50
 set hidden
 set signcolumn=yes
 set scrolloff=5
