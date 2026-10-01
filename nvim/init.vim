@@ -62,6 +62,7 @@ Plug 'ray-x/lsp_signature.nvim'
 " Statusline and file-type icons
 Plug 'nvim-lualine/lualine.nvim'
 Plug 'nvim-tree/nvim-web-devicons'
+Plug 'folke/todo-comments.nvim'
 
 call plug#end()
 
@@ -148,6 +149,20 @@ require('lualine').setup({
     },
     lualine_y = { 'progress' },
     lualine_z = { 'location' },
+  },
+})
+END
+
+lua << END
+require("todo-comments").setup({
+  signs = true,
+  sign_priority = 8,
+  highlight = {
+    before    = "",
+    keyword   = "bg",
+    after     = "fg",
+    pattern   = [[.*<(KEYWORDS)\s*:]],
+    comments_only = true,
   },
 })
 END
