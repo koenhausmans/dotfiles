@@ -14,9 +14,8 @@ call plug#begin()
 
 " Colorschemes: Additional colorschemes that can be used
 Plug 'sainnhe/gruvbox-material'
+Plug 'sainnhe/sonokai'
 Plug 'rebelot/kanagawa.nvim'
-Plug 'tanvirtin/monokai.nvim'
-Plug 'loctvl842/monokai-pro.nvim'
 Plug 'folke/tokyonight.nvim'
 
 " Treesitter: accurate syntax highlighting and structural text objects
@@ -60,13 +59,16 @@ Plug 'hrsh7th/cmp-path', {'branch': 'main'}
 " Function signature as you type
 Plug 'ray-x/lsp_signature.nvim'
 
+" Statusline and file-type icons
+Plug 'nvim-lualine/lualine.nvim'
+Plug 'nvim-tree/nvim-web-devicons'
+
 call plug#end()
 
 """ END PLUGIN MANAGER }}}
 """ PLUGIN INTEGRATION {{{
 
-" Keep Diffview usable without a Nerd Font or an icon plugin.
-lua require('diffview').setup({ use_icons = false })
+lua require('diffview').setup({ use_icons = true })
 
 lua << END
 require('nvim-treesitter.configs').setup({
@@ -124,6 +126,32 @@ require('gitsigns').setup({
 })
 END
 
+lua << END
+-- Separators: sainnhe's slant-right glyphs (U+E0B8/E0BE section, U+E0B9 component)
+require('lualine').setup({
+  options = {
+    theme                = 'auto',
+    section_separators   = { left = '', right = '' },
+    component_separators = { left = '', right = '' },
+    globalstatus         = true,
+  },
+  sections = {
+    lualine_a = { 'mode' },
+    lualine_b = {
+      'branch',
+      { 'diff', symbols = { added = ' +', modified = ' ~', removed = ' -' } },
+    },
+    lualine_c = { { 'filename', path = 1 } },
+    lualine_x = {
+      { 'diagnostics', sources = { 'nvim_lsp' } },
+      'filetype',
+    },
+    lualine_y = { 'progress' },
+    lualine_z = { 'location' },
+  },
+})
+END
+
 let g:tmux_navigator_disable_when_zoomed = 1
 
 let g:AutoPairsMultilineClose = 0
@@ -169,107 +197,24 @@ if has("persistent_undo")
 endif
 
 """ END TEMP FILES BEHAVIOR }}}
-""" STATUSLINE BEHAVIOR {{{
-
-function! GitStatusline() abort
-    let l:changes = get(b:, 'gitsigns_status_dict', {})
-    let l:head = get(l:changes, 'head', '')
-    if empty(l:head)
-        let l:head = FugitiveHead(7)
-    endif
-    if empty(l:head)
-        return ''
-    endif
-
-    let l:summary = ' [' . substitute(l:head, '%', '%%', 'g')
-    for [l:sign, l:key] in [['+', 'added'], ['~', 'changed'], ['-', 'removed']]
-        let l:count = get(l:changes, l:key, 0)
-        if l:count > 0
-            let l:summary .= printf(' %s%d', l:sign, l:count)
-        endif
-    endfor
-    return l:summary . ']'
-endfunction
-
-function! ActiveStatusline()
-    " Based on: https://gist.github.com/ericbn/f2956cd9ec7d6bff8940c2087247b132
-    let statusline="%1*"
-    let statusline.="%(%{&filetype!='help'?'\ \ '.bufnr('%'):''}\ │%)"
-    let statusline.="\ %<"
-    let statusline.="%f\ "
-    let statusline.=GitStatusline()
-    let statusline.="%*"
-    let statusline.="\ %{&modified?'[+]':''}"
-    let statusline.="%{&readonly?'[ro]':''}"
-    let statusline.="\ %="
-    let statusline.="\ %{&filetype!=#''?&filetype:'none'}"
-    let statusline.="\ │\ Ln:\ %3l,\ "
-    let statusline.="Col:\ %-2v"
-    let statusline.="\ │\ %2p%%\ "
-    return statusline
-endfunction
-
-set statusline=%!ActiveStatusline()
-
-""" END STATUSLINE BEHAVIOR }}}
 """ COLORSCHEME SETTINGS {{{
 
-function! CustomStatuslineColors() abort
-    " Gruvbox statusline colors
-    if g:colors_name == 'gruvbox'
-        highlight StatusLine   cterm=reverse ctermfg=239 ctermbg=223 gui=reverse guifg=#504945 guibg=#ebdbb2
-        highlight StatusLineNC cterm=reverse ctermfg=237 ctermbg=246 gui=reverse guifg=#3c3836 guibg=#a89984
-        highlight User1        cterm=NONE    ctermfg=235 ctermbg=223 gui=NONE    guifg=#504945 guibg=#ebdbb2
-    elseif g:colors_name == 'gruvbox-material'
-        highlight StatusLine   cterm=reverse ctermfg=239 ctermbg=223 gui=reverse guifg=#504945 guibg=#ebdbb2
-        highlight StatusLineNC cterm=reverse ctermfg=237 ctermbg=246 gui=reverse guifg=#3c3836 guibg=#a89984
-        highlight User1        cterm=NONE    ctermfg=235 ctermbg=223 gui=NONE    guifg=#504945 guibg=#ebdbb2
-    " Blue statusline colors based on apprentice colors
-    elseif g:colors_name =~# '^tokyonight'
-        " Let Tokyo Night color the statusline in both dark and light styles.
-        highlight! link User1 StatusLine
-    elseif stridx(g:colors_name, 'monokai') >= 0
-        highlight StatusLine   cterm=NONE         ctermfg=252 ctermbg=67  gui=NONE         guifg=#d0d0d0 guibg=#5f87af
-        highlight StatusLineNC cterm=NONE         ctermfg=243 ctermbg=237 gui=NONE         guifg=#949494 guibg=#3a3a3a
-        highlight User1        cterm=bold,reverse ctermfg=252 ctermbg=67  gui=NONE,reverse guifg=#d0d0d0 guibg=#5f87af
-    " Visual Studio Code inspired statusline colors
-    else
-        highlight StatusLine   cterm=NONE         ctermfg=253 ctermbg=54  gui=NONE         guifg=#dadada guibg=#5f0088
-        highlight StatusLineNC cterm=NONE         ctermfg=243 ctermbg=237 gui=NONE         guifg=#949494 guibg=#3a3a3a
-        highlight User1        cterm=bold,reverse ctermfg=253 ctermbg=54  gui=bold,reverse guifg=#dadada guibg=#5f0087
-        highlight Visual cterm=NONE ctermbg=white ctermfg=darkblue
-    endif
-    highlight ModeMsg cterm=NONE ctermbg=green ctermfg=black
-endfunction
-
-augroup CustomStatusline
-    autocmd!
-    autocmd ColorScheme * call CustomStatuslineColors()
-augroup END
-
-let g:gruvbox_material_background = 'medium'
+let g:gruvbox_material_background = 'hard'
 let g:gruvbox_material_foreground = 'original'
 let g:gruvbox_material_enable_bold = 1
 let g:gruvbox_material_enable_italic = 1
-let g:gruvbox_material_better_performance = 1
+let g:sonokai_style = 'shusia'
+let g:sonokai_enable_italic = 1
 
 set background=dark
 set cursorline
 
-lua << END
-require('kanagawa').setup({
-    compile = true,
-    transparent = false,
-})
-END
-
 " The saved theme in plugin/last-used-colorscheme.vim overrides this fallback.
 " TODO: Test
-silent! colorscheme onedark
-silent! colorscheme gruvbox-material
-silent! colorscheme kanagawa-wave
-silent! colorscheme tokyonight-moon
-silent! colorscheme monokai-pro
+" silent! colorscheme kanagawa-wave
+" silent! colorscheme tokyonight-moon
+" silent! colorscheme gruvbox-material
+silent! colorscheme sonokai
 
 function! SaveColorscheme() abort
     let l:vimhome_plugin_folder = $HOME . "/.config/nvim/plugin"

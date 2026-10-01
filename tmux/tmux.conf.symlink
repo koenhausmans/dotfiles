@@ -15,8 +15,10 @@ set  -g display-time 4000
 set  -g status-interval 5
 # Default termtype. If the rcfile sets $TERM, that overrides this value.
 # set -g default-terminal "screen-256color"
-set  -s default-terminal "screen-256color"
+# set  -s default-terminal "screen-256color"
+set  -s default-terminal "tmux-256color"
 #Undercurl for Neovim's diagnostic underlines (LSP errors, warnings). Without this they fall back to plain underlines with no colour:
+set -ga terminal-overrides ",*256col*:Tc"
 set -as terminal-overrides ',*:Smulx=\E[4::%p1%dm'
 set -as terminal-overrides ',*:Setulc=\E[58::2::%p1%{65536}%/%d::%p1%{256}%/%{255}%&%d::%p1%{255}%&%d%;m'
 # emacs key bindings in tmux command prompt (prefix + :) are better than
@@ -125,40 +127,94 @@ bind -n 'C-l' if-shell "$is_vim" 'send-keys C-l'  'select-pane -R'
 bind -n 'C-\' if-shell "$is_vim" 'send-keys C-\\' 'select-pane -l'
 
 ###
-### Set default tmux theme
-### Source: https://gist.github.com/gchiam/4606522f513cc64b79ce
+### Status bar — shared layout settings
 ###
-set  -g status-justify absolute-centre
-set  -g status-style 'fg=colour223,bg=colour237'
-set  -g pane-border-style 'fg=colour238'
-set  -g pane-active-border-style 'fg=colour109'
-set  -g pane-border-lines heavy
-set  -g message-style 'fg=colour237,bg=colour109'
-set  -g message-command-style 'fg=colour237,bg=colour248'
-set  -g mode-style 'fg=colour237,bg=colour214'
-set  -g clock-mode-colour colour109
-
-setw -g window-status-style 'fg=colour223,bg=colour239'
-setw -g window-status-current-style 'fg=colour237,bg=colour109'
-setw -g window-status-activity-style 'fg=colour237,bg=colour208'
-setw -g window-status-bell-style 'fg=colour237,bg=colour167'
-setw -g window-status-separator ' '
-
-set  -g status-left '#[fg=colour237,bg=colour248] #[bold]#S#[nobold] │ #h '
+### Separators used (nerd fonts powerline extra symbols):
+###   vim  uses  (U+E0B8/E0BE, slant right) and  (U+E0B9, thin)
+###   tmux uses  (U+E0BC/E0BA, slant left)  and  (U+E0BD, thin)
+###
+### To switch theme: uncomment exactly one theme block below (and comment the rest).
+###
+set  -g status-justify     absolute-centre
 set  -g status-left-length 40
+set  -g pane-border-lines  heavy
+set  -g @mode_prompt "#{?#{==:#{client_key_table},suspended}, ---- ,#{?client_prefix, WAIT ,#{?pane_in_mode, COPY ,#{?pane_synchronized, SYNC , TMUX }}}}"
+set  -g @mode_indicator '#[default]#{E:@mode_style}#{E:@mode_prompt}#[default]'
 set  -g status-right '#{E:@mode_indicator}'
-setw -g window-status-format " #I#{?window_flags,#{window_flags}, } │ #W "
-setw -g window-status-current-format " #I#{?window_flags,#{window_flags}, } │ #[bold]#W#[nobold] "
 
-###
-### tmux-mode-indicator
-###
-### Based on: https://github.com/MunifTanjim/tmux-mode-indicator
-###
-# Mode indicator in gruvbox colours: suspended grey, prefix blue, copy yellow, sync red, normal green
-set  -g @mode_style "#{?#{==:#{client_key_table},suspended},#[bg=colour245 fg=colour237],#{?client_prefix,#[bg=colour109 fg=colour237],#{?pane_in_mode,#[bg=colour214 fg=colour237],#{?pane_synchronized,#[bg=colour167 fg=colour237],#[bg=colour142 fg=colour237]}}}}"
-set -g @mode_prompt "#{?#{==:#{client_key_table},suspended}, ---- ,#{?client_prefix, WAIT ,#{?pane_in_mode, COPY ,#{?pane_synchronized, SYNC , TMUX }}}}"
-set -g @mode_indicator '#[default]#{E:@mode_style}#{E:@mode_prompt}#[default]'
+### ── Theme: gruvbox-material (hard bg, original fg) ─────────────── (active)
+### bg scale:  #1d2021 (hard) → #282828 (bg1) → #3c3836 (bg3) → #504945 (bg5)
+### accents:   green #b8bb26  blue/aqua #83a598  yellow #fabd2f  red #fb4934
+# set  -g status-style             'fg=#ebdbb2,bg=#3c3836'
+# set  -g pane-border-style        'fg=#504945'
+# set  -g pane-active-border-style 'fg=#83a598'
+# set  -g message-style            'fg=#1d2021,bg=#83a598'
+# set  -g message-command-style    'fg=#ebdbb2,bg=#504945'
+# set  -g mode-style               'fg=#1d2021,bg=#fabd2f'
+# set  -g clock-mode-colour        '#83a598'
+# setw -g window-status-style          'fg=#ebdbb2,bg=#504945'
+# setw -g window-status-current-style  'fg=#1d2021,bg=#83a598,bold'
+# setw -g window-status-activity-style 'fg=#1d2021,bg=#fabd2f'
+# setw -g window-status-bell-style     'fg=#1d2021,bg=#fb4934'
+# setw -g window-status-separator      ''
+# set  -g status-left '#[fg=#1d2021,bg=#b8bb26,bold] #S #[nobold]#[fg=#b8bb26,bg=#504945]#[fg=#ebdbb2,bg=#504945] #h #[fg=#504945,bg=#3c3836]'
+# setw -g window-status-format         '#[fg=#504945,bg=#3c3836]#[fg=#ebdbb2,bg=#504945] #I#{?window_flags,#{window_flags}, }#[fg=#ebdbb2,bg=#504945]  #W #[fg=#504945,bg=#3c3836]'
+# setw -g window-status-current-format '#[fg=#83a598,bg=#3c3836]#[fg=#1d2021,bg=#83a598,bold] #I#{?window_flags,#{window_flags}, }#[fg=#1d2021,bg=#83a598]  #W #[nobold]#[fg=#83a598,bg=#3c3836]'
+# set  -g @mode_style "#{?#{==:#{client_key_table},suspended},#[fg=#928374]#[bg=#3c3836]#[fg=#1d2021]#[bg=#928374],#{?client_prefix,#[fg=#83a598]#[bg=#3c3836]#[fg=#1d2021]#[bg=#83a598],#{?pane_in_mode,#[fg=#fabd2f]#[bg=#3c3836]#[fg=#1d2021]#[bg=#fabd2f],#{?pane_synchronized,#[fg=#fb4934]#[bg=#3c3836]#[fg=#1d2021]#[bg=#fb4934],#[fg=#b8bb26]#[bg=#3c3836]#[fg=#1d2021]#[bg=#b8bb26]}}}}"
+
+### ── Theme: kanagawa-wave ──────────────────────────────────────── (commented)
+# set  -g status-style             'fg=#dcd7ba,bg=#2a2a37'
+# set  -g pane-border-style        'fg=#363646'
+# set  -g pane-active-border-style 'fg=#7e9cd8'
+# set  -g message-style            'fg=#1f1f28,bg=#7e9cd8'
+# set  -g message-command-style    'fg=#dcd7ba,bg=#363646'
+# set  -g mode-style               'fg=#1f1f28,bg=#c0a36e'
+# set  -g clock-mode-colour        '#7e9cd8'
+# setw -g window-status-style          'fg=#727169,bg=#2d2d3d'
+# setw -g window-status-current-style  'fg=#1f1f28,bg=#7e9cd8,bold'
+# setw -g window-status-activity-style 'fg=#1f1f28,bg=#c0a36e'
+# setw -g window-status-bell-style     'fg=#1f1f28,bg=#c34043'
+# setw -g window-status-separator      ''
+# set  -g status-left '#[fg=#1f1f28,bg=#76946a,bold] #S #[nobold]#[fg=#76946a,bg=#363646]#[fg=#dcd7ba,bg=#363646] #h #[fg=#363646,bg=#2a2a37]'
+# setw -g window-status-format         '#[fg=#2d2d3d,bg=#2a2a37]#[fg=#727169,bg=#2d2d3d] #I#{?window_flags,#{window_flags}, }#[fg=#727169,bg=#2d2d3d]  #W #[fg=#2d2d3d,bg=#2a2a37]'
+# setw -g window-status-current-format '#[fg=#7e9cd8,bg=#2a2a37]#[fg=#1f1f28,bg=#7e9cd8,bold] #I#{?window_flags,#{window_flags}, }#[fg=#1f1f28,bg=#7e9cd8]  #W #[nobold]#[fg=#7e9cd8,bg=#2a2a37]'
+# set  -g @mode_style "#{?#{==:#{client_key_table},suspended},#[fg=#717c7c]#[bg=#2a2a37]#[fg=#1f1f28]#[bg=#717c7c],#{?client_prefix,#[fg=#7e9cd8]#[bg=#2a2a37]#[fg=#1f1f28]#[bg=#7e9cd8],#{?pane_in_mode,#[fg=#c0a36e]#[bg=#2a2a37]#[fg=#1f1f28]#[bg=#c0a36e],#{?pane_synchronized,#[fg=#c34043]#[bg=#2a2a37]#[fg=#1f1f28]#[bg=#c34043],#[fg=#76946a]#[bg=#2a2a37]#[fg=#1f1f28]#[bg=#76946a]}}}}"
+
+### ── Theme: tokyonight-night ───────────────────────────────────── (commented)
+# set  -g status-style             'fg=#c0caf5,bg=#24283b'
+# set  -g pane-border-style        'fg=#292e42'
+# set  -g pane-active-border-style 'fg=#7aa2f7'
+# set  -g message-style            'fg=#1a1b26,bg=#7aa2f7'
+# set  -g message-command-style    'fg=#c0caf5,bg=#292e42'
+# set  -g mode-style               'fg=#1a1b26,bg=#e0af68'
+# set  -g clock-mode-colour        '#7aa2f7'
+# setw -g window-status-style          'fg=#565f89,bg=#1f2335'
+# setw -g window-status-current-style  'fg=#1a1b26,bg=#7aa2f7,bold'
+# setw -g window-status-activity-style 'fg=#1a1b26,bg=#e0af68'
+# setw -g window-status-bell-style     'fg=#1a1b26,bg=#f7768e'
+# setw -g window-status-separator      ''
+# set  -g status-left '#[fg=#1a1b26,bg=#9ece6a,bold] #S #[nobold]#[fg=#9ece6a,bg=#292e42]#[fg=#c0caf5,bg=#292e42] #h #[fg=#292e42,bg=#24283b]'
+# setw -g window-status-format         '#[fg=#1f2335,bg=#24283b]#[fg=#565f89,bg=#1f2335] #I#{?window_flags,#{window_flags}, }#[fg=#565f89,bg=#1f2335]  #W #[fg=#1f2335,bg=#24283b]'
+# setw -g window-status-current-format '#[fg=#7aa2f7,bg=#24283b]#[fg=#1a1b26,bg=#7aa2f7,bold] #I#{?window_flags,#{window_flags}, }#[fg=#1a1b26,bg=#7aa2f7]  #W #[nobold]#[fg=#7aa2f7,bg=#24283b]'
+# set  -g @mode_style "#{?#{==:#{client_key_table},suspended},#[fg=#565f89]#[bg=#24283b]#[fg=#1a1b26]#[bg=#565f89],#{?client_prefix,#[fg=#7aa2f7]#[bg=#24283b]#[fg=#1a1b26]#[bg=#7aa2f7],#{?pane_in_mode,#[fg=#e0af68]#[bg=#24283b]#[fg=#1a1b26]#[bg=#e0af68],#{?pane_synchronized,#[fg=#f7768e]#[bg=#24283b]#[fg=#1a1b26]#[bg=#f7768e],#[fg=#9ece6a]#[bg=#24283b]#[fg=#1a1b26]#[bg=#9ece6a]}}}}"
+
+### ── Theme: sonokai (shusia) ───────────────────────────────────── (commented)
+set  -g status-style             'fg=#e2e2e3,bg=#33353f'
+set  -g pane-border-style        'fg=#3b3e48'
+set  -g pane-active-border-style 'fg=#76cce0'
+set  -g message-style            'fg=#2c2e34,bg=#76cce0'
+set  -g message-command-style    'fg=#e2e2e3,bg=#3b3e48'
+set  -g mode-style               'fg=#2c2e34,bg=#e7c664'
+set  -g clock-mode-colour        '#76cce0'
+setw -g window-status-style          'fg=#7f8490,bg=#2c2e34'
+setw -g window-status-current-style  'fg=#2c2e34,bg=#76cce0,bold'
+setw -g window-status-activity-style 'fg=#2c2e34,bg=#e7c664'
+setw -g window-status-bell-style     'fg=#2c2e34,bg=#fc5d7c'
+setw -g window-status-separator      ''
+set  -g status-left '#[fg=#2c2e34,bg=#9ed072,bold] #S #[nobold]#[fg=#9ed072,bg=#3b3e48]#[fg=#e2e2e3,bg=#3b3e48] #h #[fg=#3b3e48,bg=#33353f]'
+setw -g window-status-format         '#[fg=#2c2e34,bg=#33353f]#[fg=#7f8490,bg=#2c2e34] #I#{?window_flags,#{window_flags}, }#[fg=#7f8490,bg=#2c2e34]  #W #[fg=#2c2e34,bg=#33353f]'
+setw -g window-status-current-format '#[fg=#76cce0,bg=#33353f]#[fg=#2c2e34,bg=#76cce0,bold] #I#{?window_flags,#{window_flags}, }#[fg=#2c2e34,bg=#76cce0]  #W #[nobold]#[fg=#76cce0,bg=#33353f]'
+set  -g @mode_style "#{?#{==:#{client_key_table},suspended},#[fg=#7f8490]#[bg=#33353f]#[fg=#2c2e34]#[bg=#7f8490],#{?client_prefix,#[fg=#76cce0]#[bg=#33353f]#[fg=#2c2e34]#[bg=#76cce0],#{?pane_in_mode,#[fg=#e7c664]#[bg=#33353f]#[fg=#2c2e34]#[bg=#e7c664],#{?pane_synchronized,#[fg=#fc5d7c]#[bg=#33353f]#[fg=#2c2e34]#[bg=#fc5d7c],#[fg=#9ed072]#[bg=#33353f]#[fg=#2c2e34]#[bg=#9ed072]}}}}"
 
 ###
 ### tmux-suspend
@@ -182,4 +238,3 @@ bind -T suspended F12 {
 ### Local config
 ###
 if-shell "[ -f ~/.tmux.conf.local ]" 'source ~/.tmux.conf.local'
-
