@@ -21,11 +21,14 @@ Plug 'folke/tokyonight.nvim'
 " Treesitter: accurate syntax highlighting and structural text objects
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate', 'branch': 'master'}
 Plug 'nvim-treesitter/nvim-treesitter-textobjects', {'branch': 'master'}
+Plug 'nvim-treesitter/nvim-treesitter-context'
+Plug 'lukas-reineke/indent-blankline.nvim'
 
-Plug 'tpope/vim-surround'
+Plug 'kylechui/nvim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-unimpaired'
-Plug 'tpope/vim-commentary'
+Plug 'numToStr/Comment.nvim'
+Plug 'folke/flash.nvim'
 
 Plug 'romainl/vim-cool'
 
@@ -48,13 +51,7 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'neovim/nvim-lspconfig'
 
 " Autocompletion framework
-Plug 'hrsh7th/nvim-cmp', {'branch': 'main'}
-
-" LSP completion
-Plug 'hrsh7th/cmp-nvim-lsp', {'branch': 'main'}
-
-" Path completion
-Plug 'hrsh7th/cmp-path', {'branch': 'main'}
+Plug 'saghen/blink.cmp', { 'tag': '*' }
 
 " Function signature as you type
 Plug 'ray-x/lsp_signature.nvim'
@@ -63,6 +60,12 @@ Plug 'ray-x/lsp_signature.nvim'
 Plug 'nvim-lualine/lualine.nvim'
 Plug 'nvim-tree/nvim-web-devicons'
 Plug 'folke/todo-comments.nvim'
+Plug 'stevearc/oil.nvim'
+Plug 'chrisbra/unicode.vim'
+Plug 'stevearc/conform.nvim'
+Plug 'OXY2DEV/markview.nvim'
+Plug 'RRethy/vim-illuminate'
+Plug 'folke/which-key.nvim'
 
 call plug#end()
 
@@ -70,11 +73,81 @@ call plug#end()
 """ PLUGIN INTEGRATION {{{
 
 lua require('diffview').setup({ use_icons = true })
+lua require('treesitter-context').setup()
+lua require('ibl').setup()
+lua require('nvim-surround').setup()
+lua require('Comment').setup()
+lua require('markview').setup()
+lua require('illuminate').configure()
+
+lua << END
+require('which-key').setup()
+require('which-key').add({
+  { '<leader>g',  group = 'Git' },
+  { '<leader>gs', desc = 'Status' },
+  { '<leader>gd', desc = 'Diff open' },
+  { '<leader>gc', desc = 'Diff close' },
+  { '<leader>gh', desc = 'File history' },
+  { '<leader>gb', desc = 'Blame' },
+  { '<leader>gl', desc = 'Log' },
+  { '<leader>gf', desc = 'Find git file' },
+
+  { '<leader>l',  group = 'LSP' },
+  { '<leader>lt', desc = 'Type definition' },
+  { '<leader>lr', desc = 'Rename symbol' },
+  { '<leader>la', desc = 'Code actions' },
+  { '<leader>ld', desc = 'Diagnostics float' },
+  { '<leader>lq', desc = 'Diagnostics loclist' },
+  { '<leader>lf', desc = 'Format buffer' },
+
+  { '<leader>b',  desc = 'Buffers' },
+  { '<leader>f',  desc = 'Find file' },
+  { '<leader>t',  desc = 'Tags' },
+  { '<leader>e',  desc = 'Edit file' },
+  { '<leader>m',  desc = 'Make' },
+  { '<leader>q',  desc = 'Quit window' },
+  { '<leader>z',  desc = 'Alternate buffer' },
+  { '<leader>w',  desc = 'Write' },
+  { '<leader>c',  desc = 'Close buffer' },
+  { '<leader>/',  desc = 'Search (Ag/grep)' },
+  { '<leader>sw', desc = 'Search word under cursor' },
+  { '<leader>y',  desc = 'Yank to clipboard',  mode = { 'n', 'x' } },
+  { '<leader>p',  desc = 'Paste from clipboard' },
+
+  { 'g',   group = 'Go to / surround / comment' },
+  { 'gD',  desc = 'Declaration' },
+  { 'gd',  desc = 'Definition' },
+  { 'gi',  desc = 'Implementation' },
+  { 'gr',  desc = 'References' },
+  { 'gcc', desc = 'Toggle comment (line)' },
+  { 'gbc', desc = 'Toggle comment (block)' },
+
+  { ']',   group = 'Next' },
+  { ']d',  desc = 'Diagnostic' },
+  { ']h',  desc = 'Hunk' },
+  { ']r',  desc = 'Reference (illuminate)' },
+  { ']b',  desc = 'Buffer' },
+  { ']q',  desc = 'Quickfix' },
+  { ']l',  desc = 'Loclist' },
+  { ']f',  desc = 'File in dir' },
+  { ']e',  desc = 'Move line down' },
+
+  { '[',   group = 'Prev' },
+  { '[d',  desc = 'Diagnostic' },
+  { '[h',  desc = 'Hunk' },
+  { '[r',  desc = 'Reference (illuminate)' },
+  { '[b',  desc = 'Buffer' },
+  { '[q',  desc = 'Quickfix' },
+  { '[l',  desc = 'Loclist' },
+  { '[f',  desc = 'File in dir' },
+  { '[e',  desc = 'Move line up' },
+})
+END
 
 lua << END
 require('nvim-treesitter.configs').setup({
   ensure_installed = {
-    'bash', 'c', 'cpp', 'lua', 'python', 'rust', 'toml', 'vim', 'vimdoc',
+    'bash', 'c', 'cpp', 'lua', 'python', 'rust', 'toml', 'typst', 'vim', 'vimdoc',
   },
   highlight = { enable = true },
   indent    = { enable = true },
@@ -165,6 +238,16 @@ require("todo-comments").setup({
     comments_only = true,
   },
 })
+END
+
+lua << END
+require("oil").setup({
+  default_file_explorer = true,
+  view_options = {
+    show_hidden = true,
+  },
+})
+vim.keymap.set("n", "-", "<cmd>Oil<cr>", { desc = "Open parent directory" })
 END
 
 let g:tmux_navigator_disable_when_zoomed = 1
@@ -430,58 +513,50 @@ set updatetime=300
 set shortmess+=c
 
 """ END CODE COMPLETION BEHAVIOR }}}
-""" C++ SPECIFIC BEHAVIOR {{{
+""" FORMATTER {{{
 
-" Scope our C/C++ indentation settings to those filetypes.
-" g0 aligns access labels, N-s avoids namespace indentation, :0 aligns cases.
-augroup CFamilyIndent
-    autocmd!
-    autocmd FileType c,cpp setlocal cindent cinoptions+=g0 cinoptions+=N-s cinoptions+=:0
-augroup END
+lua << END
+require("conform").setup({
+  formatters_by_ft = {
+    c          = { "clang_format" },
+    cpp        = { "clang_format" },
+    rust       = { "rustfmt" },
+    python     = { "ruff_format", "ruff_organize_imports" },
+    lua        = { "stylua" },
+    typst      = { "typstyle" },
+  },
+  format_on_save = {
+    timeout_ms = 500,
+    lsp_fallback = true,
+  },
+})
+END
 
-""" END C++ SPECIFIC BEHAVIOR }}}
+""" END FORMATTER }}}
 """ LSP configuration {{{
 
 lua << END
 
-local cmp = require'cmp'
-
-cmp.setup({
-  snippet = {
-    -- Expand LSP snippets with Neovim's built-in snippet support.
-    expand = function(args)
-      vim.snippet.expand(args.body)
-    end,
+require('blink.cmp').setup({
+  keymap = {
+    preset = 'none',
+    ['<C-p>']  = { 'select_prev', 'fallback' },
+    ['<C-n>']  = { 'select_next', 'fallback' },
+    ['<CR>']   = { 'accept', 'fallback' },
+    ['<Tab>']  = { 'accept', 'fallback' },
+    ['<C-e>']  = { 'hide' },
   },
-  mapping = {
-    ['<C-p>'] = cmp.mapping.select_prev_item(),
-    ['<C-n>'] = cmp.mapping.select_next_item(),
-    ['<CR>'] = cmp.mapping.confirm({
-      behavior = cmp.ConfirmBehavior.Insert,
-      select = true,
-    }),
-    ['<Tab>'] = cmp.mapping.confirm({ select = true })
+  completion = {
+    ghost_text = { enabled = true },
   },
-  sources = cmp.config.sources({
-    { name = 'nvim_lsp' },
-  }, {
-    { name = 'path' },
-  }),
-  experimental = {
-    ghost_text = true,
+  sources = {
+    default = { 'lsp', 'path', 'snippets' },
   },
-})
-
--- Enable completing paths in :
-cmp.setup.cmdline(':', {
-  sources = cmp.config.sources({
-    { name = 'path' }
-  })
 })
 
 -- nvim-lspconfig supplies the server defaults; Neovim enables them.
 vim.lsp.config('*', {
-  capabilities = require('cmp_nvim_lsp').default_capabilities(),
+  capabilities = require('blink.cmp').get_lsp_capabilities(),
 })
 
 vim.diagnostic.config({
