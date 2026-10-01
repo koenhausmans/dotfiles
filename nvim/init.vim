@@ -315,7 +315,6 @@ set background=dark
 set cursorline
 
 " The saved theme in plugin/last-used-colorscheme.vim overrides this fallback.
-" TODO: Test
 " silent! colorscheme kanagawa-wave
 " silent! colorscheme tokyonight-moon
 " silent! colorscheme gruvbox-material
