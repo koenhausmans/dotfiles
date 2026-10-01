@@ -162,6 +162,7 @@ cabbrev bd Bdelete
 """ MISC EDITOR BEHAVIOR {{{
 
 set encoding=utf-8
+set noshowmode
 set hidden
 set signcolumn=yes
 set scrolloff=5
