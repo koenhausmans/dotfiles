@@ -8,21 +8,19 @@ fi
 
 export DOTFILES="$HOME/.dotfiles"
 
-export PATH="$HOME/bin:$DOTFILES/bin:$HOME/.local/bin/:$PATH"
+typeset -U path
+path=("$HOME/bin" "$DOTFILES/bin" "$HOME/.local/bin" $path)
 
 export VISUAL="vim"
 export EDITOR="$VISUAL"
-
-export SHELL="$(command -v zsh)"
 
 ### ---------------------------------------------------------------------------
 ### Plugins
 ### ---------------------------------------------------------------------------
 
 ZSH_PLUGIN_FOLDER="$HOME/.local/share/zsh-plugins/"
-source $ZSH_PLUGIN_FOLDER/zsh-autosuggestions/zsh-autosuggestions.zsh
-source $ZSH_PLUGIN_FOLDER/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-[[ -f "$HOME/.local/share/z/z.sh" ]] && source $HOME/.local/share/z/z.sh
+[[ -r "$ZSH_PLUGIN_FOLDER/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && source "$ZSH_PLUGIN_FOLDER/zsh-autosuggestions/zsh-autosuggestions.zsh"
+[[ -r "$HOME/.local/share/z/z.sh" ]] && source "$HOME/.local/share/z/z.sh"
 
 ### ---------------------------------------------------------------------------
 ### Theming
@@ -35,6 +33,7 @@ PROMPT='$(theme_host)$(theme_pwd)$(theme_bg_jobs)$(theme_return_status)'
 RPROMPT='$(theme_git_status)'
 
 theme_host() {
+    local me
     if [[ -n $SSH_CONNECTION ]]; then
         me="%n@%m"
     elif [[ $LOGNAME != $USER ]]; then
@@ -59,22 +58,27 @@ theme_return_status() {
 }
 
 theme_git_status() {
-    local branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
-    if [[ -n ${branch} ]]; then
-
-        local git_status=$(git status --porcelain 2>/dev/null)
-        # local staged=$(git status --porcelain 2>/dev/null | grep -e "^M " -e "^A ")
-        # local unstaged=$(git status --porcelain 2>/dev/null | grep -e "^ M" -e "^??")
+    local branch
+    branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null) || branch="@$(git rev-parse --short HEAD 2>/dev/null)"
+    [[ $branch == '@' ]] && return
+    if [[ -n $branch ]]; then
+        local git_status=$(git status --porcelain --untracked-files=normal 2>/dev/null)
+        local line staged=0 unstaged=0 untracked=0
+        for line in ${(f)git_status}; do
+            [[ $line[1] == [MADRCU] ]] && staged=1
+            [[ $line[2] == [MDU] ]] && unstaged=1
+            [[ $line[1,2] == '??' ]] && untracked=1
+        done
 
         ##
         ## Determine the color of the git branch
         ##
         local branch_color="%F{green}"
         # Check for staged commits
-        if [[ -n $(egrep '^[MADRC]' <<<"$git_status") ]]; then
+        if (( staged )); then
             branch_color="%F{red}"
         # Check for unstaged commits
-        elif [[ -n $(egrep '^.[MD]' <<<"$git_status") ]]; then
+        elif (( unstaged )); then
             branch_color="%F{yellow}"
         fi
 
@@ -88,11 +92,11 @@ theme_git_status() {
         # P local commits need to be pushed to the remote
         local flags=""
 
-        [[ -n $(egrep '^[MADRC]' <<<"$git_status") ]] && flags+="+"
-        [[ -n $(egrep '^.[MD]' <<<"$git_status") ]] && flags+="!"
-        [[ -n $(egrep '^\?\?' <<<"$git_status") ]] && flags+="?"
-        [[ -n $(git stash list) ]] && flags+="S"
-        [[ -n $(git log --branches --not --remotes) ]] && flags+="P"
+        (( staged )) && flags+="+"
+        (( unstaged )) && flags+="!"
+        (( untracked )) && flags+="?"
+        [[ -n $(git stash list -1 2>/dev/null) ]] && flags+="S"
+        [[ -n $(git rev-list --branches --not --remotes -1 2>/dev/null) ]] && flags+="P"
         [[ -n $flags ]] && flags=" | $flags"
 
         echo "\u27EE ${branch_color}${branch}%f$flags \u27EF"
@@ -210,9 +214,6 @@ HISTSIZE=10000
 SAVEHIST=$HISTSIZE
 HISTFILE=~/.zsh_history
 
-# Write to the history file immediately, not when the shell exist
-setopt inc_append_history
-
 # Share history between all sessions
 setopt share_history
 
@@ -231,13 +232,20 @@ setopt hist_verify
 ### ---------------------------------------------------------------------------
 
 autoload -Uz compinit
-if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
-    compinit;
-else
-    compinit -C;
-fi;
-
 zmodload -i zsh/complist
+zcompdump="${ZDOTDIR:-$HOME}/.zcompdump"
+# Run the security audit once a day; reuse the existing dump between audits.
+zmodload zsh/stat
+zmodload zsh/datetime
+if [[ -f $zcompdump ]]; then
+    zstat -A zcompdump_stat +mtime -- "$zcompdump"
+fi
+if [[ ! -f $zcompdump ]] || (( EPOCHSECONDS - zcompdump_stat[1] > 86400 )); then
+    compinit -d "$zcompdump"
+else
+    compinit -C -d "$zcompdump"
+fi
+unset zcompdump zcompdump_stat
 
 WORDCHARS=''
 
@@ -270,8 +278,11 @@ zstyle ':completion:*' list-colors ''
 zstyle ':completion:*:cd:*' tag-order local-directories directory-stack path-directories
 
 # Use caching so that commands like apt and dpkg complete are useable
+zsh_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+[[ -d $zsh_cache_dir ]] || mkdir -p -- "$zsh_cache_dir"
 zstyle ':completion::complete:*' use-cache 1
-zstyle ':completion::complete:*' cache-path $ZSH_CACHE_DIR
+zstyle ':completion::complete:*' cache-path "$zsh_cache_dir"
+unset zsh_cache_dir
 
 # ... unless we really want to.
 zstyle '*' single-ignored show
@@ -288,8 +299,8 @@ alias mv='nocorrect mv'
 alias sudo='nocorrect sudo'
 alias vim='nocorrect vim'
 
-# Enable auto correction
-setopt correct_all
+# Correct misspelled command names, not every argument (e.g. file paths).
+setopt correct
 
 
 ### ---------------------------------------------------------------------------
@@ -303,10 +314,10 @@ if [[ ! "$MANPATH" == *$HOME/.fzf/man* && -d "$HOME/.fzf/man" ]]; then
     export MANPATH="$MANPATH:$HOME/.fzf/man"
 fi
 
-[[ $- == *i* ]] && source "$HOME/.fzf/shell/completion.zsh" 2> /dev/null
+[[ -t 0 && -r "$HOME/.fzf/shell/completion.zsh" ]] && source "$HOME/.fzf/shell/completion.zsh"
 
 FZF_TMUX=1
-[[ -f "$HOME/.fzf/shell/key-bindings.zsh" ]] && source "$HOME/.fzf/shell/key-bindings.zsh"
+[[ -t 0 && -r "$HOME/.fzf/shell/key-bindings.zsh" ]] && source "$HOME/.fzf/shell/key-bindings.zsh"
 
 
 ##
@@ -314,3 +325,5 @@ FZF_TMUX=1
 ##
 [[ -f $HOME/.zshrc.local ]] && source $HOME/.zshrc.local
 
+# Keep highlighting last so it can wrap all widgets installed above.
+[[ -r "$ZSH_PLUGIN_FOLDER/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && source "$ZSH_PLUGIN_FOLDER/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
