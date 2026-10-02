@@ -26,35 +26,63 @@ ZSH_PLUGIN_FOLDER="$HOME/.local/share/zsh-plugins/"
 ### Theming
 ### ---------------------------------------------------------------------------
 
-# Based on https://github.com/jackharrisonsherlock/common
+# Uncomment one palette at a time. Colors are true-color values matching the
+# corresponding Neovim theme; the separators match lualine's slanted sections.
+typeset -gA prompt_palette
+
+# Sonokai (shusia) — active
+prompt_palette=(
+    bg '#37343a' muted '#848089'
+    path '#7accd7' green '#9ecd6f' yellow '#e5c463' red '#f85e84'
+)
+
+# Gruvbox Material (hard background, original foreground)
+# prompt_palette=(
+#     bg '#3c3836' muted '#928374'
+#     path '#83a598' green '#b8bb26' yellow '#fabd2f' red '#fb4934'
+# )
+
+# Kanagawa (wave)
+# prompt_palette=(
+#     bg '#363646' muted '#727169'
+#     path '#7e9cd8' green '#76946a' yellow '#c0a36e' red '#c34043'
+# )
+
+# Tokyo Night (night)
+# prompt_palette=(
+#     bg '#292e42' muted '#565f89'
+#     path '#7aa2f7' green '#9ece6a' yellow '#e0af68' red '#f7768e'
+# )
+
+prompt_left_sep=''
+prompt_right_sep=''
+# If your font lacks the slanted glyphs, use these ASCII separators instead:
+# prompt_left_sep='>'
+# prompt_right_sep='<'
+
 setopt prompt_subst
 
 PROMPT='$(theme_host)$(theme_pwd)$(theme_bg_jobs)$(theme_return_status)'
 RPROMPT='$(theme_git_status)'
 
 theme_host() {
-    local me
     if [[ -n $SSH_CONNECTION ]]; then
-        me="%n@%m"
+        print -nr -- "%F{$prompt_palette[green]}%n@%m%f "
     elif [[ $LOGNAME != $USER ]]; then
-        me="%n"
-    fi
-    if [[ -n $me ]]; then
-        echo "%{$fg[green]%}$me%{$reset_color%}:"
+        print -nr -- "%F{$prompt_palette[green]}%n%f "
     fi
 }
 
 theme_pwd() {
-    echo -n "%{$fg[blue]%}%~ "
+    print -nr -- "%K{$prompt_palette[bg]}%F{$prompt_palette[path]} %~ %k%F{$prompt_palette[bg]}${prompt_left_sep}%f "
 }
 
 theme_bg_jobs() {
-    echo -n "%{$fg[red]%}%(1j.↓%j .)"
+    print -nr -- "%F{$prompt_palette[yellow]}%(1j.↓%j .)%f"
 }
 
 theme_return_status() {
-    local common_prompt_symbol="\u27E9"
-    echo -n "%(?.%F{magenta}.%F{red})$common_prompt_symbol%f "
+    print -nr -- "%(?.%F{$prompt_palette[green]}.%F{$prompt_palette[red]})❯%f "
 }
 
 theme_git_status() {
@@ -73,13 +101,13 @@ theme_git_status() {
         ##
         ## Determine the color of the git branch
         ##
-        local branch_color="%F{green}"
+        local branch_color="$prompt_palette[green]"
         # Check for staged commits
         if (( staged )); then
-            branch_color="%F{red}"
+            branch_color="$prompt_palette[red]"
         # Check for unstaged commits
         elif (( unstaged )); then
-            branch_color="%F{yellow}"
+            branch_color="$prompt_palette[yellow]"
         fi
 
         ##
@@ -99,7 +127,9 @@ theme_git_status() {
         [[ -n $(git rev-list --branches --not --remotes -1 2>/dev/null) ]] && flags+="P"
         [[ -n $flags ]] && flags=" | $flags"
 
-        echo "\u27EE ${branch_color}${branch}%f$flags \u27EF"
+        # Branch names may contain %, which has meaning in zsh prompt strings.
+        branch=${branch//\%/%%}
+        print -nr -- "%F{$prompt_palette[bg]}${prompt_right_sep}%K{$prompt_palette[bg]}%F{$branch_color} ${branch}%F{$prompt_palette[muted]}${flags} %k%f"
     fi
 }
 
