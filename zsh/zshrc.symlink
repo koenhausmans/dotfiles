@@ -27,110 +27,123 @@ ZSH_PLUGIN_FOLDER="$HOME/.local/share/zsh-plugins/"
 ### ---------------------------------------------------------------------------
 
 # Uncomment one palette at a time. Colors are true-color values matching the
-# corresponding Neovim theme; the separators match lualine's slanted sections.
+# corresponding Neovim theme. Git uses a slightly darker shade of the path blue.
 typeset -gA prompt_palette
 
 # Sonokai (shusia) — active
 prompt_palette=(
-    bg '#37343a' muted '#848089'
+    base '#2d2a2e' git_bg '#65a2b1'
     path '#7accd7' green '#9ecd6f' yellow '#e5c463' red '#f85e84'
 )
 
 # Gruvbox Material (hard background, original foreground)
 # prompt_palette=(
-#     bg '#3c3836' muted '#928374'
+#     base '#1d2021' git_bg '#6a857c'
 #     path '#83a598' green '#b8bb26' yellow '#fabd2f' red '#fb4934'
 # )
 
 # Kanagawa (wave)
 # prompt_palette=(
-#     bg '#363646' muted '#727169'
+#     base '#1f1f28' git_bg '#6685b6'
 #     path '#7e9cd8' green '#76946a' yellow '#c0a36e' red '#c34043'
 # )
 
 # Tokyo Night (night)
 # prompt_palette=(
-#     bg '#292e42' muted '#565f89'
+#     base '#1a1b26' git_bg '#6788cf'
 #     path '#7aa2f7' green '#9ece6a' yellow '#e0af68' red '#f7768e'
 # )
 
-prompt_left_sep=''
-prompt_right_sep=''
-# If your font lacks the slanted glyphs, use these ASCII separators instead:
-# prompt_left_sep='>'
-# prompt_right_sep='<'
+# Set prompt_ascii=1 in ~/.zshrc.local if your terminal font lacks Powerline
+# and Nerd Font glyphs. Linux virtual consoles use the plain prompt automatically.
+prompt_ascii=0
+unsetopt prompt_subst
+PROMPT='%~ '
+RPROMPT=''
 
-setopt prompt_subst
+# precmd runs before the other precmd hooks, so capture the command's status
+# before git or plugin work can overwrite it. Rebuild only once per command.
+precmd() {
+    local exit_code=$?
+    local branch git_status line tip_color host ahead
+    local work_added=0 work_modified=0 work_deleted=0 untracked=0
+    local staged_added=0 staged_modified=0 staged_deleted=0 conflicts=0
+    local work_summary='' staged_summary='' stash='' ascii=0
 
-PROMPT='$(theme_host)$(theme_pwd)$(theme_bg_jobs)$(theme_return_status)'
-RPROMPT='$(theme_git_status)'
+    (( prompt_ascii )) || [[ $TERM == linux || $TTY == /dev/tty[0-9]* ]] && ascii=1
 
-theme_host() {
     if [[ -n $SSH_CONNECTION ]]; then
-        print -nr -- "%F{$prompt_palette[green]}%n@%m%f "
+        host='%n@%m '
     elif [[ $LOGNAME != $USER ]]; then
-        print -nr -- "%F{$prompt_palette[green]}%n%f "
+        host='%n '
     fi
-}
 
-theme_pwd() {
-    print -nr -- "%K{$prompt_palette[bg]}%F{$prompt_palette[path]} %~ %k%F{$prompt_palette[bg]}${prompt_left_sep}%f "
-}
-
-theme_bg_jobs() {
-    print -nr -- "%F{$prompt_palette[yellow]}%(1j.↓%j .)%f"
-}
-
-theme_return_status() {
-    print -nr -- "%(?.%F{$prompt_palette[green]}.%F{$prompt_palette[red]})❯%f "
-}
-
-theme_git_status() {
-    local branch
     branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null) || branch="@$(git rev-parse --short HEAD 2>/dev/null)"
-    [[ $branch == '@' ]] && return
+    [[ $branch == '@' ]] && branch=''
     if [[ -n $branch ]]; then
-        local git_status=$(git status --porcelain --untracked-files=normal 2>/dev/null)
-        local line staged=0 unstaged=0 untracked=0
+        git_status=$(git status --porcelain --untracked-files=normal 2>/dev/null)
         for line in ${(f)git_status}; do
-            [[ $line[1] == [MADRCU] ]] && staged=1
-            [[ $line[2] == [MDU] ]] && unstaged=1
-            [[ $line[1,2] == '??' ]] && untracked=1
+            if [[ $line[1,2] == '??' ]]; then
+                (( untracked++ ))
+                continue
+            fi
+            if [[ $line[1] == U || $line[2] == U || $line[1,2] == (AA|DD) ]]; then
+                (( conflicts++ ))
+                continue
+            fi
+            case $line[1] in
+                A) (( staged_added++ )) ;;
+                [MRTC]) (( staged_modified++ )) ;;
+                D) (( staged_deleted++ )) ;;
+            esac
+            case $line[2] in
+                A) (( work_added++ )) ;;
+                [MRTC]) (( work_modified++ )) ;;
+                D) (( work_deleted++ )) ;;
+            esac
         done
-
-        ##
-        ## Determine the color of the git branch
-        ##
-        local branch_color="$prompt_palette[green]"
-        # Check for staged commits
-        if (( staged )); then
-            branch_color="$prompt_palette[red]"
-        # Check for unstaged commits
-        elif (( unstaged )); then
-            branch_color="$prompt_palette[yellow]"
-        fi
-
-        ##
-        ## Determine the git flags that should be shown
-        ##
-        # + changes are staged and ready to commit
-        # ! unstaged changes are present
-        # ? untracked files are present
-        # S changes have been stashed
-        # P local commits need to be pushed to the remote
-        local flags=""
-
-        (( staged )) && flags+="+"
-        (( unstaged )) && flags+="!"
-        (( untracked )) && flags+="?"
-        [[ -n $(git stash list -1 2>/dev/null) ]] && flags+="S"
-        [[ -n $(git rev-list --branches --not --remotes -1 2>/dev/null) ]] && flags+="P"
-        [[ -n $flags ]] && flags=" | $flags"
-
-        # Branch names may contain %, which has meaning in zsh prompt strings.
-        branch=${branch//\%/%%}
-        print -nr -- "%F{$prompt_palette[bg]}${prompt_right_sep}%K{$prompt_palette[bg]}%F{$branch_color} ${branch}%F{$prompt_palette[muted]}${flags} %k%f"
+        [[ -n $(git stash list -1 2>/dev/null) ]] && stash=' S'
+        ahead=$(git rev-list --count '@{upstream}..HEAD' 2>/dev/null) || ahead=$(git rev-list --count HEAD --not --remotes 2>/dev/null)
     fi
+
+    (( work_added )) && work_summary+=" +$work_added"
+    (( work_modified )) && work_summary+=" ~$work_modified"
+    (( work_deleted )) && work_summary+=" -$work_deleted"
+    (( untracked )) && work_summary+=" ?$untracked"
+    (( conflicts )) && work_summary+=" x$conflicts"
+    (( staged_added )) && staged_summary+=" +$staged_added"
+    (( staged_modified )) && staged_summary+=" ~$staged_modified"
+    (( staged_deleted )) && staged_summary+=" -$staged_deleted"
+
+    # Branch names can contain %, which must not become a prompt escape.
+    branch=${branch//\%/%%}
+    RPROMPT=''
+    if (( ascii )); then
+        PROMPT="${host}%~"
+        if [[ -n $branch ]]; then
+            RPROMPT="[git:${branch}"
+            (( ahead > 0 )) && RPROMPT+=" ahead:$ahead"
+            [[ -n $work_summary ]] && RPROMPT+=" work:${work_summary# }"
+            [[ -n $staged_summary ]] && RPROMPT+=" staged:${staged_summary# }"
+            RPROMPT+="${stash}]"
+        fi
+        (( exit_code == 0 )) && PROMPT+=' [ok] ' || PROMPT+=" [exit:${exit_code}] "
+        return
+    fi
+
+    (( exit_code == 0 )) && tip_color=$prompt_palette[green] || tip_color=$prompt_palette[red]
+    PROMPT="%K{$prompt_palette[path]}%F{$prompt_palette[base]}%B   ${host}%~%b %(1j.↓%j .)"
+    if [[ -n $branch ]]; then
+        RPROMPT="%F{$prompt_palette[git_bg]}%K{$prompt_palette[git_bg]}%F{$prompt_palette[base]}%B  ${branch}"
+        (( ahead > 0 )) && RPROMPT+=" ↑$ahead"
+        [[ -n $work_summary ]] && RPROMPT+=" ${work_summary}"
+        [[ -n $staged_summary ]] && RPROMPT+=" ${staged_summary}"
+        RPROMPT+="$stash"
+        RPROMPT+=" %b%k%f"
+    fi
+    # The folder and command-status blocks remain on the left.
+    # PROMPT+="%k%F{$prompt_palette[path]}%f%F{$prompt_palette[base]}%K{$tip_color}%k%F{$tip_color}%f "
+    PROMPT+="%k%F{$prompt_palette[path]}%f%F{$prompt_palette[base]}%K{$tip_color}%k%F{$tip_color}%f "
 }
 
 ### ---------------------------------------------------------------------------
