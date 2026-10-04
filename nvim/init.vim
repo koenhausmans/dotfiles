@@ -315,10 +315,10 @@ set background=dark
 set cursorline
 
 " The saved theme in plugin/last-used-colorscheme.vim overrides this fallback.
-" silent! colorscheme kanagawa-wave
+silent! colorscheme kanagawa-wave
 " silent! colorscheme tokyonight-moon
 " silent! colorscheme gruvbox-material
-silent! colorscheme sonokai
+" silent! colorscheme sonokai
 
 function! SaveColorscheme() abort
     let l:vimhome_plugin_folder = $HOME . "/.config/nvim/plugin"
