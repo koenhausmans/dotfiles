@@ -123,13 +123,13 @@ precmd() {
     PROMPT+="%F{$prompt_palette[base]}%B ${host}%~%b%(1j. ↓%j.) "
     PROMPT+="%k%F{$prompt_palette[path]}${sep}%f "
 
-    # Right prompt: purple if ahead/behind, yellow if dirty, else green
+    # Right prompt: yellow if dirty, purple if ahead/behind, else green
     if [[ -n $branch ]]; then
         local git_color
-        if (( ahead > 0 || behind > 0 )); then
-            git_color=$prompt_palette[purple]
-        elif [[ -n $git_dirty ]]; then
+        if [[ -n $git_dirty ]]; then
             git_color=$prompt_palette[yellow]
+        elif (( ahead > 0 || behind > 0 )); then
+            git_color=$prompt_palette[purple]
         else
             git_color=$prompt_palette[green]
         fi
