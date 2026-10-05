@@ -33,25 +33,25 @@ typeset -gA prompt_palette
 # Sonokai (shusia) — active
 # prompt_palette=(
 #     base '#2c2e34'
-#     path '#76cce0' green '#9ed072' yellow '#e7c664' red '#f85e84'
+#     path '#76cce0' green '#9ed072' yellow '#e7c664' red '#f85e84' purple '#b39df3'
 # )
 
 # Gruvbox Material (hard background, original foreground)
 # prompt_palette=(
 #     base '#1d2021'
-#     path '#83a598' green '#b8bb26' yellow '#fabd2f' red '#fb4934'
+#     path '#83a598' green '#b8bb26' yellow '#fabd2f' red '#fb4934' purple '#d3869b'
 # )
 
 # Kanagawa (wave)
 prompt_palette=(
     base '#1f1f28'
-    path '#7e9cd8' green '#76946a' yellow '#c0a36e' red '#c34043'
+    path '#7e9cd8' green '#76946a' yellow '#c0a36e' red '#c34043' purple '#957fb8'
 )
 
 # Tokyo Night (night)
 # prompt_palette=(
 #     base '#1a1b26'
-#     path '#7aa2f7' green '#9ece6a' yellow '#e0af68' red '#f7768e'
+#     path '#7aa2f7' green '#9ece6a' yellow '#e0af68' red '#f7768e' purple '#bb9af7'
 # )
 
 # Set prompt_ascii=1 in ~/.zshrc.local if your terminal font lacks Powerline
@@ -65,7 +65,7 @@ RPROMPT=''
 # before git or plugin work can overwrite it. Rebuild only once per command.
 precmd() {
     local exit_code=$?
-    local branch git_dirty stash ahead=0 host is_detached=0 ascii=0
+    local branch git_dirty stash ahead=0 behind=0 host is_detached=0 ascii=0
     local sep=$'\ue0b0' lsep=$'\ue0b6' br=$'\ue0a0'
 
     (( prompt_ascii )) || [[ $TERM == linux || $TTY == /dev/tty[0-9]* ]] && ascii=1
@@ -86,8 +86,12 @@ precmd() {
     if [[ -n $branch ]]; then
         [[ -n $(git status --porcelain 2>/dev/null) ]] && git_dirty=1
         [[ -n $(git stash list -1 2>/dev/null) ]] && stash=' S'
-        ahead=$(git rev-list --count '@{upstream}..HEAD' 2>/dev/null) || \
+        local divergence
+        if divergence=$(git rev-list --left-right --count '@{upstream}...HEAD' 2>/dev/null); then
+            read -r behind ahead <<< "$divergence"
+        else
             ahead=$(git rev-list --count HEAD --not --remotes 2>/dev/null)
+        fi
     fi
 
     # Branch names can contain %, which must not become a prompt escape.
@@ -98,6 +102,7 @@ precmd() {
         if [[ -n $branch ]]; then
             RPROMPT="[git:${branch}"
             (( ahead > 0 )) && RPROMPT+=" ↑${ahead}"
+            (( behind > 0 )) && RPROMPT+=" ↓${behind}"
             [[ -n $git_dirty ]] && RPROMPT+=' ±'
             RPROMPT+="${stash}]"
         fi
@@ -118,15 +123,22 @@ precmd() {
     PROMPT+="%F{$prompt_palette[base]}%B ${host}%~%b%(1j. ↓%j.) "
     PROMPT+="%k%F{$prompt_palette[path]}${sep}%f "
 
-    # Right prompt: git info, yellow background if dirty else green
+    # Right prompt: purple if ahead/behind, yellow if dirty, else green
     if [[ -n $branch ]]; then
         local git_color
-        [[ -n $git_dirty ]] && git_color=$prompt_palette[yellow] || git_color=$prompt_palette[green]
+        if (( ahead > 0 || behind > 0 )); then
+            git_color=$prompt_palette[purple]
+        elif [[ -n $git_dirty ]]; then
+            git_color=$prompt_palette[yellow]
+        else
+            git_color=$prompt_palette[green]
+        fi
         RPROMPT="%F{$git_color}${lsep}%K{$git_color}%F{$prompt_palette[base]}%B "
         (( is_detached )) || RPROMPT+="${br} "
         RPROMPT+="${branch}"
         [[ -n $git_dirty ]] && RPROMPT+=' ±'
         (( ahead > 0 )) && RPROMPT+=" ↑${ahead}"
+        (( behind > 0 )) && RPROMPT+=" ↓${behind}"
         RPROMPT+="${stash} %b%k%f"
     fi
 }
