@@ -1,2 +1,7 @@
 # Export the current username to hide it from the shell prompt
 export DEFAULT_USER="$USER"
+
+# Optional nvm setup: --no-use avoids selecting a Node version at every shell
+# startup. Run `nvm use default` when you need the nvm-managed node/npm.
+# export NVM_DIR="$HOME/.nvm"
+# [[ -r "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh" --no-use

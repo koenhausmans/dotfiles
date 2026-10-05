@@ -1,187 +1,197 @@
-# Neovim on WSL
+# Neovim configuration
 
-Run Neovim and its external tools inside WSL, even when the terminal is Windows Terminal. Keep language servers on the Linux `PATH` used to start `nvim`, rather than installing their Windows versions.
+This configuration uses Neovim 0.11 or newer and Vim-plug for plugins. Run Neovim and its external tools inside WSL. The leader key is `,`.
 
-## Neovim
+## What it configures
 
-Use Neovim 0.11 or newer for the built-in LSP configuration in `init.vim`. Check with `nvim --version`. See the [official installation instructions](https://neovim.io/doc/install/) if an Ubuntu package is too old.
+- Built-in LSP for Python, Rust, C/C++, and Typst, with blink.cmp completion, built-in snippets, and signature help.
+- Automatic format-on-save via conform.nvim: clang-format for C/C++, rustfmt for Rust, ruff for Python, stylua for Lua, typstyle for Typst.
+- Git status and history with Fugitive, Diffview, and Gitsigns. The statusline shows the branch and current file's changes.
+- Lualine statusline with slant separators, showing mode, git branch, diagnostics, filetype, and cursor position.
+- TODO/FIXME/NOTE keyword highlights with badge-style colouring and gutter signs via todo-comments.
+- Inline Markdown and Typst rendering via markview.nvim: headings, tables, code blocks, and checkboxes render in the buffer; raw syntax is restored when the cursor enters the element.
+- File browsing and management with oil.nvim: directories open as editable buffers.
+- Unicode search and insertion with unicode.vim and fzf integration.
+- Jump navigation with flash.nvim: label-based jumping to any visible position, with treesitter-aware node selection.
+- Word highlighting with illuminate: all references to the symbol under the cursor are highlighted using LSP or treesitter.
+- Scope pinning with nvim-treesitter-context: the enclosing function or block is shown as a sticky header when scrolled past.
+- Indent guides via indent-blankline, with treesitter-aware scope highlighting.
+- Keybinding popup via which-key: press a prefix and pause to see labelled completions.
+- File selection with fzf and text search with Ag when available.
+- Four-space indentation, persistent undo, smart-case search, marker folds, and splits that open below or to the right.
+- Line numbers, visible whitespace, a fixed sign column, and a cursor line in the active window. Theme changes are saved and restored.
+- Spelling for Markdown, Git commit messages, and todo files. Python and CoffeeScript files lose trailing whitespace on write.
 
 ## Language servers
 
-These are prerequisites for the Python, Rust, C, C++, and Typst configurations in `init.vim`. Installing a server alone does **not** enable it in Neovim. Use a WSL shell to run the commands below.
+Install these tools inside WSL. The server executable must be on the Linux `PATH` used to start Neovim.
 
-### Python: basedpyright
+| Language | Server | Installation note |
+| --- | --- | --- |
+| Python | basedpyright | Install with npm. Make sure `basedpyright-langserver` is on `PATH`. |
+| Rust | rust-analyzer | Add the `rust-analyzer`, `rustfmt`, and `rust-src` components to the active rustup toolchain. |
+| C/C++ | clangd | Install clangd. Provide `compile_commands.json` for project-specific compiler flags and include paths. |
+| Typst | Tinymist | Install a Linux release or build it with Cargo. Make sure `tinymist` is on `PATH`. |
 
-Install a current Linux Node.js LTS release and npm first. If you use [nvm](https://github.com/nvm-sh/nvm), for example:
+Open a matching file and use `:LspInfo` to check that its server attached. `:checkhealth vim.lsp` can help diagnose problems.
 
-```sh
-nvm install --lts
-nvm use --lts
-npm install -g basedpyright
-```
+## Formatters
 
-Check that `node`, `npm`, and the language server resolve to WSL executables, not paths under `/mnt/c`:
+conform.nvim runs the appropriate formatter on save. Each formatter must be on the Linux `PATH`.
 
-```sh
-command -v node npm basedpyright-langserver
-basedpyright --version
-```
+| Language | Formatter | Installation note |
+| --- | --- | --- |
+| C/C++ | clang-format | Install clangd or clang-format separately. Style is controlled by a `.clang-format` file in the project root. |
+| Rust | rustfmt | Included with rustup. Add the `rustfmt` component if missing. |
+| Python | ruff | Install with `pip install ruff` or your system package manager. Handles both formatting and import sorting. |
+| Lua | stylua | Install a release binary from the stylua GitHub releases page. |
+| Typst | typstyle | Build with `cargo install typstyle` or install a release binary. Falls back to Tinymist's built-in formatter if not found. |
 
-`nvm` selects a Node.js version per shell. Ensure the version containing `basedpyright-langserver` is active when you launch Neovim. If you want new shells to use LTS by default, run `nvm alias default 'lts/*'`; projects can still choose a different version with `nvm use`.
+Use `,lf` to trigger formatting manually. Format-on-save can be bypassed with `:noautocmd w`.
 
-The config enables basedpyright for Python files. Open a `.py` file in a project and run `:LspInfo` to confirm it attached. Basedpyright provides diagnostics and completion, not code formatting. `Space l f` needs a formatting-capable server to format Python.
+## Bindings configured in `init.vim`
 
-### Rust: rust-analyzer
+These bindings use normal mode unless marked otherwise. LSP bindings work only in buffers with an attached server.
 
-With [rustup](https://rustup.rs/) installed inside WSL, add the language server and formatter for your active toolchain:
+Press `,` and pause to see the which-key popup with labelled completions for all leader bindings.
 
-```sh
-rustup component add rust-analyzer rustfmt rust-src
-rustup component list --installed
-rust-analyzer --version
-```
-
-Having a `rust-analyzer` launcher on `PATH` is not enough: `rustup component list --installed` must include `rust-analyzer` for the selected toolchain. `rust-src` helps rust-analyzer navigate into the standard library. If a project pins a toolchain in `rust-toolchain.toml`, run the install command from that project to add the components to its toolchain too.
-
-The config enables rust-analyzer for Rust files. Open a `.rs` file in a Cargo project and run `:LspInfo` to confirm it attached. `Space l f` requests formatting through rust-analyzer and rustfmt. Formatting on save is not enabled.
-
-### C and C++: clangd
-
-```sh
-sudo apt update
-sudo apt install clangd
-clangd --version
-```
-
-Both C and C++ use `clangd`. For project-specific include paths and compiler flags, provide a `compile_commands.json` compilation database. If your project uses CMake, install it with `sudo apt install cmake`, then generate a database with:
-
-```sh
-cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-ln -s build/compile_commands.json compile_commands.json
-```
-
-Run these from the project root. Check that `build/compile_commands.json` exists before creating the link; skip `ln -s` if a root-level `compile_commands.json` already exists. Keep the link relative so it continues to work if the project moves. For other build systems, follow their compilation-database instructions. Without a compilation database, clangd may use incorrect include paths or compiler flags.
-
-The config enables clangd for both C and C++ files. Open a `.c` or `.cpp` file in a project and run `:LspInfo` to confirm it attached. `Space l f` requests formatting from clangd. Use `:LspClangdSwitchSourceHeader` to switch between a source file and its header when clangd can identify the pair.
-
-### Typst: Tinymist
-
-Install [Tinymist](https://github.com/Myriad-Dreamin/tinymist/releases) for Linux inside WSL and put its `tinymist` executable on `PATH`. If you have Cargo installed, you can build it from source instead:
-
-```sh
-cargo install --git https://github.com/Myriad-Dreamin/tinymist --locked tinymist-cli
-command -v tinymist
-```
-
-Open a `.typ` file and run `:LspInfo` to confirm Tinymist attached. The shared LSP shortcuts work for diagnostics, completion, and navigation; `Space l f` formats through Tinymist's built-in formatter. Formatting on save is not enabled. Use `:LspTinymistExportPdf` to export the current document to PDF.
-
-## Verify in Neovim
-
-Open a `.py`, `.rs`, `.c`, `.cpp`, or `.typ` file. Run `:checkhealth vim.lsp` and `:LspInfo` to check server attachment, then try `gd` for definition and `K` for hover. If no server starts, check its executable in the same WSL shell that launches Neovim and inspect `:messages`.
-
-## File and text search
-
-The config uses [fzf](https://github.com/junegunn/fzf) for file selection and [Ag](https://github.com/ggreer/the_silver_searcher) for text search. Install Ag inside WSL with `sudo apt install silversearcher-ag`. The fzf binary can be on `PATH` or in `~/.fzf/bin/fzf`.
+### Files, buffers, and search
 
 | Keys | Action |
 | --- | --- |
-| `Space f f` (or `,f`) | Fuzzy-find files in the current working directory. |
-| `Space f g` | Fuzzy-find Git-tracked files (`:GFiles`). |
-| `Space f b` (or `,b`) | Pick an open buffer. |
-| `Space s g` (or `,/`) | Enter an Ag text search, then press Enter. |
-| `Space s w` | Ag search for the literal whole word under the cursor. |
+| `-` | Open the current file's parent directory in oil. |
+| `,f` | Find a file. |
+| `,gf` | Find a Git-tracked file (fzf only). |
+| `,b` | Select a buffer. |
 | `,t` | Search tags. |
-
-`Space` is the leader key. The `Space f` mappings need fzf. `Space s g` and `Space s w` need both fzf and Ag. Without fzf, `,f`, `,b`, and `,t` use Vim's file, buffer, and tag commands. If fzf or Ag is unavailable, `,/` starts `:grep` instead. `:Files` uses fzf's file walker (which skips `.git` and `node_modules` by default). `:GFiles` uses Git's tracked-file list. A shell-level `FZF_DEFAULT_COMMAND` takes precedence over fzf's walker.
-
-In most fzf pickers, `Ctrl-t` opens a result in a new tab, `Ctrl-x` opens a split, and `Ctrl-v` opens a vertical split.
-
-## Git views
-
-Fugitive provides the status view. Diffview provides changes and history panes. Gitsigns marks changed lines in the sign column. Open a file in a Git repository before using current-file history.
-
-| Keys | Action |
-| --- | --- |
-| `Space g s` | Open Fugitive status (`:Git`). |
-| `Space g d` | Open the Diffview changes pane (`:DiffviewOpen`). |
-| `Space g h` | Show the current file's history (`:DiffviewFileHistory %`). |
-| `[h` / `]h` | Jump to the previous / next changed hunk in a tracked file. |
-
-Use `:DiffviewClose` to leave a diff view. `:DiffviewFileHistory` without `%` shows repository history. See `:help diffview` for actions inside a diff view.
-
-The statusline shows the branch and nonzero `+added ~changed -removed` counts for the current file. It shows no Git section outside a repository.
-
-## Shortcut reference
-
-`Space` is the leader key. These shortcuts use normal mode unless a row says otherwise. Plugin shortcuts require the relevant plugin to load.
-
-### Buffers, files, and windows
-
-| Keys | Action |
-| --- | --- |
-| `Space w` | Save the current file. |
-| `Space b d` / `,c` | Close the current buffer with `:Bdelete`, without closing its window. `,c` uses `:bd` as an abbreviation for `:Bdelete`. |
-| `Space b p` / `,z` | Switch to the alternate buffer. |
 | `,e` | Start `:e **/*` to open a file under the current directory. |
+| `,w` | Save the file. |
+| `,c` | Delete the buffer without closing its window (`:Bdelete`). |
+| `,z` | Switch to the alternate buffer. |
 | `,m` | Run `:make`. |
-| `,q` | Close the current window (`:quit`). |
-| `Ctrl-h` / `Ctrl-j` / `Ctrl-k` / `Ctrl-l` | Move left / down / up / right between splits, and across tmux panes when configured. |
-| `Ctrl-\` | Return to the previous split or tmux pane (vim-tmux-navigator). |
-| `[b` / `]b` | Go to the previous / next buffer (vim-unimpaired). |
-| `[q` / `]q` | Go to the previous / next quickfix item (vim-unimpaired). |
-| `[l` / `]l` | Go to the previous / next location-list item (vim-unimpaired). |
-| `[f` / `]f` | Open the previous / next file in the current file's directory (vim-unimpaired). |
-| `[n` / `]n` | Jump to the previous / next conflict marker or diff hunk (vim-unimpaired). |
+| `,q` | Close the window. |
+| `,/` | Start an Ag search, or `:grep` when fzf or Ag is unavailable. |
+| `,sw` | Search for the word under the cursor with Ag (requires fzf and Ag). |
 
-The window shortcuts use vim-tmux-navigator when it loads. Without it, `Ctrl-h/j/k/l` move between Neovim splits. In tmux, navigation does not leave a zoomed pane. Quickfix and location-list windows open after their respective search commands.
+With fzf, `,f`, `,b`, and `,t` open pickers. Without fzf, they use Neovim's file, buffer, and tag commands.
+
+### Git
+
+| Keys | Action |
+| --- | --- |
+| `,gs` | Open Fugitive status. |
+| `,gd` | Open the Diffview changes pane. |
+| `,gc` | Close the Diffview pane. |
+| `,gh` | Show history for the current file. |
+| `,gb` | Show Git blame for the current file. |
+| `,gl` | Show the Git log. |
+| `[h` / `]h` | Go to the previous / next changed hunk in a tracked file. |
 
 ### Editing and navigation
 
 | Keys | Action |
 | --- | --- |
-| `j` / `k` | Move by display line when no count is given. A count moves by file line. |
+| `s` | Jump to any visible position: type two characters, then the label shown. |
+| `S` | Treesitter-select mode: jump to a syntax node by label. |
+| `j` / `k` | Move by display line without a count, or by file line with a count. |
 | `0` / `$` | Move to the first nonblank / last character of the display line. |
-| `'` | Jump to an exact mark position, like Vim's backtick command. |
-| `<` / `>` (visual) | Decrease / increase indent and keep the selection. |
-| `=` (visual) | Reindent and keep the selection. |
-| `gcc` / `gc{motion}` / `gc` (visual) | Toggle comments on a line, across a motion, or in the selection (vim-commentary). |
-| `gcu` | Uncomment the current and adjacent commented lines (vim-commentary). |
-| `ds{char}` / `cs{old}{new}` | Delete or change surrounding quotes, brackets, or tags (vim-surround). For example, `ds"` removes quotes. |
-| `ys{motion}{char}` / `yss{char}` / `S` (visual) | Surround a motion, a line, or a selection. For example, `ysiw)` wraps a word in parentheses. |
-| `[e` / `]e` | Move the current line up / down (vim-unimpaired). |
-| `[<Space>` / `]<Space>` | Add a blank line above / below (vim-unimpaired). |
-| `yoh` / `yol` / `yos` | Toggle search highlighting / visible whitespace / spelling (vim-unimpaired). |
-| `.` | Repeat supported plugin edits such as surround and commentary operations (vim-repeat). |
+| `'` | Jump to an exact mark position. |
+| `<` / `>` / `=` (visual) | Change indentation or reindent, then keep the selection. |
+| `,y{motion}` / `,y` (visual) | Copy text to the system clipboard. `,yy` copies a line. |
+| `,p` | Paste from the system clipboard. |
+| `Ctrl-h/j/k/l` | Move between splits, or between tmux panes with vim-tmux-navigator. |
 
-Auto-pairs inserts matching brackets and quotes as you type. In insert mode, `Backspace` deletes an empty pair. `Enter` adds an indented line inside an empty pair. Type an opening delimiter, then press `Alt-e` to wrap the next string or bracketed expression. `Alt-n` jumps past the next closing character, and `Alt-p` toggles auto-pairs. Terminal support for Alt keys can vary.
-
-Use `:StripTrailingWhitespaces` to remove trailing whitespace from the current file. The config also does this on write for Python and CoffeeScript files.
+The clipboard bindings use the `+` register. They do not change Neovim's default clipboard setting. Without vim-tmux-navigator, `Ctrl-h/j/k/l` still moves between splits.
 
 ### LSP and completion
 
-The LSP shortcuts below apply only in buffers with an attached language server. The config enables basedpyright, rust-analyzer, clangd, and Tinymist.
+| Keys | Action |
+| --- | --- |
+| `gD` / `gd` | Go to the declaration / definition. |
+| `gi` / `gr` | Find implementations / references. |
+| `K` | Show hover information. |
+| `,lt` | Go to the type definition. |
+| `,lr` | Rename a symbol. |
+| `,la` | Show code actions. |
+| `,ld` | Show diagnostics at the cursor. |
+| `[d` / `]d` | Go to the previous / next diagnostic. |
+| `,lq` | Put diagnostics in the location list. |
+| `,lf` | Format the buffer manually (conform.nvim; format-on-save runs automatically). |
+| `Ctrl-p` / `Ctrl-n` (insert) | Select the previous / next completion item. |
+| `Enter` / `Tab` (insert) | Confirm a completion item. |
+| `Ctrl-e` (insert) | Dismiss the completion menu. |
+
+## Plugin-provided bindings
+
+These bindings come from plugins rather than mappings in `init.vim`.
+
+### oil.nvim
 
 | Keys | Action |
 | --- | --- |
-| `gD` / `gd` | Jump to the declaration / definition. |
-| `gi` / `gr` | Find implementations / references. |
-| `K` | Show hover information. |
-| `Space D` | Jump to the type definition. |
-| `Space r` / `Space l r` | Rename a symbol. |
-| `Space a` / `Space l a` | Show code actions. |
-| `Space e` / `Space l d` | Show diagnostics at the cursor. |
-| `[d` / `]d` | Jump to the previous / next diagnostic. |
-| `Space q` | Put diagnostics in the location list. |
-| `Space l f` | Request asynchronous formatting from the language server. |
-| `Ctrl-p` / `Ctrl-n` (insert) | Select the previous / next completion item (nvim-cmp). |
-| `Enter` / `Tab` (insert) | Confirm the selected completion item, or the first item if none is selected (nvim-cmp). |
+| `<CR>` | Open the file or directory under the cursor. |
+| `-` | Go up to the parent directory. |
+| `_` | Open the current working directory. |
+| `g.` | Toggle hidden files. |
+| `g?` | Show the full list of oil keybindings. |
 
-Completion uses language-server results and file paths. `Ctrl-x Ctrl-o` requests LSP omni-completion in an attached buffer. Lsp_signature shows function signatures while you type arguments.
+Edit filenames directly in the buffer and save with `:w` to rename or move files. Delete a line to delete the file. Open oil with `:e .` or press `-` from any buffer.
 
-`signcolumn=yes` keeps Git and diagnostic markers from shifting the text. `scrolloff=5` leaves context near the cursor. `termguicolors` enables true colors in Windows Terminal. To compare colors without true color, run `:set notermguicolors`. Windows clipboard integration is opt-in. Check `:checkhealth vim.provider` before using `"+y` or `"+p`.
+### flash.nvim
 
-## Color schemes
+| Keys | Action |
+| --- | --- |
+| `s` | Open the jump picker: type two characters, then the label to jump. |
+| `S` | Open the treesitter-select picker: jump to and select a syntax node. |
+| `f` / `F` / `t` / `T` | Enhanced single-character motions with labels when multiple matches exist. |
+| `;` / `,` | Repeat the last flash motion forward / backward. |
 
-Gruvbox is the default theme. Neovim saves theme changes in `~/.config/nvim/plugin/last-used-colorscheme.vim` and restores them at startup.
+### illuminate
 
-Try `:colorscheme tokyonight-moon` (or `tokyonight-night`, `tokyonight-storm`, or `tokyonight-day`). Other configured themes include `gruvbox`, `apprentice`, `onedark`, and `monokai`. `:Colors` opens a scheme picker when fzf is available. The statusline uses the selected theme's colors.
+| Keys | Action |
+| --- | --- |
+| `]r` | Go to the next reference to the symbol under the cursor. |
+| `[r` | Go to the previous reference to the symbol under the cursor. |
+
+### unicode.vim
+
+| Keys | Action |
+| --- | --- |
+| `ga` | Show the Unicode codepoint, name, and digraph for the character under the cursor. |
+| `<C-x><C-g>` (insert) | Complete a digraph from the characters already typed. |
+
+Use `:UnicodeSearch` to open an fzf picker over the full Unicode table and insert a character. Use `:Digraphs` to search all Vim digraphs with fzf.
+
+### Other plugins
+
+| Keys | Action |
+| --- | --- |
+| `gcc` / `gc{motion}` / `gc` (visual) | Toggle comments with Comment.nvim. |
+| `gbc` / `gb{motion}` | Toggle block comments with Comment.nvim. |
+| `ds{char}` / `cs{old}{new}` | Delete or change surrounding characters or tags (nvim-surround). |
+| `ys{motion}{char}` / `yss{char}` / `S` (visual) | Add surrounding characters or tags (nvim-surround). The cursor stays in place after the operation. |
+| `[b` / `]b` | Go to the previous / next buffer (vim-unimpaired). |
+| `Ctrl-\` | Return to the previous split or tmux pane (vim-tmux-navigator). |
+| `[q` / `]q` | Go to the previous / next quickfix item (vim-unimpaired). |
+| `[l` / `]l` | Go to the previous / next location-list item (vim-unimpaired). |
+| `[f` / `]f` | Open the previous / next file in the current file's directory (vim-unimpaired). |
+| `[n` / `]n` | Go to the previous / next conflict marker or diff hunk (vim-unimpaired). |
+| `[e` / `]e` | Move the current line up / down (vim-unimpaired). |
+| `[<Space>` / `]<Space>` | Add a blank line above / below (vim-unimpaired). |
+| `yoh` / `yol` / `yos` | Toggle search highlighting / visible whitespace / spelling (vim-unimpaired). |
+| `.` | Repeat the last surround or comment operation (vim-repeat). |
+| `Ctrl-t` / `Ctrl-x` / `Ctrl-v` (fzf picker) | Open the result in a tab / split / vertical split. |
+| `Backspace` / `Enter` (insert) | Delete an empty pair / add an indented line inside one (auto-pairs). |
+| `Alt-e` / `Alt-n` / `Alt-p` (insert) | Wrap the next expression / skip a closing character / toggle auto-pairs. |
+
+Auto-pairs inserts matching brackets and quotes automatically. Terminal support for Alt keys can vary.
+
+## Commands and themes
+
+Use `:StripTrailingWhitespaces` to remove trailing whitespace. In command-line mode, `:bd` expands to `:Bdelete`, `%%` inserts the current file's directory, and `w!!` writes through `sudo`.
+
+Use `:Markview` to toggle inline rendering on or off. `:Markview enable` and `:Markview disable` control it explicitly. Rendering is on by default for Markdown and Typst buffers.
+
+Use `:TSContextToggle` to hide or show the treesitter scope header at the top of the window.
+
+Use `:colorscheme` to change themes. Available themes: `kanagawa-wave`, `gruvbox-material`, `tokyonight-night`, and `sonokai` (shusia variant). `:Colors` opens a picker when fzf is available. Neovim saves and restores theme changes across sessions.

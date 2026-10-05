@@ -1,6 +1,7 @@
 """ PLUGIN MANAGER (VIM-PLUG) {{{
 
-let mapleader = ' '
+let mapleader = ','
+nnoremap <leader>, ,
 " The fzf binary also works when Neovim is started without an interactive shell.
 let s:has_fzf = executable('fzf') || executable(expand('~/.fzf/bin/fzf'))
 
@@ -12,21 +13,22 @@ endif
 call plug#begin()
 
 " Colorschemes: Additional colorschemes that can be used
-Plug 'morhetz/gruvbox'
-Plug 'romainl/apprentice'
-Plug 'joshdick/onedark.vim'
-Plug 'tanvirtin/monokai.nvim'
+Plug 'sainnhe/gruvbox-material'
+Plug 'sainnhe/sonokai'
+Plug 'rebelot/kanagawa.nvim'
 Plug 'folke/tokyonight.nvim'
 
-" Syntax: Additional syntaxes that can be used
-Plug 'tpope/vim-git', { 'for': 'git' }
-Plug 'cakebaker/scss-syntax.vim', { 'for': 'scss' }
+" Treesitter: accurate syntax highlighting and structural text objects
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate', 'branch': 'master'}
+Plug 'nvim-treesitter/nvim-treesitter-textobjects', {'branch': 'master'}
+Plug 'nvim-treesitter/nvim-treesitter-context'
+Plug 'lukas-reineke/indent-blankline.nvim'
 
-Plug 'tpope/vim-sensible'
-Plug 'tpope/vim-surround'
+Plug 'kylechui/nvim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-unimpaired'
-Plug 'tpope/vim-commentary'
+Plug 'numToStr/Comment.nvim'
+Plug 'folke/flash.nvim'
 
 Plug 'romainl/vim-cool'
 
@@ -49,28 +51,130 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'neovim/nvim-lspconfig'
 
 " Autocompletion framework
-Plug 'hrsh7th/nvim-cmp', {'branch': 'main'}
-
-" LSP completion
-Plug 'hrsh7th/cmp-nvim-lsp', {'branch': 'main'}
-
-" Path completion
-Plug 'hrsh7th/cmp-path', {'branch': 'main'}
+Plug 'saghen/blink.cmp', { 'tag': '*' }
 
 " Function signature as you type
 Plug 'ray-x/lsp_signature.nvim'
 
-" Snippet expansion for nvim-cmp
-Plug 'hrsh7th/cmp-vsnip', {'branch': 'main'}
-Plug 'hrsh7th/vim-vsnip'
+" Statusline and file-type icons
+Plug 'nvim-lualine/lualine.nvim'
+Plug 'nvim-tree/nvim-web-devicons'
+Plug 'folke/todo-comments.nvim'
+Plug 'stevearc/oil.nvim'
+Plug 'chrisbra/unicode.vim'
+Plug 'stevearc/conform.nvim'
+Plug 'OXY2DEV/markview.nvim'
+Plug 'RRethy/vim-illuminate'
+Plug 'folke/which-key.nvim'
 
 call plug#end()
 
 """ END PLUGIN MANAGER }}}
 """ PLUGIN INTEGRATION {{{
 
-" Keep Diffview usable without a Nerd Font or an icon plugin.
-lua require('diffview').setup({ use_icons = false })
+lua require('diffview').setup({ use_icons = true })
+lua require('treesitter-context').setup()
+lua require('ibl').setup()
+lua require('nvim-surround').setup()
+lua require('Comment').setup()
+lua require('markview').setup()
+lua require('illuminate').configure()
+
+lua << END
+require('which-key').setup()
+require('which-key').add({
+  { '<leader>g',  group = 'Git' },
+  { '<leader>gs', desc = 'Status' },
+  { '<leader>gd', desc = 'Diff open' },
+  { '<leader>gc', desc = 'Diff close' },
+  { '<leader>gh', desc = 'File history' },
+  { '<leader>gb', desc = 'Blame' },
+  { '<leader>gl', desc = 'Log' },
+  { '<leader>gf', desc = 'Find git file' },
+
+  { '<leader>l',  group = 'LSP' },
+  { '<leader>lt', desc = 'Type definition' },
+  { '<leader>lr', desc = 'Rename symbol' },
+  { '<leader>la', desc = 'Code actions' },
+  { '<leader>ld', desc = 'Diagnostics float' },
+  { '<leader>lq', desc = 'Diagnostics loclist' },
+  { '<leader>lf', desc = 'Format buffer' },
+
+  { '<leader>b',  desc = 'Buffers' },
+  { '<leader>f',  desc = 'Find file' },
+  { '<leader>t',  desc = 'Tags' },
+  { '<leader>e',  desc = 'Edit file' },
+  { '<leader>m',  desc = 'Make' },
+  { '<leader>q',  desc = 'Quit window' },
+  { '<leader>z',  desc = 'Alternate buffer' },
+  { '<leader>w',  desc = 'Write' },
+  { '<leader>c',  desc = 'Close buffer' },
+  { '<leader>/',  desc = 'Search (Ag/grep)' },
+  { '<leader>sw', desc = 'Search word under cursor' },
+  { '<leader>y',  desc = 'Yank to clipboard',  mode = { 'n', 'x' } },
+  { '<leader>p',  desc = 'Paste from clipboard' },
+
+  { 'g',   group = 'Go to / surround / comment' },
+  { 'gD',  desc = 'Declaration' },
+  { 'gd',  desc = 'Definition' },
+  { 'gi',  desc = 'Implementation' },
+  { 'gr',  desc = 'References' },
+  { 'gcc', desc = 'Toggle comment (line)' },
+  { 'gbc', desc = 'Toggle comment (block)' },
+
+  { ']',   group = 'Next' },
+  { ']d',  desc = 'Diagnostic' },
+  { ']h',  desc = 'Hunk' },
+  { ']r',  desc = 'Reference (illuminate)' },
+  { ']b',  desc = 'Buffer' },
+  { ']q',  desc = 'Quickfix' },
+  { ']l',  desc = 'Loclist' },
+  { ']f',  desc = 'File in dir' },
+  { ']e',  desc = 'Move line down' },
+
+  { '[',   group = 'Prev' },
+  { '[d',  desc = 'Diagnostic' },
+  { '[h',  desc = 'Hunk' },
+  { '[r',  desc = 'Reference (illuminate)' },
+  { '[b',  desc = 'Buffer' },
+  { '[q',  desc = 'Quickfix' },
+  { '[l',  desc = 'Loclist' },
+  { '[f',  desc = 'File in dir' },
+  { '[e',  desc = 'Move line up' },
+})
+END
+
+lua << END
+require('nvim-treesitter.configs').setup({
+  ensure_installed = {
+    'bash', 'c', 'cpp', 'lua', 'python', 'rust', 'toml', 'typst', 'vim', 'vimdoc',
+  },
+  highlight = { enable = true },
+  indent    = { enable = true },
+  textobjects = {
+    select = {
+      enable    = true,
+      lookahead = true,
+      keymaps = {
+        ['af'] = '@function.outer',
+        ['if'] = '@function.inner',
+        ['ac'] = '@class.outer',
+        ['ic'] = '@class.inner',
+        ['aa'] = '@parameter.outer',
+        ['ia'] = '@parameter.inner',
+      },
+    },
+    move = {
+      enable              = true,
+      set_jumps           = true,
+      goto_next_start     = { [']f'] = '@function.outer' },
+      goto_next_end       = { [']F'] = '@function.outer' },
+      goto_previous_start = { ['[f'] = '@function.outer' },
+      goto_previous_end   = { ['[F'] = '@function.outer' },
+    },
+  },
+})
+END
 
 lua << END
 require('gitsigns').setup({
@@ -96,6 +200,56 @@ require('gitsigns').setup({
 })
 END
 
+lua << END
+-- Separators: sainnhe's slant-right glyphs (U+E0B8/E0BE section, U+E0B9 component)
+require('lualine').setup({
+  options = {
+    theme                = 'auto',
+    section_separators   = { left = '', right = '' },
+    component_separators = { left = '', right = '' },
+    globalstatus         = true,
+  },
+  sections = {
+    lualine_a = { 'mode' },
+    lualine_b = {
+      'branch',
+      { 'diff', symbols = { added = ' +', modified = ' ~', removed = ' -' } },
+    },
+    lualine_c = { { 'filename', path = 1 } },
+    lualine_x = {
+      { 'diagnostics', sources = { 'nvim_lsp' } },
+      'filetype',
+    },
+    lualine_y = { 'progress' },
+    lualine_z = { 'location' },
+  },
+})
+END
+
+lua << END
+require("todo-comments").setup({
+  signs = true,
+  sign_priority = 8,
+  highlight = {
+    before    = "",
+    keyword   = "bg",
+    after     = "fg",
+    pattern   = [[.*<(KEYWORDS)\s*:]],
+    comments_only = true,
+  },
+})
+END
+
+lua << END
+require("oil").setup({
+  default_file_explorer = true,
+  view_options = {
+    show_hidden = true,
+  },
+})
+vim.keymap.set("n", "-", "<cmd>Oil<cr>", { desc = "Open parent directory" })
+END
+
 let g:tmux_navigator_disable_when_zoomed = 1
 
 let g:AutoPairsMultilineClose = 0
@@ -106,9 +260,18 @@ cabbrev bd Bdelete
 """ MISC EDITOR BEHAVIOR {{{
 
 set encoding=utf-8
+set noshowmode
+
+" Cursor shape per mode.
+" Non-blinking: steady block in normal/visual, bar in insert, underline in replace.
+"set guicursor=n-v-c:block,i-ci-ve:ver40,r-cr:hor20,o:hor50
+" Blinking in insert mode (700 ms delay before first blink, 400 ms on, 250 ms off).
+set guicursor=n-v-c:block,i-ci-ve:ver40-blinkwait700-blinkon400-blinkoff250,r-cr:hor20,o:hor50
 set hidden
 set signcolumn=yes
 set scrolloff=5
+set sidescrolloff=2
+set display+=truncate
 set termguicolors
 " Recognize numbered lists
 set formatoptions+=n
@@ -139,89 +302,23 @@ if has("persistent_undo")
 endif
 
 """ END TEMP FILES BEHAVIOR }}}
-""" STATUSLINE BEHAVIOR {{{
-
-function! GitStatusline() abort
-    let l:changes = get(b:, 'gitsigns_status_dict', {})
-    let l:head = get(l:changes, 'head', '')
-    if empty(l:head)
-        let l:head = FugitiveHead(7)
-    endif
-    if empty(l:head)
-        return ''
-    endif
-
-    let l:summary = ' [' . substitute(l:head, '%', '%%', 'g')
-    for [l:sign, l:key] in [['+', 'added'], ['~', 'changed'], ['-', 'removed']]
-        let l:count = get(l:changes, l:key, 0)
-        if l:count > 0
-            let l:summary .= printf(' %s%d', l:sign, l:count)
-        endif
-    endfor
-    return l:summary . ']'
-endfunction
-
-function! ActiveStatusline()
-    " Based on: https://gist.github.com/ericbn/f2956cd9ec7d6bff8940c2087247b132
-    let statusline="%1*"
-    let statusline.="%(%{&filetype!='help'?'\ \ '.bufnr('%'):''}\ │%)"
-    let statusline.="\ %<"
-    let statusline.="%f\ "
-    let statusline.=GitStatusline()
-    let statusline.="%*"
-    let statusline.="\ %{&modified?'[+]':''}"
-    let statusline.="%{&readonly?'[ro]':''}"
-    let statusline.="\ %="
-    let statusline.="\ %{&filetype!=#''?&filetype:'none'}"
-    let statusline.="\ │\ Ln:\ %3l,\ "
-    let statusline.="Col:\ %-2v"
-    let statusline.="\ │\ %2p%%\ "
-    return statusline
-endfunction
-
-set statusline=%!ActiveStatusline()
-
-""" END STATUSLINE BEHAVIOR }}}
 """ COLORSCHEME SETTINGS {{{
 
-function! CustomStatuslineColors() abort
-    " Gruvbox statusline colors
-    if g:colors_name == 'gruvbox'
-        highlight StatusLine   cterm=reverse ctermfg=239 ctermbg=223 gui=reverse guifg=#504945 guibg=#ebdbb2
-        highlight StatusLineNC cterm=reverse ctermfg=237 ctermbg=246 gui=reverse guifg=#3c3836 guibg=#a89984
-        highlight User1        cterm=NONE    ctermfg=235 ctermbg=223 gui=NONE    guifg=#504945 guibg=#ebdbb2
-    " Blue statusline colors based on apprentice colors
-    elseif g:colors_name =~# '^tokyonight'
-        " Let Tokyo Night color the statusline in both dark and light styles.
-        highlight! link User1 StatusLine
-    elseif g:colors_name == 'apprentice'
-        highlight StatusLine   cterm=NONE         ctermfg=252 ctermbg=67  gui=NONE         guifg=#d0d0d0 guibg=#5f87af
-        highlight StatusLineNC cterm=NONE         ctermfg=243 ctermbg=237 gui=NONE         guifg=#949494 guibg=#3a3a3a
-        highlight User1        cterm=bold,reverse ctermfg=252 ctermbg=67  gui=NONE,reverse guifg=#d0d0d0 guibg=#5f87af
-    elseif stridx(g:colors_name, 'monokai') >= 0
-        highlight StatusLine   cterm=NONE         ctermfg=252 ctermbg=67  gui=NONE         guifg=#d0d0d0 guibg=#5f87af
-        highlight StatusLineNC cterm=NONE         ctermfg=243 ctermbg=237 gui=NONE         guifg=#949494 guibg=#3a3a3a
-        highlight User1        cterm=bold,reverse ctermfg=252 ctermbg=67  gui=NONE,reverse guifg=#d0d0d0 guibg=#5f87af
-    " Visual Studio Code inspired statusline colors
-    else
-        highlight StatusLine   cterm=NONE         ctermfg=253 ctermbg=54  gui=NONE         guifg=#dadada guibg=#5f0087
-        highlight StatusLineNC cterm=NONE         ctermfg=243 ctermbg=237 gui=NONE         guifg=#949494 guibg=#3a3a3a
-        highlight User1        cterm=bold,reverse ctermfg=253 ctermbg=54  gui=bold,reverse guifg=#dadada guibg=#5f0087
-        highlight Visual cterm=NONE ctermbg=white ctermfg=darkblue
-    endif
-    highlight ModeMsg cterm=NONE ctermbg=green ctermfg=black
-endfunction
-
-augroup CustomStatusline
-    autocmd!
-    autocmd ColorScheme * call CustomStatuslineColors()
-augroup END
+let g:gruvbox_material_background = 'hard'
+let g:gruvbox_material_foreground = 'original'
+let g:gruvbox_material_enable_bold = 1
+let g:gruvbox_material_enable_italic = 1
+let g:sonokai_style = 'shusia'
+let g:sonokai_enable_italic = 1
 
 set background=dark
 set cursorline
 
 " The saved theme in plugin/last-used-colorscheme.vim overrides this fallback.
-silent! colorscheme gruvbox
+silent! colorscheme kanagawa-wave
+" silent! colorscheme tokyonight-moon
+" silent! colorscheme gruvbox-material
+" silent! colorscheme sonokai
 
 function! SaveColorscheme() abort
     let l:vimhome_plugin_folder = $HOME . "/.config/nvim/plugin"
@@ -327,37 +424,38 @@ cabbr <expr> %% expand('%:p:h')
 """ LEADER KEY BEHAVIOR {{{
 
 if s:has_fzf
-    nnoremap <silent> ,b :Buffers<cr>
-    nnoremap <silent> ,f :Files<cr>
-    nnoremap <silent> ,t :Tags<cr>
-    nnoremap <silent> <leader>fb :Buffers<cr>
-    nnoremap <silent> <leader>ff :Files<cr>
-    nnoremap <silent> <leader>fg :GFiles<cr>
+    nnoremap <silent> <leader>b :Buffers<cr>
+    nnoremap <silent> <leader>f :Files<cr>
+    nnoremap <silent> <leader>t :Tags<cr>
+    nnoremap <silent> <leader>gf :GFiles<cr>
 else
-    nnoremap          ,b :b <C-d>
-    nnoremap          ,f :find *
-    nnoremap          ,t :tjump /
+    nnoremap          <leader>b :b <C-d>
+    nnoremap          <leader>f :find *
+    nnoremap          <leader>t :tjump /
 endif
 
-nmap     <silent> ,c       :bd<cr>
-nnoremap          ,e       :e **/*
-nnoremap <silent> ,m       :make<cr>
-nnoremap <silent> ,q       :quit<cr>
-nnoremap <silent> ,z       :b#<cr>
+nmap     <silent> <leader>c :bd<cr>
+nnoremap          <leader>e :e **/*
+nnoremap <silent> <leader>m :make<cr>
+nnoremap <silent> <leader>q :quit<cr>
+nnoremap <silent> <leader>z :b#<cr>
 nnoremap <silent> <leader>w :write<cr>
-nnoremap <silent> <leader>bd :Bdelete<cr>
-nnoremap <silent> <leader>bp :b#<cr>
+nnoremap          <leader>y "+y
+xnoremap          <leader>y "+y
+nnoremap          <leader>p "+p
 
 nnoremap <silent> <leader>gs :Git<cr>
 nnoremap <silent> <leader>gd :DiffviewOpen<cr>
+nnoremap <silent> <leader>gc :DiffviewClose<cr>
 nnoremap <silent> <leader>gh :DiffviewFileHistory %<cr>
+nnoremap <silent> <leader>gb :Git blame<cr>
+nnoremap <silent> <leader>gl :Git log<cr>
 
 if s:has_fzf && executable('ag')
-    nnoremap ,/ :Ag<space>
-    nnoremap <leader>sg :Ag<space>
+    nnoremap          <leader>/ :Ag<space>
     nnoremap <silent> <leader>sw :call fzf#vim#ag(expand('<cword>'), '--literal --word-regexp', fzf#vim#with_preview())<cr>
 else
-    nnoremap ,/ :grep<space>
+    nnoremap          <leader>/ :grep<space>
 endif
 
 """ END LEADER KEY BEHAVIOR }}}
@@ -414,58 +512,50 @@ set updatetime=300
 set shortmess+=c
 
 """ END CODE COMPLETION BEHAVIOR }}}
-""" C++ SPECIFIC BEHAVIOR {{{
+""" FORMATTER {{{
 
-" Scope our C/C++ indentation settings to those filetypes.
-" g0 aligns access labels, N-s avoids namespace indentation, :0 aligns cases.
-augroup CFamilyIndent
-    autocmd!
-    autocmd FileType c,cpp setlocal cindent cinoptions+=g0 cinoptions+=N-s cinoptions+=:0
-augroup END
+lua << END
+require("conform").setup({
+  formatters_by_ft = {
+    c          = { "clang_format" },
+    cpp        = { "clang_format" },
+    rust       = { "rustfmt" },
+    python     = { "ruff_format", "ruff_organize_imports" },
+    lua        = { "stylua" },
+    typst      = { "typstyle" },
+  },
+  format_on_save = {
+    timeout_ms = 500,
+    lsp_fallback = true,
+  },
+})
+END
 
-""" END C++ SPECIFIC BEHAVIOR }}}
+""" END FORMATTER }}}
 """ LSP configuration {{{
 
 lua << END
 
-local cmp = require'cmp'
-
-cmp.setup({
-  snippet = {
-    -- Expand LSP snippets with vim-vsnip.
-    expand = function(args)
-      vim.fn["vsnip#anonymous"](args.body)
-    end,
+require('blink.cmp').setup({
+  keymap = {
+    preset = 'none',
+    ['<C-p>']  = { 'select_prev', 'fallback' },
+    ['<C-n>']  = { 'select_next', 'fallback' },
+    ['<CR>']   = { 'accept', 'fallback' },
+    ['<Tab>']  = { 'accept', 'fallback' },
+    ['<C-e>']  = { 'hide' },
   },
-  mapping = {
-    ['<C-p>'] = cmp.mapping.select_prev_item(),
-    ['<C-n>'] = cmp.mapping.select_next_item(),
-    ['<CR>'] = cmp.mapping.confirm({
-      behavior = cmp.ConfirmBehavior.Insert,
-      select = true,
-    }),
-    ['<Tab>'] = cmp.mapping.confirm({ select = true })
+  completion = {
+    ghost_text = { enabled = true },
   },
-  sources = cmp.config.sources({
-    { name = 'nvim_lsp' },
-  }, {
-    { name = 'path' },
-  }),
-  experimental = {
-    ghost_text = true,
+  sources = {
+    default = { 'lsp', 'path', 'snippets' },
   },
-})
-
--- Enable completing paths in :
-cmp.setup.cmdline(':', {
-  sources = cmp.config.sources({
-    { name = 'path' }
-  })
 })
 
 -- nvim-lspconfig supplies the server defaults; Neovim enables them.
 vim.lsp.config('*', {
-  capabilities = require('cmp_nvim_lsp').default_capabilities(),
+  capabilities = require('blink.cmp').get_lsp_capabilities(),
 })
 
 vim.diagnostic.config({
@@ -484,17 +574,14 @@ vim.api.nvim_create_autocmd('LspAttach', {
     vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
     vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
     vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
-    vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, opts)
-    vim.keymap.set('n', '<space>r', vim.lsp.buf.rename, opts)
-    vim.keymap.set('n', '<space>a', vim.lsp.buf.code_action, opts)
     vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
-    vim.keymap.set('n', '<space>e', vim.diagnostic.open_float, opts)
     vim.keymap.set('n', '[d', function() vim.diagnostic.jump({ count = -1 }) end, opts)
     vim.keymap.set('n', ']d', function() vim.diagnostic.jump({ count = 1 }) end, opts)
-    vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, opts)
+    vim.keymap.set('n', '<leader>lt', vim.lsp.buf.type_definition, opts)
     vim.keymap.set('n', '<leader>lr', vim.lsp.buf.rename, opts)
     vim.keymap.set('n', '<leader>la', vim.lsp.buf.code_action, opts)
     vim.keymap.set('n', '<leader>ld', vim.diagnostic.open_float, opts)
+    vim.keymap.set('n', '<leader>lq', vim.diagnostic.setloclist, opts)
     vim.keymap.set('n', '<leader>lf', function() vim.lsp.buf.format({ async = true }) end, opts)
 
     require('lsp_signature').on_attach({

@@ -1,0 +1,32 @@
+# Palette: https://github.com/sainnhe/gruvbox-material (with Gruvbox colors)
+# Upstream notice: Copyright (c) 2020 sainnhe; MIT License.
+# License text: ../licenses/gruvbox-material-LICENSE
+# Provenance and other notices: ../SOURCES.md
+
+[colors.primary]
+background = "#1d2021"
+foreground = "#ebdbb2"
+
+[colors.cursor]
+cursor = "#ebdbb2"
+text   = "#1d2021"
+
+[colors.normal]
+black   = "#504945"
+red     = "#fb4934"
+green   = "#b8bb26"
+yellow  = "#fabd2f"
+blue    = "#83a598"
+magenta = "#d3869b"
+cyan    = "#8ec07c"
+white   = "#ebdbb2"
+
+[colors.bright]
+black   = "#504945"
+red     = "#fb4934"
+green   = "#b8bb26"
+yellow  = "#fabd2f"
+blue    = "#83a598"
+magenta = "#d3869b"
+cyan    = "#8ec07c"
+white   = "#ebdbb2"
