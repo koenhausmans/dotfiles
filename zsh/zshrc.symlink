@@ -66,7 +66,7 @@ RPROMPT=''
 precmd() {
     local exit_code=$?
     local branch git_dirty stash ahead=0 host is_detached=0 ascii=0
-    local sep=$'\ue0b0' lsep=$'\ue0b2' br=$'\ue0a0'
+    local sep=$'\ue0b0' lsep=$'\ue0b6' br=$'\ue0a0'
 
     (( prompt_ascii )) || [[ $TERM == linux || $TTY == /dev/tty[0-9]* ]] && ascii=1
 
