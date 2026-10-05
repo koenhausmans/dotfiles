@@ -1,3 +1,8 @@
+# Palette: https://github.com/sainnhe/sonokai (Shusia variant)
+# Upstream notice: Copyright (c) 2020 sainnhe; MIT License.
+# License text: ../licenses/sonokai-LICENSE
+# Provenance and other notices: ../SOURCES.md
+
 [colors.primary]
 background = "#2d2a2e"
 foreground = "#e3e1e4"

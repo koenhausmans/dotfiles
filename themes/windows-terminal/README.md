@@ -42,10 +42,12 @@
 
 ## Available themes
 
-| File | Scheme name |
-|---|---|
-| `kanagawa-wave.json` | `Kanagawa Wave` |
-| `gruvbox-material.json` | `Gruvbox Material` |
-| `tokyonight-night.json` | `Tokyo Night` |
-| `sonokai-shusia.json` | `Sonokai Shusia` |
-| `gruvbox-dark.json` | `Gruvbox Dark` |
+| File | Scheme name | Palette source and upstream notices |
+|---|---|---|
+| `kanagawa-wave.json` | `Kanagawa Wave` | [Kanagawa Wave](https://github.com/rebelot/kanagawa.nvim), [MIT notice](../licenses/kanagawa.nvim-LICENSE) |
+| `gruvbox-material.json` | `Gruvbox Material` | [Gruvbox Material](https://github.com/sainnhe/gruvbox-material) mixed with [Gruvbox](https://github.com/morhetz/gruvbox), [MIT notice](../licenses/gruvbox-material-LICENSE) |
+| `tokyonight-night.json` | `Tokyo Night` | Adapted from [TokyoNight Night](https://github.com/folke/tokyonight.nvim) (bright colors differ from its Windows Terminal export), [Apache-2.0](../licenses/tokyonight.nvim-LICENSE); [original by Enkia](https://github.com/tokyo-night/tokyo-night-vscode-theme), [MIT notice](../licenses/tokyo-night-vscode-LICENSE.txt) |
+| `sonokai-shusia.json` | `Sonokai Shusia` | [Sonokai Shusia](https://github.com/sainnhe/sonokai), [MIT notice](../licenses/sonokai-LICENSE) |
+| `gruvbox-dark.json` | `Gruvbox Dark` | [Gruvbox](https://github.com/morhetz/gruvbox), [MIT/X11 statement](https://github.com/morhetz/gruvbox/blob/master/README.md#license) |
+
+The JSON files contain no comments so they can be pasted into Windows Terminal settings. Keep these source and license references with the schemes when redistributing them. See [provenance and remaining license uncertainties](../SOURCES.md); the linked notices describe upstream works, not a license for this dotfiles repository.

@@ -1,3 +1,8 @@
+# Palette: https://github.com/rebelot/kanagawa.nvim
+# Upstream notice: Copyright (c) 2021 Tommaso Laurenzi; MIT License.
+# License text: ../licenses/kanagawa.nvim-LICENSE
+# Provenance and other notices: ../SOURCES.md
+
 [colors.primary]
 background = "#1f1f28"
 foreground = "#dcd7ba"

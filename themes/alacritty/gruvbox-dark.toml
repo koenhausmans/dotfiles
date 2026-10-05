@@ -1,3 +1,7 @@
+# Palette: https://github.com/morhetz/gruvbox
+# Upstream notice: MIT/X11 (README.md, License section).
+# Provenance and other notices: ../SOURCES.md
+
 [colors.primary]
 background = "#282828"
 foreground = "#ebdbb2"
