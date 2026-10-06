@@ -77,7 +77,13 @@ exec "source " . expand(s:vimrc_root . "/vim/vimrc.minimal")
 """ PLUGIN INTEGRATION {{{
 
 " FZF Integration: Add shortcuts for FZF usage
-let $FZF_DEFAULT_COMMAND = 'ag -g ""'
+if executable('fd')
+    let $FZF_DEFAULT_COMMAND = 'fd --type f'
+elseif executable('fdfind')
+    let $FZF_DEFAULT_COMMAND = 'fdfind --type f'
+elseif executable('rg')
+    let $FZF_DEFAULT_COMMAND = 'rg --files'
+endif
 
 function! s:find_git_root()
     return system('git rev-parse --show-toplevel 2> /dev/null')[:-2]
@@ -94,8 +100,8 @@ if executable('fzf')
     nnoremap <silent> ,t :Tags<cr>
 endif
 
-if executable('ag')
-    nnoremap <silent> ,/ :execute 'Ag ' . input('Ag/')<cr>
+if executable('fzf') && executable('rg')
+    nnoremap <silent> ,/ :execute 'Rg ' . input('Rg/')<cr>
 endif
 
 " vim-argwrap
