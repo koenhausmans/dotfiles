@@ -549,7 +549,8 @@ require('blink.cmp').setup({
     preset = 'none',
     ['<C-p>']  = { 'select_prev', 'fallback' },
     ['<C-n>']  = { 'select_next', 'fallback' },
-    ['<CR>']   = { 'accept', 'fallback' },
+    -- Blink's fallback cannot replay auto-pairs' script-local <CR> mapping.
+    ['<CR>']   = { 'accept', function() return vim.keycode('<CR><C-R>=AutoPairsReturn()<CR>') end },
     ['<Tab>']  = { 'accept', 'fallback' },
     ['<C-e>']  = { 'hide' },
   },
