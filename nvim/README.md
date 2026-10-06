@@ -17,7 +17,7 @@ This configuration uses Neovim 0.11 or newer and Vim-plug for plugins. Run Neovi
 - Scope pinning with nvim-treesitter-context: the enclosing function or block is shown as a sticky header when scrolled past.
 - Indent guides via indent-blankline, with treesitter-aware scope highlighting.
 - Keybinding popup via which-key: press a prefix and pause to see labelled completions.
-- File selection with fzf and text search with Ag when available.
+- File selection with fzf (using `fd`, `fdfind`, or `rg --files` when available) and text search with ripgrep.
 - Four-space indentation, persistent undo, smart-case search, marker folds, and splits that open below or to the right.
 - Line numbers, visible whitespace, a fixed sign column, and a cursor line in the active window. Theme changes are saved and restored.
 - Spelling for Markdown, Git commit messages, and todo files. Python and CoffeeScript files lose trailing whitespace on write.
@@ -70,10 +70,11 @@ Press `,` and pause to see the which-key popup with labelled completions for all
 | `,z` | Switch to the alternate buffer. |
 | `,m` | Run `:make`. |
 | `,q` | Close the window. |
-| `,/` | Start an Ag search, or `:grep` when fzf or Ag is unavailable. |
-| `,sw` | Search for the word under the cursor with Ag (requires fzf and Ag). |
+| `,/` | Start an `:Rg` search, or `:grep` when fzf or ripgrep is unavailable. |
+| `,sw` | Search for the word under the cursor with ripgrep (requires fzf and ripgrep). |
 
 With fzf, `,f`, `,b`, and `,t` open pickers. Without fzf, they use Neovim's file, buffer, and tag commands.
+On Ubuntu, install `fd-find` to provide `fdfind`; on systems with `fd`, that command is used instead. If neither is available, file pickers use `rg --files` when ripgrep is installed, otherwise fzf's default file search.
 
 ### Git
 

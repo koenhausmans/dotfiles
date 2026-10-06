@@ -144,18 +144,14 @@ FZF: Fuzzy finder:
 ------------------
 The following shortcuts are allowed in Normal mode:
 
-`<C-p>`: Open FZF with multiple select mode enabled<br/>
-`<leader>f`: Open FZF<br/>
-`<leader>g`: Open FZF from (git) project root<br/>
-`<leader>G`: Open FZF for all files in the current git repository<br/>
-`<leader>?`: Open FZF for previously opened files<br/>
-`<leader>b`: Open FZF for buffers<br/>
-`<leader>t`: Open FZF for all tags in project<br/>
-`<leader>m`: Open FZF for all marks<br/>
-`<leader>/`: Open FZF for an Ag search<br/>
-`<leader>.`: Open FZF for an Ag search under a directory<br/>
+`<leader>f`: Open the file picker<br/>
+`<leader>F`: Open the file picker in the current file's directory<br/>
+`<leader>G`: Open the Git file picker<br/>
+`<leader>b`: Open the buffer picker<br/>
+`<leader>t`: Open the tag picker<br/>
+`<leader>/`: Start a ripgrep search with fzf (requires ripgrep)<br/>
 
-`K`: Open FZF for an Ag search looking for the current word under the cursor<br/>
+The file picker uses `fd` or `fdfind` when installed, then `rg --files` if available, and otherwise fzf's default file search. `K` searches for the word under the cursor using `:grep` and adds matches to the quickfix list.
 
 In a fzf window, the following shortcuts are supported:
 
@@ -179,4 +175,3 @@ Surround.vim: Quoting/Parenthesizing made simple:
 `S"`: To add `"` quotes around selection<br/>
 
 Adding `()`-brackets (and `{}`-brackets) can be done by `(` to add a space or by `)` to add without a space<br/>
-

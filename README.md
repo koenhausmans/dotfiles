@@ -43,26 +43,12 @@ Required packages (Ubuntu):
  * exuberant-ctags
  * g++
  * build-essential
- * silversearcher-ag
+ * ripgrep
+ * fd-find
 
-Required packages(Arch Linux):
-------------------------------
- * base-devel
- * bash bash-completion
- * ctags
- * zsh
- * vim
- * tmux
- * the_silver_searcher
- * python python-setuptools python-pip
- * mlocate
- * curl
- * git
- * bash-git-prompt
- * wget
+On Ubuntu, `fd-find` installs the file-search command as `fdfind`. The Vim and Neovim configurations accept either `fdfind` or `fd` for fzf file pickers; if neither is installed, they use `rg --files` when available.
 
 Required packages (Nvim):
 -------------------------
  * neovim
-
 

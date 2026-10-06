@@ -5,6 +5,14 @@ nnoremap <leader>, ,
 " The fzf binary also works when Neovim is started without an interactive shell.
 let s:has_fzf = executable('fzf') || executable(expand('~/.fzf/bin/fzf'))
 
+if executable('fd')
+    let $FZF_DEFAULT_COMMAND = 'fd --type f'
+elseif executable('fdfind')
+    let $FZF_DEFAULT_COMMAND = 'fdfind --type f'
+elseif executable('rg')
+    let $FZF_DEFAULT_COMMAND = 'rg --files'
+endif
+
 if empty(glob('~/.config/nvim/autoload/plug.vim'))
     silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     autocmd VimEnter * PlugInstall
@@ -109,7 +117,7 @@ require('which-key').add({
   { '<leader>z',  desc = 'Alternate buffer' },
   { '<leader>w',  desc = 'Write' },
   { '<leader>c',  desc = 'Close buffer' },
-  { '<leader>/',  desc = 'Search (Ag/grep)' },
+  { '<leader>/',  desc = 'Search (Rg/grep)' },
   { '<leader>sw', desc = 'Search word under cursor' },
   { '<leader>y',  desc = 'Yank to clipboard',  mode = { 'n', 'x' } },
   { '<leader>p',  desc = 'Paste from clipboard' },
@@ -451,9 +459,9 @@ nnoremap <silent> <leader>gh :DiffviewFileHistory %<cr>
 nnoremap <silent> <leader>gb :Git blame<cr>
 nnoremap <silent> <leader>gl :Git log<cr>
 
-if s:has_fzf && executable('ag')
-    nnoremap          <leader>/ :Ag<space>
-    nnoremap <silent> <leader>sw :call fzf#vim#ag(expand('<cword>'), '--literal --word-regexp', fzf#vim#with_preview())<cr>
+if s:has_fzf && executable('rg')
+    nnoremap          <leader>/ :Rg<space>
+    nnoremap <silent> <leader>sw :call fzf#vim#grep('rg --column --line-number --no-heading --color=always --smart-case --word-regexp -- ' . fzf#shellescape(expand('<cword>')), fzf#vim#with_preview(), 0)<cr>
 else
     nnoremap          <leader>/ :grep<space>
 endif
@@ -461,8 +469,8 @@ endif
 """ END LEADER KEY BEHAVIOR }}}
 """ GREP AND VIMGREP BEHAVIOR {{{
 
-if executable('ag')
-    set grepprg=ag\ --vimgrep\ $*
+if executable('rg')
+    set grepprg=rg\ --vimgrep\ --smart-case\ $*
     set grepformat=%f:%l:%c:%m
 endif
 
