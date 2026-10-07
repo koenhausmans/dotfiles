@@ -293,8 +293,8 @@ nnoremap <silent> ,<space> :nohlsearch<cr>
 """ GREP AND VIMGREP BEHAVIOR {{{
 
 " Check for file_in_path error, due to incompatibility with Vim <7.3
-if executable('ag')
-    set grepprg=ag\ --vimgrep\ $*
+if executable('rg')
+    set grepprg=rg\ --vimgrep\ --smart-case\ $*
     set grepformat=%f:%l:%c:%m
 elseif executable('ack')
     set grepprg=ack\ --nogroup\ --column\ --smart-case\ --nocolor\ --follow\ $*
@@ -303,8 +303,13 @@ endif
 
 command! -nargs=+ -complete=file_in_path -bar Grep silent! grep! <args> | redraw!
 
-nnoremap <silent> K :grep! <cword> -r *<cr>
-vnoremap <silent> K y:grep! <c-r>" -r *<cr>
+if executable('rg')
+    nnoremap <silent> K :grep! <cword><cr>
+    vnoremap <silent> K y:grep! <c-r>"<cr>
+else
+    nnoremap <silent> K :grep! <cword> -r *<cr>
+    vnoremap <silent> K y:grep! <c-r>" -r *<cr>
+endif
 
 """ END GREP AND VIMGREP BEHAVIOR }}}
 """ BUFFER SPECIFIC BEHAVIOR {{{

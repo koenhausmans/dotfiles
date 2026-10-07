@@ -34,6 +34,14 @@ Plug 'christoomey/vim-tmux-navigator'
 
 call plug#end()
 
+if executable('fd')
+    let $FZF_DEFAULT_COMMAND = 'fd --type f'
+elseif executable('fdfind')
+    let $FZF_DEFAULT_COMMAND = 'fdfind --type f'
+elseif executable('rg')
+    let $FZF_DEFAULT_COMMAND = 'rg --files'
+endif
+
 """ END PLUGIN MANAGER }}}
 """ PLUGIN INTEGRATION {{{
 
@@ -251,13 +259,18 @@ nnoremap          ,/       :grep<space>
 """ END LEADER KEY BEHAVIOR }}}
 """ GREP AND VIMGREP BEHAVIOR {{{
 
-if executable('ag')
-    set grepprg=ag\ --vimgrep\ $*
+if executable('rg')
+    set grepprg=rg\ --vimgrep\ --smart-case\ $*
     set grepformat=%f:%l:%c:%m
 endif
 
-nnoremap <silent> K :grep! <cword> -r *<cr>
-vnoremap <silent> K y:grep! <c-r>" -r *<cr>
+if executable('rg')
+    nnoremap <silent> K :grep! <cword><cr>
+    vnoremap <silent> K y:grep! <c-r>"<cr>
+else
+    nnoremap <silent> K :grep! <cword> -r *<cr>
+    vnoremap <silent> K y:grep! <c-r>" -r *<cr>
+endif
 
 """ END GREP AND VIMGREP BEHAVIOR }}}
 """ BUFFER SPECIFIC BEHAVIOR {{{
