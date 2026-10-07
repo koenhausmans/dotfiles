@@ -1,0 +1,31 @@
+{
+  "name": "Sonokai Shusia",
+  "base": "dark",
+  "overrides": {
+    "claude": "#ab9df2",
+    "claudeShimmer": "#b9aeee",
+    "text": "#e3e1e4",
+    "inactive": "#a3a1a4",
+    "subtle": "#848089",
+    "suggestion": "#7accd7",
+    "permission": "#7accd7",
+    "remember": "#ab9df2",
+    "success": "#9ecd6f",
+    "error": "#f85e84",
+    "warning": "#e5c463",
+    "promptBorder": "#7accd7",
+    "planMode": "#7accd7",
+    "autoAccept": "#9ecd6f",
+    "bashBorder": "#ef8f74",
+    "diffAdded": "#353533",
+    "diffRemoved": "#3b2e34",
+    "diffAddedDimmed": "#3f4438",
+    "diffRemovedDimmed": "#4d323c",
+    "diffAddedWord": "#4d5840",
+    "diffRemovedWord": "#663946",
+    "userMessageBackground": "#434044",
+    "bashMessageBackgroundColor": "#434044",
+    "memoryBackgroundColor": "#434044",
+    "selectionBg": "#394449"
+  }
+}

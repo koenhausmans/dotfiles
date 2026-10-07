@@ -1,0 +1,31 @@
+{
+  "name": "Kanagawa Wave",
+  "base": "dark",
+  "overrides": {
+    "claude": "#7fb4ca",
+    "claudeShimmer": "#96bdc6",
+    "text": "#dcd7ba",
+    "inactive": "#c8c093",
+    "subtle": "#727169",
+    "suggestion": "#7fb4ca",
+    "permission": "#7fb4ca",
+    "remember": "#938aa9",
+    "success": "#98bb6c",
+    "error": "#e82424",
+    "warning": "#e6c384",
+    "promptBorder": "#7fb4ca",
+    "planMode": "#7fb4ca",
+    "autoAccept": "#98bb6c",
+    "bashBorder": "#e77052",
+    "diffAdded": "#25272d",
+    "diffRemoved": "#2a212a",
+    "diffAddedDimmed": "#2d3233",
+    "diffRemovedDimmed": "#39242c",
+    "diffAddedWord": "#37403a",
+    "diffRemovedWord": "#4d2830",
+    "userMessageBackground": "#36353a",
+    "bashMessageBackgroundColor": "#36353a",
+    "memoryBackgroundColor": "#36353a",
+    "selectionBg": "#2e3344"
+  }
+}
