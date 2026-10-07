@@ -1,0 +1,49 @@
+theme = "kanagawa"
+
+[editor]
+line-number    = "relative"
+cursorline     = true
+scrolloff      = 5
+auto-pairs     = true
+bufferline     = "multiple"
+color-modes    = true
+idle-timeout   = 300
+rulers         = []
+
+[editor.cursor-shape]
+normal = "block"
+insert = "bar"
+select = "underline"
+
+[editor.file-picker]
+hidden = true
+
+[editor.search]
+smart-case  = true
+wrap-around = true
+
+[editor.whitespace.render]
+tab  = "all"
+nbsp = "all"
+
+[editor.whitespace.characters]
+tab    = "»"
+tabpad = " "
+nbsp   = "␣"
+
+[editor.indent-guides]
+render      = true
+character   = "╎"
+skip-levels = 1
+
+[editor.statusline]
+left      = ["mode", "spinner", "version-control", "file-name", "file-modification-indicator"]
+center    = []
+right     = ["diagnostics", "file-type", "file-encoding", "position-percentage", "position"]
+separator = "│"
+
+[editor.lsp]
+display-messages          = true
+display-inlay-hints       = true
+auto-signature-help       = true
+display-signature-help-docs = false
