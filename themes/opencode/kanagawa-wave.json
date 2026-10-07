@@ -14,14 +14,14 @@
       "muted": "$hue.neutral.300",
       "action": {
         "primary": {
-          "base": "$text.base",
+          "base": "#dcd7ba",
           "$disabled": "$hue.neutral.400",
           "$focused": "$hue.neutral.900",
           "$selected": "$hue.interactive.200"
         },
         "secondary": {
-          "base": "$text.muted",
-          "$hovered": "$text.base"
+          "base": "$hue.neutral.300",
+          "$hovered": "#dcd7ba"
         },
         "destructive": {
           "base": "$hue.neutral.900",
@@ -100,7 +100,7 @@
       "text": {
         "added": "$hue.green.200",
         "removed": "$hue.red.200",
-        "context": "$text.muted",
+        "context": "$hue.neutral.300",
         "hunkHeader": "$hue.blue.200"
       },
       "background": {
@@ -113,7 +113,7 @@
         "removed": "$hue.red.100"
       },
       "lineNumber": {
-        "text": "$text.muted",
+        "text": "$hue.neutral.300",
         "background": {
           "added": "$hue.green.800",
           "removed": "$hue.red.800"
@@ -121,31 +121,31 @@
       }
     },
     "syntax": {
-      "comment": "$text.muted",
+      "comment": "$hue.neutral.300",
       "keyword": "$hue.purple.200",
       "function": "$hue.blue.200",
-      "variable": "$text.base",
+      "variable": "#dcd7ba",
       "string": "$hue.green.200",
       "number": "$hue.orange.200",
       "type": "$hue.yellow.200",
       "operator": "$hue.cyan.200",
-      "punctuation": "$text.base"
+      "punctuation": "#dcd7ba"
     },
     "markdown": {
-      "text": "$text.base",
+      "text": "#dcd7ba",
       "heading": "$hue.accent.200",
       "link": "$hue.blue.200",
       "linkText": "$hue.cyan.200",
       "code": "$hue.green.200",
-      "blockQuote": "$text.muted",
+      "blockQuote": "$hue.neutral.300",
       "emphasis": "$hue.yellow.200",
       "strong": "$hue.orange.200",
-      "horizontalRule": "$text.muted",
+      "horizontalRule": "$hue.neutral.300",
       "listItem": "$hue.accent.200",
       "listEnumeration": "$hue.cyan.200",
       "image": "$hue.blue.200",
       "imageText": "$hue.cyan.200",
-      "codeBlock": "$text.base"
+      "codeBlock": "#dcd7ba"
     },
     "@dialog": {
       "background": {
