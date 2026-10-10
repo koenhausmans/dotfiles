@@ -58,6 +58,7 @@ prompt_palette=(
 # and Nerd Font glyphs. Linux virtual consoles use the plain prompt automatically.
 prompt_ascii=0
 unsetopt prompt_subst
+ZLE_RPROMPT_INDENT=0
 PROMPT='%~ '
 RPROMPT=''
 
@@ -139,7 +140,7 @@ precmd() {
         [[ -n $git_dirty ]] && RPROMPT+=' ±'
         (( ahead > 0 )) && RPROMPT+=" ↑${ahead}"
         (( behind > 0 )) && RPROMPT+=" ↓${behind}"
-        RPROMPT+="${stash} %b%k%f"
+        RPROMPT+="${stash}%b%k%f"
     fi
 }
 
