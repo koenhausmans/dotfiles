@@ -140,7 +140,7 @@ precmd() {
         [[ -n $git_dirty ]] && RPROMPT+=' ±'
         (( ahead > 0 )) && RPROMPT+=" ↑${ahead}"
         (( behind > 0 )) && RPROMPT+=" ↓${behind}"
-        RPROMPT+="${stash}%b%k%f"
+        RPROMPT+="${stash} %b%k%f"
     fi
 }
 
