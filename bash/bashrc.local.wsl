@@ -15,9 +15,6 @@ export DISPLAY=localhost:0.0
 if [[ ! -f "$WSL_SESSION_FILE" ]] ; then
     touch "$WSL_SESSION_FILE"
 
-    # Remove the temporary files/folders once at start of the wsl session
-    rm -rf /tmp/*
-
     # Fire up ssh-agent once per wsl session
     mkdir -p "$SSH_AGENT_FOLDER"
     ssh-agent -a "$SSH_AGENT_FOLDER/agent.sock" &> "$SSH_AGENT_FOLDER/env"
