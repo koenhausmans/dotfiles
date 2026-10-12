@@ -1,6 +1,7 @@
 """Exercise Git helper CLIs against temporary local repositories only."""
 
 import os
+import shutil
 import subprocess
 import tempfile
 import time
@@ -96,6 +97,22 @@ class GitHelperTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertTrue(self.has_remote_ref("refs/heads/old-branch"))
 
+    def test_failed_branch_listing_is_not_reported_as_noop(self):
+        fake = self.root / "commands"
+        fake.mkdir()
+        git = fake / "git"
+        git.write_text('#!/bin/sh\n'
+                       'if [ "$1" = for-each-ref ]; then exit 7; fi\n'
+                       'exec "$REAL_GIT" "$@"\n')
+        git.chmod(0o755)
+
+        result = subprocess.run([str(REPO / "bin/git-remove-old-local-branches")],
+                                cwd=self.work, capture_output=True, text=True, check=False,
+                                env={**self.env, "REAL_GIT": shutil.which("git"),
+                                     "PATH": f"{fake}:{os.environ['PATH']}"})
+
+        self.assertNotEqual(result.returncode, 0)
+
     def test_gone_noncurrent_branch_is_removed(self):
         self.git("switch", "-c", "stale-branch")
         self.git("push", "-u", "origin", "stale-branch")
@@ -119,6 +136,33 @@ class GitHelperTests(unittest.TestCase):
         result = subprocess.run([str(REPO / "git/git-template/hooks/ctags")],
                                 cwd=self.work, capture_output=True, text=True,
                                 check=False, env={**self.env, "TMPDIR": str(self.root),
+                                                  "PATH": f"{fake}:{os.environ['PATH']}"})
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(tags.read_text(), "existing tags\n")
+
+    def test_ctags_git_listing_failure_keeps_previous_tags(self):
+        tags = self.work / ".tags"
+        tags.write_text("existing tags\n")
+        fake = self.root / "commands"
+        fake.mkdir()
+        git = fake / "git"
+        git.write_text('#!/bin/sh\n'
+                       'if [ "$1" = ls-files ] && [ "$#" -eq 1 ]; then exit 7; fi\n'
+                       'exec "$REAL_GIT" "$@"\n')
+        git.chmod(0o755)
+        ctags = fake / "ctags"
+        ctags.write_text('#!/bin/sh\n'
+                          'while [ "$#" -gt 0 ]; do\n'
+                          '  if [ "$1" = -f ]; then shift; printf "new tags\\n" > "$1"; fi\n'
+                          '  shift\n'
+                          'done\n')
+        ctags.chmod(0o755)
+
+        result = subprocess.run([str(REPO / "git/git-template/hooks/ctags")],
+                                cwd=self.work, capture_output=True, text=True,
+                                check=False, env={**self.env, "TMPDIR": str(self.root),
+                                                  "REAL_GIT": shutil.which("git"),
                                                   "PATH": f"{fake}:{os.environ['PATH']}"})
 
         self.assertNotEqual(result.returncode, 0)

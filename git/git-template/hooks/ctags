@@ -5,7 +5,7 @@ if [ -d doc -a \( -d autoload -o -d ftdetect -o -d plugin \) ]; then
   nohup vim -u NONE -c 'helptags doc' -cq >/dev/null 2>&1 </dev/null &
 fi
 
-optfiles=`git ls-files -oc --directory -- .ctags '*/.ctags'`
+optfiles=$(git ls-files -oc --directory -- .ctags '*/.ctags') || exit 1
 
 IFS='
 '
@@ -13,9 +13,11 @@ for optfile in ${optfiles:-./fake}; do
   (
   unset GIT_DIR GIT_WORK_TREE
   tmpfile=$(mktemp "${TMPDIR:-/tmp}/tags.XXXXXXXXXX~") || exit 1
-  trap 'rm -f -- "$tmpfile"' EXIT INT TERM
+  listfile="$tmpfile.files"
+  trap 'rm -f -- "$tmpfile" "$listfile"' EXIT INT TERM
   cd "$(dirname -- "$optfile")" || exit 1
-  git ls-files | ctags -L - -f "$tmpfile" "$@" || exit 1
+  git ls-files > "$listfile" || exit 1
+  ctags -L "$listfile" -f "$tmpfile" "$@" || exit 1
   mv -- "$tmpfile" .tags
   )
 done

@@ -16,6 +16,10 @@ case ${1:-} in
 esac
 
 current_branch=$(git symbolic-ref --quiet --short HEAD || true)
+refs=$(git for-each-ref --format='%(refname:short)%09%(upstream:track)' refs/heads) || {
+    printf 'Could not list local branches\n' >&2
+    exit 1
+}
 while IFS=$'\t' read -r branch tracking; do
     [[ $tracking == '[gone]' ]] || continue
     if [[ $branch == "$current_branch" ]]; then
@@ -23,4 +27,4 @@ while IFS=$'\t' read -r branch tracking; do
         continue
     fi
     git branch "$delete_flag" -- "$branch"
-done < <(git for-each-ref --format='%(refname:short)%09%(upstream:track)' refs/heads)
+done <<< "$refs"
