@@ -60,8 +60,3 @@ echo "Press Enter to continue. . ." ; read ;;
 
 esac
 done
-
-##### END INVALID OPTION #####
-
-esac
-done

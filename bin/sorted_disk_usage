@@ -1,73 +1,55 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-BLOCK_SIZE="MiB"
-ROOT_USAGE=""
-QUIET=""
-ADDITIONAL_OPTIONS=""
+block_size=MiB
+quiet=false
+root_command=()
+additional_options=()
 
-function show_help() {
-    echo """
-usage: $0 --size=SIZE
+show_help() {
+    cat <<'EOF'
+usage: sorted_disk_usage [--size=SIZE] [--root] [--quiet] [du options or paths]
 
 arguments:
-  -s SIZE|--size=SIZE  Sets the size unit that will be filtered on.
-                       Possible options: k/kb/kib, m/mb/mib, g/gb/gib
+  -s SIZE|--size=SIZE  Sets the size unit: k/kb/kib, m/mb/mib, g/gb/gib
   -r|--root            Executes the command as root
-  -q|--quiet           Ignore errors
-"""
-    exit
+  -q|--quiet           Ignores du error output
+EOF
 }
 
-function extend_size_abbreviation() {
-    size_unit=""
-    lower_case_input=`echo "$1" | tr '[:upper:]' '[:lower:]'`
-    case "$lower_case_input" in
-        k|kb|kib)
-            size_unit="KiB"
-            ;;
-        m|mb|mib)
-            size_unit="MiB"
-            ;;
-        g|gb|gib)
-            size_unit="GiB"
-            ;;
-        *)
-            echo -e "\e[31mInvalid size provided\e[0m"
-            exit
-            ;;
+extend_size_abbreviation() {
+    case ${1,,} in
+        k|kb|kib) printf 'KiB\n' ;;
+        m|mb|mib) printf 'MiB\n' ;;
+        g|gb|gib) printf 'GiB\n' ;;
+        *) printf 'Invalid size provided: %s\n' "$1" >&2; return 2 ;;
     esac
-    echo "$size_unit"
 }
 
-while [[ $# -ge 1 ]] ; do
-    case "$1" in
-    -s|--size)
-        BLOCK_SIZE="$(extend_size_abbreviation $2)"
-        shift
-        ;;
-    -s=*|--size=*)
-        BLOCK_SIZE="$(extend_size_abbreviation ${1#*=})"
-        ;;
-    -r|--root)
-        ROOT_USAGE="sudo"
-        ;;
-    -q|--quiet)
-        QUIET="true"
-        ;;
-    -h|--help)
-        show_help
-        exit
-        ;;
-    *)
-        ADDITIONAL_OPTIONS="$ADDITIONAL_OPTIONS $1"
-        ;;
+while (( $# > 0 )); do
+    case $1 in
+        -s|--size)
+            if (( $# < 2 )); then
+                printf 'Missing size after %s\n' "$1" >&2
+                exit 2
+            fi
+            block_size=$(extend_size_abbreviation "$2")
+            shift 2
+            ;;
+        -s=*|--size=*)
+            block_size=$(extend_size_abbreviation "${1#*=}")
+            shift
+            ;;
+        -r|--root) root_command=(sudo); shift ;;
+        -q|--quiet) quiet=true; shift ;;
+        -h|--help) show_help; exit 0 ;;
+        --) shift; additional_options+=("$@"); break ;;
+        *) additional_options+=("$1"); shift ;;
     esac
-    shift
 done
 
-if [[ "$QUIET" == "true" ]] ; then
-    $ROOT_USAGE du --block-size=$BLOCK_SIZE --max-depth=1 $ADDITIONAL_OPTIONS 2>/dev/null | sort -n
+if $quiet; then
+    "${root_command[@]}" du --block-size="$block_size" --max-depth=1 "${additional_options[@]}" 2>/dev/null | sort -n
 else
-    $ROOT_USAGE du --block-size=$BLOCK_SIZE --max-depth=1 $ADDITIONAL_OPTIONS | sort -n
+    "${root_command[@]}" du --block-size="$block_size" --max-depth=1 "${additional_options[@]}" | sort -n
 fi
-
