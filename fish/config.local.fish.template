@@ -1,0 +1,8 @@
+# Copy to ~/.config/fish/config.local.fish (or $XDG_CONFIG_HOME/fish/config.local.fish).
+# Select a prompt palette: kanagawa (default), sonokai, gruvbox-material,
+# or tokyo-night.
+# set -g fish_prompt_theme sonokai
+# Use an ASCII prompt if your terminal lacks Powerline glyphs.
+# set -g fish_prompt_ascii 1
+# Add machine-specific PATH entries or abbreviations here.
+# Example: fish_add_path --path $HOME/my-tools/bin

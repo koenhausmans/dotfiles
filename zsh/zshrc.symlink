@@ -58,6 +58,7 @@ prompt_palette=(
 # and Nerd Font glyphs. Linux virtual consoles use the plain prompt automatically.
 prompt_ascii=0
 unsetopt prompt_subst
+ZLE_RPROMPT_INDENT=0
 PROMPT='%~ '
 RPROMPT=''
 
