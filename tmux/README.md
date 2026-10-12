@@ -3,7 +3,7 @@ Tmux - Keyboard Shortcuts:
 
 General:
 ========
-`<C-a>r`: Reload the tmux configuration<br/>
+Run `tmux source-file ~/.tmux.conf` to reload the configuration; there is no reload shortcut.<br/>
 
 Windows:
 ========
@@ -13,8 +13,9 @@ Windows:
 `<C-a><C-n>`: Next window<br/>
 `<C-a>p`: Previous window<br/>
 `<C-a><C-p>`: Previous window<br/>
-`<C-a><C-a>`: Switch to last window<br/>
-`<C-a><C-k>`: Kill window<br/>
+`<C-a>a`: Switch to the last window<br/>
+`<C-a><C-a>`: Send `<C-a>` to the current pane<br/>
+`<C-a>&`: Kill the current window (tmux default)<br/>
 
 `<C-a>,`: Rename window<br/>
 `<C-a>:rename-window`: Rename window<br/>
@@ -27,13 +28,13 @@ Splits:
 `<C-a>_`: Splits window vertically<br/><br/>
 
 `<C-a>h`: Resize pane to the left with 1<br/>
-`<C-a>j`: Resize pane to the top with 1<br/>
-`<C-a>k`: Resize pane to the bottom with 1<br/>
+`<C-a>j`: Resize pane down by 1<br/>
+`<C-a>k`: Resize pane up by 1<br/>
 `<C-a>l`: Resize pane to the right with 1<br/>
 
 `<C-a>H`: Resize pane to the left with 5<br/>
-`<C-a>J`: Resize pane to the top with 5<br/>
-`<C-a>K`: Resize pane to the bottom with 5<br/>
+`<C-a>J`: Resize pane down by 5<br/>
+`<C-a>K`: Resize pane up by 5<br/>
 `<C-a>L`: Resize pane to the right with 5<br/><br/>
 
 Panes:
@@ -50,4 +51,3 @@ Pane Layouts:
 `<C-a><space>`: Toggle between layouts<br/>
 `<C-a><M-1>`: Evenly space all panes horizontally<br/>
 `<C-a><M-2>`: Evenly space all panes vertically<br/>
-

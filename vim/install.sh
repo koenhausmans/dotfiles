@@ -10,7 +10,6 @@ if [[ "$MODE_ARGUMENT" == "minimal" ]] ; then
 
     mkdir -p ~/.vim/colors/
     pushd ~/.vim/colors/ > /dev/null
-    wget --no-check-certificate --quiet https://raw.githubusercontent.com/romainl/Apprentice/master/colors/apprentice.vim
+    wget --quiet https://raw.githubusercontent.com/romainl/Apprentice/master/colors/apprentice.vim
     popd > /dev/null
 fi
-

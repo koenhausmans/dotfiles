@@ -67,6 +67,7 @@ RPROMPT=''
 precmd() {
     local exit_code=$?
     local branch git_dirty stash ahead=0 behind=0 host is_detached=0 ascii=0
+    local git_lines line oid plus minus
     local sep=$'\ue0b0' lsep=$'\ue0b6' br=$'\ue0a0'
 
     (( prompt_ascii )) || [[ $TERM == linux || $TTY == /dev/tty[0-9]* ]] && ascii=1
@@ -75,24 +76,26 @@ precmd() {
         host='%n@%m '
     fi
 
-    branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null)
-    if [[ $? -ne 0 ]]; then
-        local sha
-        sha=$(git rev-parse --short HEAD 2>/dev/null)
-        if [[ -n $sha ]]; then
-            branch="➦ ${sha}"
-            is_detached=1
-        fi
+    if git_lines=$(command git status --porcelain=v2 --branch --show-stash 2>/dev/null); then
+        for line in ${(f)git_lines}; do
+            case $line in
+                '# branch.head '*) branch=${line#'# branch.head '} ;;
+                '# branch.oid '*) oid=${line#'# branch.oid '} ;;
+                '# branch.ab '*)
+                    read -r plus minus <<< "${line#'# branch.ab '}"
+                    ahead=${plus#+}
+                    behind=${minus#-}
+                    ;;
+                '# stash '*)
+                    (( ${line#'# stash '} > 0 )) && stash=' S'
+                    ;;
+                '1 '*|'2 '*|'u '*|'? '*) git_dirty=1 ;;
+            esac
+        done
     fi
-    if [[ -n $branch ]]; then
-        [[ -n $(git status --porcelain 2>/dev/null) ]] && git_dirty=1
-        [[ -n $(git stash list -1 2>/dev/null) ]] && stash=' S'
-        local divergence
-        if divergence=$(git rev-list --left-right --count '@{upstream}...HEAD' 2>/dev/null); then
-            read -r behind ahead <<< "$divergence"
-        else
-            ahead=$(git rev-list --count HEAD --not --remotes 2>/dev/null)
-        fi
+    if [[ $branch == '(detached)' ]]; then
+        branch="➦ ${oid[1,7]}"
+        is_detached=1
     fi
 
     # Branch names can contain %, which must not become a prompt escape.

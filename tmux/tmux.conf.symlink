@@ -146,7 +146,7 @@ set  -g @mode_prompt "#{?#{==:#{client_key_table},suspended}, ---- ,#{?client_pr
 set  -g @mode_indicator '#[default]#{E:@mode_style}#{E:@mode_prompt}#[default]'
 set  -g status-right '#{E:@mode_indicator}'
 
-### ── Theme: gruvbox-material (hard bg, original fg) ─────────────── (active)
+### ── Theme: gruvbox-material (hard bg, original fg) ──────────── (commented)
 ### bg scale:  #1d2021 (hard) → #282828 (bg1) → #3c3836 (bg3) → #504945 (bg5)
 ### accents:   green #b8bb26  blue/aqua #83a598  yellow #fabd2f  red #fb4934
 # set  -g status-style             'fg=#ebdbb2,bg=#3c3836'
@@ -166,7 +166,7 @@ set  -g status-right '#{E:@mode_indicator}'
 # setw -g window-status-current-format '#[fg=#83a598,bg=#3c3836]#[fg=#1d2021,bg=#83a598,bold] #I#{?window_flags,#{window_flags}, }#[fg=#1d2021,bg=#83a598]  #W #[nobold]#[fg=#83a598,bg=#3c3836]'
 # set  -g @mode_style "#{?#{==:#{client_key_table},suspended},#[fg=#928374]#[bg=#3c3836]#[fg=#1d2021]#[bg=#928374],#{?client_prefix,#[fg=#83a598]#[bg=#3c3836]#[fg=#1d2021]#[bg=#83a598],#{?pane_in_mode,#[fg=#fabd2f]#[bg=#3c3836]#[fg=#1d2021]#[bg=#fabd2f],#{?pane_synchronized,#[fg=#fb4934]#[bg=#3c3836]#[fg=#1d2021]#[bg=#fb4934],#[fg=#b8bb26]#[bg=#3c3836]#[fg=#1d2021]#[bg=#b8bb26]}}}}"
 
-### ── Theme: kanagawa-wave ──────────────────────────────────────── (commented)
+### ── Theme: kanagawa-wave ──────────────────────────────────────── (active)
 set  -g status-style             'fg=#dcd7ba,bg=#2a2a37'
 set  -g pane-border-style        'fg=#363646'
 set  -g pane-active-border-style 'fg=#7e9cd8'

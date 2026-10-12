@@ -146,7 +146,7 @@ The following shortcuts are allowed in Normal mode:
 
 `<leader>f`: Open the file picker<br/>
 `<leader>F`: Open the file picker in the current file's directory<br/>
-`<leader>G`: Open the Git file picker<br/>
+`<leader>gf`: Open the Git-tracked file picker<br/>
 `<leader>b`: Open the buffer picker<br/>
 `<leader>t`: Open the tag picker<br/>
 `<leader>/`: Start a ripgrep search with fzf (requires ripgrep)<br/>

@@ -1,2 +1,3 @@
 #!/bin/sh
-.git/hooks/ctags >/dev/null 2>&1 &
+hook=$(git rev-parse --git-path hooks/ctags) || exit 1
+"$hook" >/dev/null 2>&1 &

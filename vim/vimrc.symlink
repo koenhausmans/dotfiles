@@ -85,16 +85,11 @@ elseif executable('rg')
     let $FZF_DEFAULT_COMMAND = 'rg --files'
 endif
 
-function! s:find_git_root()
-    return system('git rev-parse --show-toplevel 2> /dev/null')[:-2]
-endfunction
-
 if executable('fzf')
-    command! GitRootFiles execute 'Files' s:find_git_root()
     command! LocalFiles execute 'Files' expand('%:h')
 
     nnoremap <silent> ,b :Buffers<cr>
-    nnoremap <silent> ,G :GitFiles<cr>
+    nnoremap <silent> ,gf :GFiles<cr>
     nnoremap <silent> ,f :Files<cr>
     nnoremap <silent> ,F :LocalFiles<cr>
     nnoremap <silent> ,t :Tags<cr>

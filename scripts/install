@@ -15,43 +15,35 @@ DOTFILES_ROOT="$(dirname "$BASEDIR")"
 
 info 'Running installer scripts'
 
-will_install_all=false
-find $DOTFILES_ROOT -iname install.sh -print0 | while IFS="" read -r -d "" installer
-do
-    action=""
-    will_install=false
+install_all=false
+# Only these top-level components are allowed to supply install scripts.
+for component in bash fish fzf nvim vim zsh; do
+    installer="$DOTFILES_ROOT/$component/install.sh"
+    [[ -f $installer ]] || continue
 
-    ShortInstallerName=$(echo ${installer} | sed "s:$DOTFILES_ROOT/::g")
-    user "Do you want to install \e[1m${ShortInstallerName}\e[0m?\n\
-        [y]es, [Y]es to all, [n]o?"
-    read -n 1 action < /dev/tty
-
-    case "$action" in
-        y )
-            will_install=true;;
-        Y )
-            will_install_all=true;;
-        n )
-            ;;
-    esac
-
-    do_install=${will_install:-$will_install_all}
-
-    if [[ "$do_install" == "true" ]] ; then
-        info "Installing \e[1m${ShortInstallerName}\e[0m"
-
-        # Disable immediate exit if a command fails, otherwise the check for exit codes does not work
-        set +e
-
-        sh -c "${installer} $@"
-        if [ $? -ne 0 ] ; then
-            fail "Error while executing \e[1m${ShortInstallerName}\e[0m"
-        else
-            success "Finished installing \e[1m${ShortInstallerName}\e[0m"
+    if [[ $install_all != true ]]; then
+        if ! ( : </dev/tty ) 2>/dev/null; then
+            fail "Cannot choose installers without a terminal"
         fi
+        while :; do
+            user "Do you want to install \e[1m$component/install.sh\e[0m?\n        [y]es, [Y]es to all, [n]o?"
+            if ! IFS= read -r -n 1 action < /dev/tty; then
+                fail "No choice received for $component/install.sh"
+            fi
+            printf '\n'
+            case $action in
+                y|Y|n) break ;;
+                *) user 'Enter y, Y, or n.' ;;
+            esac
+        done
+        [[ $action == Y ]] && install_all=true
+        [[ $action == n ]] && continue
+    fi
 
-        # Re-enable immediate exit if a command fails
-        set -e
+    info "Installing \e[1m$component/install.sh\e[0m"
+    if "$installer" "$@"; then
+        success "Finished installing \e[1m$component/install.sh\e[0m"
+    else
+        fail "Error while executing \e[1m$component/install.sh\e[0m"
     fi
 done
-

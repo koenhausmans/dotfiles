@@ -2,22 +2,29 @@
 
 set -euo pipefail
 
-set +e
-GitRootDirectory="$(git rev-parse --show-toplevel 2> /dev/null)"
-
-if [[ $? -ne 0 || -z "$GitRootDirectory" ]] ; then
-    echo -e "\e[31mNo git root directory found\e[0m"
+if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
+    printf 'No git root directory found\n' >&2
     exit 1
 fi
-set -e
 
 git fetch --prune
 
-if [[ ! -z "${1:-}" && "${1:-}" =~ ^(-f|--force)$ ]] ; then
-    git branch -vv | grep 'origin/.*: gone]' | awk '{ printf $1"\n" }' | xargs git branch -D
-else
-    git branch -vv | grep 'origin/.*: gone]' | awk '{ printf $1"\n" }' | xargs git branch -d
-fi
+case ${1:-} in
+    '') delete_flag=-d ;;
+    -f|--force) delete_flag=-D ;;
+    *) printf 'Usage: %s [-f|--force]\n' "$(basename "$0")" >&2; exit 2 ;;
+esac
 
-
-
+current_branch=$(git symbolic-ref --quiet --short HEAD || true)
+refs=$(git for-each-ref --format='%(refname:short)%09%(upstream:track)' refs/heads) || {
+    printf 'Could not list local branches\n' >&2
+    exit 1
+}
+while IFS=$'\t' read -r branch tracking; do
+    [[ $tracking == '[gone]' ]] || continue
+    if [[ $branch == "$current_branch" ]]; then
+        printf 'Skipping current branch: %s\n' "$branch"
+        continue
+    fi
+    git branch "$delete_flag" -- "$branch"
+done <<< "$refs"

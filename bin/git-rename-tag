@@ -5,23 +5,27 @@ set -euo pipefail
 OldTag=${1:-}
 NewTag=${2:-}
 
-if [[ $# -le 1 || -z "$OldTag" || -z "$NewTag" ]] ; then
-    echo -e "Usage: \e[1m`basename $0`\e[0m {oldtag} {newtag}"
+if [[ $# -ne 2 || -z "$OldTag" || -z "$NewTag" ]] ; then
+    printf 'Usage: %s {oldtag} {newtag}\n' "$(basename "$0")" >&2
     exit 1
 fi
 
-set +e
-GitRootDirectory="$(git rev-parse --show-toplevel 2> /dev/null)"
-
-if [[ $? -ne 0 || -z "$GitRootDirectory" ]] ; then
-    echo -e "\e[31mNo git root directory found\e[0m"
+if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
+    printf 'No git root directory found\n' >&2
     exit 1
 fi
-set -e
 
-git checkout ${OldTag}
-git tag ${NewTag}
-git tag --delete ${OldTag}
-git push --delete origin ${OldTag}
-git push --tags
+git check-ref-format "refs/tags/$NewTag"
+if ! git show-ref --verify --quiet "refs/tags/$OldTag"; then
+    printf 'Tag not found: %s\n' "$OldTag" >&2
+    exit 1
+fi
+if git show-ref --verify --quiet "refs/tags/$NewTag"; then
+    printf 'Tag already exists: %s\n' "$NewTag" >&2
+    exit 1
+fi
 
+git tag "$NewTag" "$OldTag"
+git push origin "refs/tags/$NewTag:refs/tags/$NewTag"
+git push origin --delete "refs/tags/$OldTag"
+git tag --delete "$OldTag"
