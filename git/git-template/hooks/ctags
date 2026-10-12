@@ -12,11 +12,10 @@ IFS='
 for optfile in ${optfiles:-./fake}; do
   (
   unset GIT_DIR GIT_WORK_TREE
-  tmpfile=`mktemp ${TMPDIR:-/tmp}/tags.XXXXXXXXXX~`
-  cd `dirname $optfile`
-  trap 'rm -f $tmpfile' EXIT INT TERM
-  git ls-files | ctags -L - -f $tmpfile "$@"
-  mv $tmpfile .tags
+  tmpfile=$(mktemp "${TMPDIR:-/tmp}/tags.XXXXXXXXXX~") || exit 1
+  trap 'rm -f -- "$tmpfile"' EXIT INT TERM
+  cd "$(dirname -- "$optfile")" || exit 1
+  git ls-files | ctags -L - -f "$tmpfile" "$@" || exit 1
+  mv -- "$tmpfile" .tags
   )
 done
-

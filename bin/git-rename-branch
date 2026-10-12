@@ -5,23 +5,28 @@ set -euo pipefail
 OldBranch=${1:-}
 NewBranch=${2:-}
 
-if [[ $# -le 1 || -z "$OldBranch" || -z "$NewBranch" ]] ; then
-    echo -e "Usage: \e[1m`basename $0`\e[0m {oldbranch} {newbranch}"
+if [[ $# -ne 2 || -z "$OldBranch" || -z "$NewBranch" ]] ; then
+    printf 'Usage: %s {oldbranch} {newbranch}\n' "$(basename "$0")" >&2
     exit 1
 fi
 
-set +e
-GitRootDirectory="$(git rev-parse --show-toplevel 2> /dev/null)"
-
-if [[ $? -ne 0 || -z "$GitRootDirectory" ]] ; then
-    echo -e "\e[31mNo git root directory found\e[0m"
+if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
+    printf 'No git root directory found\n' >&2
     exit 1
 fi
-set -e
 
-git checkout ${OldBranch}
-git branch -m ${NewBranch}
-git push --delete origin ${OldBranch}
-git push -u origin HEAD
+git check-ref-format --branch "$NewBranch" >/dev/null
+if ! git show-ref --verify --quiet "refs/heads/$OldBranch"; then
+    printf 'Branch not found: %s\n' "$OldBranch" >&2
+    exit 1
+fi
+if git show-ref --verify --quiet "refs/heads/$NewBranch"; then
+    printf 'Branch already exists: %s\n' "$NewBranch" >&2
+    exit 1
+fi
 
+git switch "$OldBranch"
+git push -u origin "refs/heads/$OldBranch:refs/heads/$NewBranch"
+git branch -m "$NewBranch"
+git push origin --delete "$OldBranch"
 
