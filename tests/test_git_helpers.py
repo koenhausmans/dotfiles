@@ -118,7 +118,8 @@ class GitHelperTests(unittest.TestCase):
 
         result = subprocess.run([str(REPO / "git/git-template/hooks/ctags")],
                                 cwd=self.work, capture_output=True, text=True,
-                                check=False, env={**self.env, "PATH": f"{fake}:{os.environ['PATH']}"})
+                                check=False, env={**self.env, "TMPDIR": str(self.root),
+                                                  "PATH": f"{fake}:{os.environ['PATH']}"})
 
         self.assertNotEqual(result.returncode, 0)
         self.assertEqual(tags.read_text(), "existing tags\n")

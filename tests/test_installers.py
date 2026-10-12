@@ -93,6 +93,15 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(status, 1, output)
         self.assertIn("FAIL", output)
 
+    def test_yes_then_no_only_runs_first_component(self):
+        self.component("bash")
+        self.component("fish")
+
+        status, output = self.run_installer("yn")
+
+        self.assertEqual(status, 0, output)
+        self.assertEqual(self.log.read_text().splitlines(), ["bash:<>"])
+
     def test_unknown_bootstrap_mode_is_rejected(self):
         for name in ("bootstrap", "_links.sh"):
             shutil.copy2(REPO / "scripts" / name, self.root / "scripts" / name)
@@ -148,6 +157,18 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertTrue(any("pull" in line for line in self.log.read_text().splitlines()))
         self.assertIn("binary:--bin", self.log.read_text())
+
+    def test_unrelated_fzf_directory_is_not_updated(self):
+        folder = self.root / "fzf"
+        folder.mkdir()
+        shutil.copy2(REPO / "fzf" / "install.sh", folder / "install.sh")
+        (self.root / ".fzf").mkdir()
+
+        result = subprocess.run([str(folder / "install.sh")], capture_output=True,
+                                text=True, check=False, env={**os.environ, "HOME": str(self.root)})
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("not a Git checkout", result.stderr)
 
 
 if __name__ == "__main__":
