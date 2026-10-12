@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 ZSH_PLUGIN_FOLDER="$HOME/.local/share/zsh-plugins/"
 
-[[ ! -d "$ZSH_PLUGIN_FOLDER" ]] && mkdir -p "$ZSH_PLUGIN_FOLDER"
+mkdir -p "$ZSH_PLUGIN_FOLDER"
 
 git_clone_or_pull () {
-    repo_path="$1"
-    repo_url="$2"
+    local repo_path="$1" repo_url="$2"
     if [[ -d "$repo_path" ]] ; then
-        git -C "$repo_path" pull --quiet
+        git -C "$repo_path" pull --ff-only --quiet
     else
         git clone --quiet "$repo_url" "$repo_path"
     fi
@@ -20,4 +20,3 @@ git_clone_or_pull "$ZSH_PLUGIN_FOLDER/agnoster-zsh-theme" "https://github.com/ag
 
 Z_HOME="$HOME/.local/share/z/"
 git_clone_or_pull "$Z_HOME" "https://github.com/rupa/z"
-

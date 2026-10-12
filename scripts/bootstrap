@@ -15,6 +15,10 @@ MODE_ARGUMENT=${1:-}
 source "$BASEDIR/_helpers.sh"
 source "$BASEDIR/_links.sh"
 
+if (( $# > 1 )) || [[ -n $MODE_ARGUMENT && $MODE_ARGUMENT != minimal ]]; then
+    fail 'Usage: ./scripts/bootstrap [minimal]'
+fi
+
 # Check for root permissions
 if [ "$(whoami)" == "root" ] ; then
     fail "Please execute without root permissions!"
