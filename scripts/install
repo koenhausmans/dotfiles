@@ -26,7 +26,7 @@ for component in bash fish fzf nvim vim zsh; do
             fail "Cannot choose installers without a terminal"
         fi
         while :; do
-            user "Do you want to install \e[1m$component/install.sh\e[0m?\n        [y]es, [Y]es to all, [n]o?"
+            user "Do you want to install \e[1;36m$component/install.sh\e[0m?\n        \e[0;32m[y]\e[0mes, \e[1;32m[Y]\e[0mes to all, \e[0;34m[n]\e[0mo?"
             if ! IFS= read -r -n 1 action < /dev/tty; then
                 fail "No choice received for $component/install.sh"
             fi

@@ -39,12 +39,11 @@ class InstallerTests(unittest.TestCase):
         )
         script.chmod(0o755)
 
-    def run_installer(self, replies, *args):
+    def run_command(self, command, replies, *args, env=None):
         pid, fd = pty.fork()
         if pid == 0:
-            env = {**os.environ, "INSTALL_LOG": str(self.log)}
-            os.execve(str(self.root / "scripts" / "install"),
-                      [str(self.root / "scripts" / "install"), *args], env)
+            environment = {**os.environ, "INSTALL_LOG": str(self.log), **(env or {})}
+            os.execve(str(command), [str(command), *args], environment)
         output = bytearray()
         try:
             os.write(fd, replies.encode())
@@ -68,6 +67,17 @@ class InstallerTests(unittest.TestCase):
                 os.kill(pid, signal.SIGKILL)
                 _, status = os.waitpid(pid, 0)
         return os.waitstatus_to_exitcode(status), output.decode(errors="replace")
+
+    def run_installer(self, replies, *args):
+        return self.run_command(self.root / "scripts" / "install", replies, *args)
+
+    def nvim_installer(self):
+        shutil.copy2(REPO / "scripts" / "_links.sh", self.root / "scripts" / "_links.sh")
+        folder = self.root / "nvim"
+        folder.mkdir()
+        shutil.copy2(REPO / "nvim" / "install.sh", folder / "install.sh")
+        (folder / "init.vim").write_text('" fixture\n')
+        return folder / "install.sh"
 
     def test_yes_to_all_runs_only_known_components_with_exact_arguments(self):
         self.component("bash")
@@ -101,6 +111,93 @@ class InstallerTests(unittest.TestCase):
 
         self.assertEqual(status, 0, output)
         self.assertEqual(self.log.read_text().splitlines(), ["bash:<>"])
+
+    def test_component_prompt_colors_the_target_and_choices(self):
+        self.component("bash")
+
+        status, output = self.run_installer("n")
+
+        self.assertEqual(status, 0, output)
+        self.assertIn("\x1b[1;36mbash/install.sh\x1b[0m", output)
+        self.assertIn("\x1b[0;32m[y]\x1b[0mes", output)
+        self.assertIn("\x1b[1;32m[Y]\x1b[0mes to all", output)
+        self.assertIn("\x1b[0;34m[n]\x1b[0mo", output)
+        self.assertFalse(self.log.exists())
+
+    def test_link_conflict_identifies_home_path_and_colored_choices(self):
+        installer = self.nvim_installer()
+        destination = self.root / ".config" / "nvim" / "init.vim"
+        destination.parent.mkdir(parents=True)
+        destination.write_text("existing\n")
+
+        status, output = self.run_command(installer, "s\n", env={"HOME": str(self.root)})
+
+        self.assertEqual(status, 0, output)
+        self.assertIn("[ \x1b[0;33m??\x1b[0m ] File already exists:", output)
+        self.assertIn("\x1b[1;36m~/.config/nvim/init.vim\x1b[0m", output)
+        self.assertIn("Link from: ~/nvim/init.vim", output)
+        for choice in ("\x1b[0;34m[s]\x1b[0m", "\x1b[1;34m[S]\x1b[0m",
+                       "\x1b[0;31m[o]\x1b[0m", "\x1b[1;31m[O]\x1b[0m",
+                       "\x1b[0;32m[b]\x1b[0m", "\x1b[1;32m[B]\x1b[0m"):
+            self.assertIn(choice, output)
+        self.assertIn("Skipped: ~/.config/nvim/init.vim", output)
+        self.assertEqual(destination.read_text(), "existing\n")
+
+    def test_link_backup_and_repeat_install_keep_files_safe(self):
+        installer = self.nvim_installer()
+        destination = self.root / ".config" / "nvim" / "init.vim"
+        destination.parent.mkdir(parents=True)
+        destination.write_text("existing\n")
+
+        status, output = self.run_command(installer, "b\n", env={"HOME": str(self.root)})
+
+        self.assertEqual(status, 0, output)
+        self.assertEqual((destination.parent / "init.vim.backup").read_text(), "existing\n")
+        self.assertTrue(destination.is_symlink())
+        self.assertEqual(destination.resolve(), self.root / "nvim" / "init.vim")
+        self.assertIn("Backed up: ~/.config/nvim/init.vim.backup", output)
+        self.assertIn("Linked: ~/.config/nvim/init.vim -> ~/nvim/init.vim", output)
+
+        status, output = self.run_command(installer, "", env={"HOME": str(self.root)})
+
+        self.assertEqual(status, 0, output)
+        self.assertIn("Already linked: ~/.config/nvim/init.vim", output)
+        self.assertNotIn("File already exists:", output)
+
+    def test_link_conflict_without_terminal_does_not_change_existing_file(self):
+        installer = self.nvim_installer()
+        destination = self.root / ".config" / "nvim" / "init.vim"
+        destination.parent.mkdir(parents=True)
+        destination.write_text("existing\n")
+
+        result = subprocess.run([str(installer)], capture_output=True, text=True,
+                                check=False, env={**os.environ, "HOME": str(self.root)})
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Cannot choose what to do with ~/.config/nvim/init.vim", result.stderr)
+        self.assertEqual(destination.read_text(), "existing\n")
+
+    def test_paths_outside_home_and_backslashes_are_printed_literally(self):
+        self.nvim_installer()
+        home = self.root / "home"
+        home.mkdir()
+        destination = self.root / "elsewhere" / "nvim" / "init\\e[31m.vim"
+        destination.parent.mkdir(parents=True)
+        destination.write_text("existing\n")
+        # Call the link helper through a stand-in installer with a custom destination.
+        wrapper = self.root / "nvim" / "custom-install.sh"
+        wrapper.write_text('#!/usr/bin/env bash\n'
+                           'source "$(dirname "$0")/../scripts/_links.sh"\n'
+                           'link_files "$1" "$2"\n')
+        wrapper.chmod(0o755)
+
+        status, output = self.run_command(wrapper, "s\n", str(self.root / "nvim" / "init.vim"), str(destination),
+                                          env={"HOME": str(home)})
+
+        self.assertEqual(status, 0, output)
+        self.assertIn(str(destination), output)
+        self.assertNotIn("~", output)
+        self.assertEqual(destination.read_text(), "existing\n")
 
     def test_unknown_bootstrap_mode_is_rejected(self):
         for name in ("bootstrap", "_links.sh"):
