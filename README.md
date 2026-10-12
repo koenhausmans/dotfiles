@@ -12,6 +12,14 @@ Run the optional Bash, Fish, fzf, Neovim, theme, Vim, and Zsh installers with:
 Choose `y` for one component, `Y` for this and all remaining components, or
 `n` to skip one. This repository has no Git submodules.
 
+`./fzf/install.sh` installs the `.deb` from the latest fzf release on GitHub
+with `sudo dpkg -i`, after it checks the SHA-256 checksum. It needs a
+Debian-based system. Run it again to upgrade; it does nothing when the latest
+version is already installed. The shell configurations load fzf's key bindings
+from the installed binary. Inside tmux, fzf opens in a popup. After you move
+from an older version of this repository, remove the old `~/.fzf` checkout and
+run `:PlugInstall` in Vim and Neovim.
+
 ### Install symlinks: ###
 
 To install all symlinks in the home directory, execute:

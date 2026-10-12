@@ -349,20 +349,11 @@ setopt correct
 
 
 ### ---------------------------------------------------------------------------
-### Auto correction
+### FZF Plugin
 ### ---------------------------------------------------------------------------
-if [[ -d "$HOME/.fzf/bin" && ! "$PATH" == *$HOME/.fzf/bin/* ]]; then
-    export PATH="$PATH:$HOME/.fzf/bin"
-fi
-
-if [[ ! "$MANPATH" == *$HOME/.fzf/man* && -d "$HOME/.fzf/man" ]]; then
-    export MANPATH="$MANPATH:$HOME/.fzf/man"
-fi
-
-[[ -t 0 && -r "$HOME/.fzf/shell/completion.zsh" ]] && source "$HOME/.fzf/shell/completion.zsh"
-
-FZF_TMUX=1
-[[ -t 0 && -r "$HOME/.fzf/shell/key-bindings.zsh" ]] && source "$HOME/.fzf/shell/key-bindings.zsh"
+# fzf ignores --tmux outside tmux; its Vim plugin drops it when fzf opens in a Vim window.
+export FZF_DEFAULT_OPTS="--tmux bottom,40%"
+[[ -t 0 ]] && (( $+commands[fzf] )) && source <(fzf --zsh)
 
 
 ##

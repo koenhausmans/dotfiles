@@ -1,6 +1,7 @@
 """Installer CLI checks using harmless stand-in component installers."""
 
 import errno
+import hashlib
 import json
 import os
 import pty
@@ -107,6 +108,42 @@ class InstallerTests(unittest.TestCase):
         settings.parent.mkdir(parents=True)
         settings.write_text(text)
         return settings
+
+    def run_fzf_installer(self, *, installed="", checksum=None):
+        """Run fzf/install.sh with stand-ins for the download and package tools."""
+        folder = self.root / "fzf"
+        folder.mkdir()
+        shutil.copy2(REPO / "fzf" / "install.sh", folder / "install.sh")
+        commands = self.root / "commands"
+        commands.mkdir()
+        tools = {
+            "curl": 'printf "curl:%s\\n" "$*" >> "$INSTALL_LOG"\n'
+                    'while (( $# )); do\n'
+                    '    case $1 in\n'
+                    '        -w) printf "https://github.com/junegunn/fzf/releases/tag/v0.74.5"; exit 0 ;;\n'
+                    '        -o) out=$2; shift ;;\n'
+                    '    esac\n'
+                    '    shift\n'
+                    'done\n'
+                    'case $out in\n'
+                    '    *.deb) printf "package" > "$out" ;;\n'
+                    '    *.txt) printf "%s  fzf_0.74.5_amd64.deb\\n" "$FAKE_CHECKSUM" > "$out" ;;\n'
+                    'esac\n',
+            "dpkg": 'if [[ $1 == --print-architecture ]]; then echo amd64; exit; fi\n'
+                    'printf "dpkg:%s\\n" "$1" >> "$INSTALL_LOG"\n',
+            "dpkg-query": '[[ -n $FAKE_INSTALLED ]] && printf "%s" "$FAKE_INSTALLED"\n',
+            "sudo": 'exec "$@"\n',
+        }
+        for name, body in tools.items():
+            (commands / name).write_text("#!/usr/bin/env bash\n" + body)
+            (commands / name).chmod(0o755)
+        if checksum is None:
+            checksum = hashlib.sha256(b"package").hexdigest()
+        return subprocess.run([str(folder / "install.sh")], capture_output=True, text=True,
+                              check=False, env={**os.environ,
+                                  "HOME": str(self.root), "INSTALL_LOG": str(self.log),
+                                  "FAKE_INSTALLED": installed, "FAKE_CHECKSUM": checksum,
+                                  "PATH": f"{commands}:{os.environ['PATH']}"})
 
     def test_yes_to_all_runs_only_known_components_with_exact_arguments(self):
         self.component("bash")
@@ -258,45 +295,38 @@ class InstallerTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertEqual(len(self.log.read_text().splitlines()), 1)
 
-    def test_existing_fzf_checkout_can_be_updated(self):
-        folder = self.root / "fzf"
-        folder.mkdir()
-        shutil.copy2(REPO / "fzf" / "install.sh", folder / "install.sh")
-        checkout = self.root / ".fzf"
-        (checkout / ".git").mkdir(parents=True)
-        binary_install = checkout / "install"
-        binary_install.write_text('#!/usr/bin/env bash\nprintf "binary:%s\\n" "$*" >> "$INSTALL_LOG"\n')
-        binary_install.chmod(0o755)
-        commands = self.root / "commands"
-        commands.mkdir()
-        git = commands / "git"
-        git.write_text('#!/usr/bin/env bash\n'
-                       'printf "git:%s\\n" "$*" >> "$INSTALL_LOG"\n'
-                       'if [[ $* == *"remote get-url origin" ]]; then\n'
-                       '    printf "https://github.com/junegunn/fzf\\n"\n'
-                       'fi\n')
-        git.chmod(0o755)
-
-        result = subprocess.run([str(folder / "install.sh")], capture_output=True,
-                                text=True, check=False, env={**os.environ,
-                                    "HOME": str(self.root), "INSTALL_LOG": str(self.log),
-                                    "PATH": f"{commands}:{os.environ['PATH']}"})
+    def test_fzf_deb_is_installed_after_checksum_check(self):
+        result = self.run_fzf_installer()
 
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertTrue(any("pull" in line for line in self.log.read_text().splitlines()))
-        self.assertIn("binary:--bin", self.log.read_text())
+        log = self.log.read_text()
+        self.assertIn("releases/download/v0.74.5/fzf_0.74.5_amd64.deb", log)
+        self.assertIn("releases/download/v0.74.5/fzf_0.74.5_checksums.txt", log)
+        self.assertIn("dpkg:-i", log)
+        self.assertNotIn("can be removed", result.stdout)
 
-    def test_unrelated_fzf_directory_is_not_updated(self):
-        folder = self.root / "fzf"
-        folder.mkdir()
-        shutil.copy2(REPO / "fzf" / "install.sh", folder / "install.sh")
-        (self.root / ".fzf").mkdir()
+    def test_current_fzf_is_not_reinstalled(self):
+        result = self.run_fzf_installer(installed="0.74.5")
 
-        result = subprocess.run([str(folder / "install.sh")], capture_output=True,
-                                text=True, check=False, env={**os.environ, "HOME": str(self.root)})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("already installed", result.stdout)
+        self.assertEqual(len(self.log.read_text().splitlines()), 1)
+
+    def test_fzf_checksum_mismatch_is_not_installed(self):
+        result = self.run_fzf_installer(checksum="0" * 64)
 
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("not a Git checkout", result.stderr)
+        self.assertIn("Checksum mismatch", result.stderr)
+        self.assertNotIn("dpkg:-i", self.log.read_text())
+
+    def test_old_fzf_checkout_is_reported_but_kept(self):
+        (self.root / ".fzf").mkdir()
+
+        result = self.run_fzf_installer()
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("can be removed", result.stdout)
+        self.assertTrue((self.root / ".fzf").is_dir())
 
     def test_theme_installers_skip_tools_that_are_not_installed(self):
         installer = self.themes_installer()

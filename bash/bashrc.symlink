@@ -157,17 +157,10 @@ HISTFILESIZE=2000
 ### FZF Plugin
 ### ---------------------------------------------------------------------------
 
-if [[ -d "$HOME/.fzf" ]] ;then
-    export PATH="$PATH:$HOME/.fzf/bin"
-
-    if [[ -x "$(command -v fzf)" && -d "$HOME/.fzf" ]] ; then
-        export MANPATH="$MANPATH:$HOME/.fzf/man"
-
-        FZF_TMUX=1
-        [[ $- == *i* ]] && source "$HOME/.fzf/shell/completion.bash" 2> /dev/null
-
-        source "$HOME/.fzf/shell/key-bindings.bash"
-    fi
+# fzf ignores --tmux outside tmux; its Vim plugin drops it when fzf opens in a Vim window.
+export FZF_DEFAULT_OPTS="--tmux bottom,40%"
+if [[ $- == *i* ]] && command -v fzf > /dev/null; then
+    eval "$(fzf --bash)"
 fi
 
 ### ---------------------------------------------------------------------------

@@ -23,7 +23,7 @@ Plug 'rust-lang/rust.vim'
 
 " FZF Vim: Fuzzy file openener vim extension
 if executable('fzf')
-    Plug 'junegunn/fzf', {'dir': '~/.fzf', 'frozen': 1}
+    Plug 'junegunn/fzf'
     Plug 'junegunn/fzf.vim'
 endif
 

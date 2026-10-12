@@ -2,8 +2,7 @@
 
 let mapleader = ','
 nnoremap <leader>, ,
-" The fzf binary also works when Neovim is started without an interactive shell.
-let s:has_fzf = executable('fzf') || executable(expand('~/.fzf/bin/fzf'))
+let s:has_fzf = executable('fzf')
 
 if executable('fd')
     let $FZF_DEFAULT_COMMAND = 'fd --type f'
@@ -49,7 +48,7 @@ Plug 'lewis6991/gitsigns.nvim'
 Plug 'jiangmiao/auto-pairs'
 
 if s:has_fzf
-    Plug 'junegunn/fzf', {'dir': '~/.fzf', 'frozen': 1}
+    Plug 'junegunn/fzf'
     Plug 'junegunn/fzf.vim'
 endif
 

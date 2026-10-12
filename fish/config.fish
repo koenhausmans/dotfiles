@@ -5,7 +5,6 @@ set -gx EDITOR $VISUAL
 
 # --path changes this shell's PATH without persisting fish_user_paths.
 fish_add_path --path $HOME/bin $DOTFILES/bin $HOME/.local/bin
-fish_add_path --path --append $HOME/.fzf/bin
 
 if status is-interactive
     set -g fish_greeting ''
@@ -37,9 +36,9 @@ if status is-interactive
     abbr -a week 'date +%V'
 
     if type -q fzf
-        set -gx FZF_TMUX 1
-        # Use fzf's fish bindings when supported; older versions can skip them.
-        fzf --fish 2>/dev/null | source
+        # fzf ignores --tmux outside tmux; its Vim plugin drops it when fzf opens in a Vim window.
+        set -gx FZF_DEFAULT_OPTS "--tmux bottom,40%"
+        fzf --fish | source
     end
 end
 
