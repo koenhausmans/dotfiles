@@ -371,7 +371,7 @@ nnoremap <silent> $ g$
 nnoremap <silent> 0 g^
 nnoremap ' `
 
-if empty(glob("~/.vim/plugged/vim-tmux-navigator/"))
+if empty(glob(stdpath('data') . '/plugged/vim-tmux-navigator/'))
     nnoremap <c-j> <c-w>j
     nnoremap <c-k> <c-w>k
     nnoremap <c-h> <c-w>h
