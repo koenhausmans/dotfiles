@@ -7,7 +7,6 @@ name                 = "python"
 language-servers     = ["basedpyright", "ruff"]
 formatter            = { command = "ruff", args = ["format", "-"] }
 auto-format          = true
-code-actions-on-save = ["source.organizeImports"]
 
 [[language]]
 name        = "rust"
