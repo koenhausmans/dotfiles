@@ -12,7 +12,13 @@ These dark-mode themes match the palettes in `themes/alacritty/`:
 
 The JSON files are strict theme data, so keep these references and the linked upstream notices alongside them when redistributing them. See [provenance and remaining license uncertainties](../SOURCES.md). These upstream notices do not assign a license to the new OpenCode files or to this dotfiles repository.
 
-To install them for all projects, copy the JSON files to the global OpenCode themes directory:
+To install them for all projects, link the JSON files into the global OpenCode themes directory:
+
+```sh
+./themes/opencode/install.sh
+```
+
+The installer skips OpenCode if `opencode` is not on your `PATH`, and uses `$XDG_CONFIG_HOME` instead of `~/.config` when it is set. Existing files at the link paths are handled as in `./scripts/bootstrap`. Because the files are symlinks, `git pull` updates installed themes. To copy them instead:
 
 ```sh
 mkdir -p ~/.config/opencode/themes

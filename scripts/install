@@ -17,7 +17,7 @@ info 'Running installer scripts'
 
 install_all=false
 # Only these top-level components are allowed to supply install scripts.
-for component in bash fish fzf nvim vim zsh; do
+for component in bash fish fzf nvim themes vim zsh; do
     installer="$DOTFILES_ROOT/$component/install.sh"
     [[ -f $installer ]] || continue
 

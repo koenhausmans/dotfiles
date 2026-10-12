@@ -1,6 +1,7 @@
 """Installer CLI checks using harmless stand-in component installers."""
 
 import errno
+import json
 import os
 import pty
 import select
@@ -79,9 +80,38 @@ class InstallerTests(unittest.TestCase):
         (folder / "init.vim").write_text('" fixture\n')
         return folder / "install.sh"
 
+    def themes_installer(self):
+        shutil.copy2(REPO / "scripts" / "_links.sh", self.root / "scripts" / "_links.sh")
+        shutil.copytree(REPO / "themes", self.root / "themes")
+        return self.root / "themes" / "install.sh"
+
+    def tool_path(self, *tools):
+        """Return a PATH with the commands theme installers use and stand-in tools."""
+        folder = Path(tempfile.mkdtemp(dir=self.root))
+        for name in ("bash", "dirname", "ln", "mkdir", "mv", "python3", "readlink", "rm"):
+            (folder / name).symlink_to(shutil.which(name))
+        for name in tools:
+            (folder / name).write_text("#!/usr/bin/env bash\n")
+            (folder / name).chmod(0o755)
+        return str(folder)
+
+    def run_theme_installer(self, installer, *tools, **env):
+        environment = {key: value for key, value in os.environ.items()
+                       if key not in ("CLAUDE_CONFIG_DIR", "XDG_CONFIG_HOME")}
+        environment.update(HOME=str(self.root), PATH=self.tool_path(*tools), **env)
+        return subprocess.run([str(installer)], capture_output=True, text=True, check=False,
+                              env=environment, start_new_session=True)
+
+    def antigravity_settings(self, text):
+        settings = self.root / ".gemini" / "antigravity-cli" / "settings.json"
+        settings.parent.mkdir(parents=True)
+        settings.write_text(text)
+        return settings
+
     def test_yes_to_all_runs_only_known_components_with_exact_arguments(self):
         self.component("bash")
         self.component("fish")
+        self.component("themes")
         self.component("bash", nested=True)
         self.component("unexpected")
 
@@ -91,6 +121,7 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(self.log.read_text().splitlines(), [
             "bash:<two words><$(echo unsafe)>",
             "fish:<two words><$(echo unsafe)>",
+            "themes:<two words><$(echo unsafe)>",
         ])
         self.assertEqual(output.count("Do you want to install"), 1)
 
@@ -266,6 +297,101 @@ class InstallerTests(unittest.TestCase):
 
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("not a Git checkout", result.stderr)
+
+    def test_theme_installers_skip_tools_that_are_not_installed(self):
+        installer = self.themes_installer()
+
+        result = self.run_theme_installer(installer)
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Claude Code is not installed, skipping its themes", result.stdout)
+        self.assertIn("OpenCode is not installed, skipping its themes", result.stdout)
+        self.assertIn("Antigravity CLI is not installed, skipping its color scheme", result.stdout)
+        for config in (".claude", ".config", ".gemini"):
+            self.assertFalse((self.root / config).exists(), config)
+
+    def test_theme_installers_link_themes_for_installed_tools_once(self):
+        installer = self.themes_installer()
+        themes = sorted(path.name for path in (REPO / "themes" / "opencode").glob("*.json"))
+        linked = self.root / "xdg" / "opencode" / "themes"
+
+        result = self.run_theme_installer(installer, "opencode", XDG_CONFIG_HOME=str(self.root / "xdg"))
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Claude Code is not installed", result.stdout)
+        self.assertEqual(sorted(path.name for path in linked.iterdir()), themes)
+        for name in themes:
+            self.assertEqual((linked / name).resolve(), self.root / "themes" / "opencode" / name)
+
+        result = self.run_theme_installer(installer, "opencode", XDG_CONFIG_HOME=str(self.root / "xdg"))
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout.count("Already linked:"), len(themes))
+
+    def test_claude_code_themes_follow_claude_config_dir(self):
+        self.themes_installer()
+        themes = sorted(path.name for path in (REPO / "themes" / "claude-code").glob("*.json"))
+        linked = self.root / "claude config" / "themes"
+
+        result = self.run_theme_installer(self.root / "themes" / "claude-code" / "install.sh", "claude",
+                                          CLAUDE_CONFIG_DIR=str(self.root / "claude config"))
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(sorted(path.name for path in linked.iterdir()), themes)
+        self.assertFalse((self.root / ".claude").exists())
+
+    def test_antigravity_creates_settings_with_terminal_color_scheme(self):
+        self.themes_installer()
+
+        result = self.run_theme_installer(self.root / "themes" / "antigravity-cli" / "install.sh", "agy")
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        settings = self.root / ".gemini" / "antigravity-cli" / "settings.json"
+        self.assertEqual(json.loads(settings.read_text()), {"colorScheme": "terminal"})
+
+    def test_antigravity_asks_before_replacing_a_color_scheme(self):
+        self.themes_installer()
+        installer = self.root / "themes" / "antigravity-cli" / "install.sh"
+        original = '{"colorScheme": "tokyo night", "trustedWorkspaces": ["/work"]}\n'
+        settings = self.antigravity_settings(original)
+        env = {"HOME": str(self.root), "PATH": self.tool_path("agy")}
+
+        status, output = self.run_command(installer, "n\n", env=env)
+
+        self.assertEqual(status, 0, output)
+        self.assertIn('\x1b[1;36m"tokyo night"\x1b[0m', output)
+        self.assertEqual(settings.read_text(), original)
+
+        status, output = self.run_command(installer, "y\n", env=env)
+
+        self.assertEqual(status, 0, output)
+        self.assertEqual(json.loads(settings.read_text()),
+                         {"colorScheme": "terminal", "trustedWorkspaces": ["/work"]})
+
+        status, output = self.run_command(installer, "", env=env)
+
+        self.assertEqual(status, 0, output)
+        self.assertIn("already uses the terminal color scheme", output)
+
+    def test_antigravity_keeps_settings_it_cannot_safely_change(self):
+        self.themes_installer()
+        installer = self.root / "themes" / "antigravity-cli" / "install.sh"
+        settings = self.antigravity_settings('{"colorScheme": "tokyo night"}\n')
+
+        result = self.run_theme_installer(installer, "agy")
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('Cannot replace Antigravity CLI color scheme "tokyo night" without a terminal',
+                      result.stderr)
+        self.assertEqual(settings.read_text(), '{"colorScheme": "tokyo night"}\n')
+
+        settings.write_text('{\n  // comment\n}\n')
+
+        result = self.run_theme_installer(installer, "agy")
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Could not read Antigravity CLI settings", result.stderr)
+        self.assertEqual(settings.read_text(), '{\n  // comment\n}\n')
 
 
 if __name__ == "__main__":

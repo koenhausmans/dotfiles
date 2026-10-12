@@ -10,7 +10,13 @@ These five dark themes adapt the palettes in `themes/alacritty/` and the semanti
 | `sonokai-shusia.json` | [Sonokai Shusia](https://github.com/sainnhe/sonokai), [MIT notice](../licenses/sonokai-LICENSE) |
 | `tokyonight-night.json` | [TokyoNight Night](https://github.com/folke/tokyonight.nvim), [Apache-2.0](../licenses/tokyonight.nvim-LICENSE); [original by Enkia](https://github.com/tokyo-night/tokyo-night-vscode-theme), [MIT notice](../licenses/tokyo-night-vscode-LICENSE.txt) |
 
-Copy the JSON files into Claude Code's global themes directory:
+Link the JSON files into Claude Code's global themes directory with:
+
+```sh
+./themes/claude-code/install.sh
+```
+
+The installer skips Claude Code if `claude` is not on your `PATH`. It links into `$CLAUDE_CONFIG_DIR/themes` when that variable is set. Existing files at the link paths are handled as in `./scripts/bootstrap`. Because the files are symlinks, `git pull` updates installed themes. To copy them instead:
 
 ```sh
 mkdir -p ~/.claude/themes

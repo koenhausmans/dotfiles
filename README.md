@@ -6,7 +6,7 @@ Installation:
 
 ### Run component installers: ###
 
-Run the optional Bash, Fish, fzf, Neovim, Vim, and Zsh installers with:
+Run the optional Bash, Fish, fzf, Neovim, theme, Vim, and Zsh installers with:
  > `./scripts/install`
 
 Choose `y` for one component, `Y` for this and all remaining components, or
@@ -30,6 +30,17 @@ it your default shell (log out and back in afterward).
 
 Prompts and status bars use Powerline glyphs. Select a terminal font that
 provides them; this repository does not install fonts.
+
+### Install themes: ###
+
+Run `./themes/install.sh` to install the Claude Code and OpenCode themes and to
+set Antigravity CLI to use the terminal's colors. It runs
+`themes/claude-code/install.sh`, `themes/opencode/install.sh`, and
+`themes/antigravity-cli/install.sh`; each one skips its tool when the tool's
+command (`claude`, `opencode`, or `agy`) is not on your `PATH`. You can also run
+them separately. `./scripts/install` offers the themes installer too. See the
+README in each `themes/` folder for details. Windows Terminal, Alacritty, and
+PuTTY themes are installed by hand.
 
 Minimal installation:
 ---------------------
