@@ -13,8 +13,10 @@ elseif executable('rg')
     let $FZF_DEFAULT_COMMAND = 'rg --files'
 endif
 
-if empty(glob('~/.config/nvim/autoload/plug.vim'))
-    silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+let s:nvim_config_dir = stdpath('config')
+let s:plug_path = s:nvim_config_dir . '/autoload/plug.vim'
+if empty(glob(s:plug_path))
+    execute 'silent !curl -fLo ' . shellescape(s:plug_path) . ' --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
     autocmd VimEnter * PlugInstall
 endif
 
@@ -306,7 +308,8 @@ command! StripTrailingWhitespaces call StripTrailingWhitespaces()
 
 if has("persistent_undo")
     set undofile
-    set undodir=$HOME/.config/nvim/undodir
+    let &undodir = s:nvim_config_dir . '/undodir'
+    call mkdir(&undodir, 'p')
 endif
 
 """ END TEMP FILES BEHAVIOR }}}
@@ -329,7 +332,7 @@ silent! colorscheme kanagawa-wave
 " silent! colorscheme sonokai
 
 function! SaveColorscheme() abort
-    let l:vimhome_plugin_folder = $HOME . "/.config/nvim/plugin"
+    let l:vimhome_plugin_folder = s:nvim_config_dir . '/plugin'
     let l:last_used_file = l:vimhome_plugin_folder . "/last-used-colorscheme.vim"
     let l:contents = [ 'silent! colorscheme ' . g:colors_name ]
     if !isdirectory(l:vimhome_plugin_folder)
