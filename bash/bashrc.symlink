@@ -121,10 +121,16 @@ function _prompt_command {
     local _blue="\[\e[01;34m\]"
     local _rst="\[\e[0m\]"
 
-    [[ -n "$SSH_CONNECTION" ]] && local _HOST="$_yellow\u@\h "
-    local _GIT="$(_git_prompt)"
+    local _HOST=''
+    [[ -n "$SSH_CONNECTION" ]] && _HOST="$_yellow\u@\h "
+    _git_prompt
 
-    PS1="$_HOST$_blue\w $_GIT"
+    PS1="$_HOST$_blue\w "
+    if [[ -n $__dotfiles_git_branch ]]; then
+        PS1+="$_rst(${__dotfiles_git_color}"
+        PS1+='${__dotfiles_git_branch}'
+        PS1+="$_rst${__dotfiles_git_flags}) "
+    fi
 
     if [[ $_exit_status != 0 ]] ; then
         PS1+="${_red}\$${_rst} "
@@ -181,4 +187,3 @@ load_z
 if [[ -f $HOME/.bashrc.local ]]; then
     source $HOME/.bashrc.local
 fi
-

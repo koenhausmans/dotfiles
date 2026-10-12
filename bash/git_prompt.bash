@@ -1,50 +1,47 @@
-# Slightly based on: https://github.com/jcgoble3/gitstuff/blob/master/gitprompt.sh
+# Capture one porcelain-v2 status for the prompt. Keep the branch name in a
+# variable: embedding it directly in PS1 would evaluate shell substitutions
+# from an untrusted Git branch name when Bash renders the prompt.
+_git_prompt() {
+    __dotfiles_git_branch=''
+    __dotfiles_git_color=''
+    __dotfiles_git_flags=''
 
-function _git_prompt() {
-    local _rst="\[\e[0m\]"
-    local _red="\[\e[31m\]"
-    local _green="\[\e[32m\]"
-    local _yellow="\[\e[33m\]"
+    local status line branch='' oid='' xy staged=0 unstaged=0 untracked=0 stash=0 ahead=0
+    local plus minus
+    status=$(command git status --porcelain=v2 --branch --show-stash 2>/dev/null) || return 0
 
-    # -- Finds and outputs the current branch name by parsing the list of
-    #    all branches
-    # -- Current branch is identified by an asterisk at the beginning
-    # -- If not in a Git repository, error message goes to /dev/null and
-    #    no output is produced
-    local branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+    while IFS= read -r line; do
+        case $line in
+            '# branch.head '*) branch=${line#'# branch.head '} ;;
+            '# branch.oid '*) oid=${line#'# branch.oid '} ;;
+            '# branch.ab '*)
+                read -r plus minus <<< "${line#'# branch.ab '}"
+                ahead=${plus#+}
+                ;;
+            '# stash '*) stash=${line#'# stash '} ;;
+            '1 '*|'2 '*|'u '*)
+                xy=${line:2:2}
+                [[ ${xy:0:1} != . ]] && staged=1
+                [[ ${xy:1:1} != . ]] && unstaged=1
+                ;;
+            '? '*) untracked=1 ;;
+        esac
+    done <<< "$status"
 
-    if [[ "$branch" != "" ]] ; then
-        local git_status="$(git status --porcelain 2>/dev/null)"
+    [[ $branch == '(detached)' ]] && branch=${oid:0:7}
+    [[ -n $branch ]] || return 0
+    __dotfiles_git_branch=$branch
 
-        ##
-        ## Determine the color of the git branch
-        ##
-        local branch_color="$_green"
-        # Check for staged commits
-        if [[ -n $(egrep '^[MADRC]' <<<"$git_status") ]]; then
-            local branch_color="$_red"
-        # Check for unstaged commits
-        elif [[ -n $(egrep '^.[MD]' <<<"$git_status") ]]; then
-            local branch_color="$_yellow"
-        fi
-
-        # Outputs a series of indicators based on the status of the
-        # working directory:
-        # + changes are staged and ready to commit
-        # ! unstaged changes are present
-        # ? untracked files are present
-        # S changes have been stashed
-        # P local commits need to be pushed to the remote
-        local flags=''
-
-        [[ -n $(egrep '^[MADRC]' <<<"$git_status") ]] && flags+="+"
-        [[ -n $(egrep '^.[MD]' <<<"$git_status") ]] && flags+="!"
-        [[ -n $(egrep '^\?\?' <<<"$git_status") ]] && flags+="?"
-        [[ -n $(git stash list) ]] && flags+="S"
-        [[ -n $(git log --branches --not --remotes) ]] && flags+="P"
-        [[ -n $flags ]] && flags="|$flags"  # separate from branch name
-
-        echo "$_rst(${branch_color}$branch$_rst$flags) "
+    __dotfiles_git_color='\[\e[32m\]'
+    if (( staged )); then
+        __dotfiles_git_color='\[\e[31m\]'
+        __dotfiles_git_flags+='+'
+    elif (( unstaged )); then
+        __dotfiles_git_color='\[\e[33m\]'
     fi
+    (( unstaged )) && __dotfiles_git_flags+='!'
+    (( untracked )) && __dotfiles_git_flags+='?'
+    (( stash > 0 )) && __dotfiles_git_flags+='S'
+    (( ahead > 0 )) && __dotfiles_git_flags+='P'
+    [[ -n $__dotfiles_git_flags ]] && __dotfiles_git_flags="|$__dotfiles_git_flags"
 }
-
