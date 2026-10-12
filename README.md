@@ -4,10 +4,13 @@ Dotfiles:
 Installation:
 -------------
 
-### Install all submodules: ###
+### Run component installers: ###
 
-To install the submodules, execute:
+Run the optional Bash, Fish, fzf, Neovim, Vim, and Zsh installers with:
  > `./scripts/install`
+
+Choose `y` for one component, `Y` for this and all remaining components, or
+`n` to skip one. This repository has no Git submodules.
 
 ### Install symlinks: ###
 
@@ -25,10 +28,14 @@ link any newly added fish functions. `./scripts/install` also offers to run the 
 installer. Run `fish` to try it, or use `chsh -s "$(command -v fish)"` to make
 it your default shell (log out and back in afterward).
 
+Prompts and status bars use Powerline glyphs. Select a terminal font that
+provides them; this repository does not install fonts.
+
 Minimal installation:
 ---------------------
 
-Add the `minimal` argument to both the `bootstrap` as `install` script, to install minimal versions of the dotfiles.
+Pass `minimal` to both `./scripts/bootstrap` and `./scripts/install` to use
+the minimal Vim configuration. `./scripts/bootstrap` accepts no other mode.
 
 Making local customizations:
 ----------------------------
@@ -53,7 +60,7 @@ Required packages (Ubuntu):
  * curl
  * git
  * bash
- * python python-pip python-setuptools
+ * python3 python3-pip python3-setuptools
  * vim
  * zsh
  * fish
