@@ -1,0 +1,26 @@
+[language-server.basedpyright]
+command = "basedpyright-langserver"
+args    = ["--stdio"]
+
+[[language]]
+name                 = "python"
+language-servers     = ["basedpyright", "ruff"]
+formatter            = { command = "ruff", args = ["format", "-"] }
+auto-format          = true
+
+[[language]]
+name        = "rust"
+auto-format = true
+
+[[language]]
+name        = "c"
+auto-format = true
+
+[[language]]
+name        = "cpp"
+auto-format = true
+
+[[language]]
+name        = "typst"
+formatter   = { command = "typstyle" }
+auto-format = true
