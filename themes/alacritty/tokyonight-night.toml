@@ -1,7 +1,6 @@
 # Adapted from: https://github.com/folke/tokyonight.nvim (Night palette)
-# Upstream notice: Apache License 2.0; ../licenses/tokyonight.nvim-LICENSE
-# Original Tokyo Night by Enkia (MIT): ../licenses/tokyo-night-vscode-LICENSE.txt
-# Provenance and other notices: ../SOURCES.md
+# Upstream notice: Apache License 2.0; original Tokyo Night by Enkia (MIT).
+# Source and license texts: ../SOURCES.md
 
 [colors.primary]
 background = "#1a1b26"

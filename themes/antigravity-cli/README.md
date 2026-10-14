@@ -12,4 +12,4 @@ To use a matching palette, select one of the five schemes in [`themes/alacritty/
 
 `./themes/antigravity-cli/install.sh` makes this change for you. It skips Antigravity CLI if `agy` is not on your `PATH`, creates the settings file if needed, and keeps your other settings. If a different `colorScheme` is already set, it asks before replacing it; without a terminal, it leaves the file unchanged and fails. It also refuses to change a settings file that is not plain JSON (for example, one with comments).
 
-You can also use `/config` in Antigravity CLI to choose the **terminal** scheme. This is terminal-palette inheritance, not a custom semantic theme: Antigravity CLI controls how it uses the terminal's colors. The terminal palettes' upstream attribution and license references are recorded in [`themes/SOURCES.md`](../SOURCES.md) and [`themes/licenses/`](../licenses/); these notices do not license the original dotfiles work.
+You can also use `/config` in Antigravity CLI to choose the **terminal** scheme. This uses your terminal's palette; see [sources and upstream notices](../SOURCES.md).

@@ -1,14 +1,256 @@
-# Theme palette sources and notices
+# Theme sources
 
-These are **upstream attribution and license references**, not a license declaration for this dotfiles repository. The local `alacritty/*.toml` and `windows-terminal/*.json` files are compact terminal configurations using selected palette values. Matching hex values do not establish that an entire upstream config was copied, or settle whether a set of colors is copyrightable. Copies of the identifiable upstream MIT and Apache-2.0 license texts are in [`licenses/`](licenses/); the source links and notices here identify which upstream work each copy belongs to. Preserve those notices when redistributing upstream code/config (or a substantial adapted part). No license for this repository or its original local work was verified. Before these references were added, only `putty/gruvbox-dark-hard.reg` had a source comment; none of the theme files contained a copyright or license notice.
+Upstream palette sources and notices, not a license for this repository. Keep this file with redistributed themes.
 
-| Local palette | Primary upstream source and copyright/license notice | Comparison with local themes |
+| Palette | Source | Upstream license |
 | --- | --- | --- |
-| `gruvbox-dark` | [morhetz/gruvbox `colors/gruvbox.vim`](https://github.com/morhetz/gruvbox/blob/master/colors/gruvbox.vim) identifies **morhetz** as author and contains the dark palette and Neovim terminal color assignments. Its [README license section](https://github.com/morhetz/gruvbox/blob/master/README.md#license) says **MIT/X11** and its [`package.json`](https://github.com/morhetz/gruvbox/blob/master/package.json) says **MIT**; no standalone `LICENSE` was present at the [upstream repository root](https://github.com/morhetz/gruvbox/tree/master). | `alacritty/gruvbox-dark.toml` and `windows-terminal/gruvbox-dark.json` use the medium dark `#282828` background and neutral/bright Gruvbox colors from that source. Local commit `522b581` describes the Gruvbox Dark scheme as coming from a *davialexandre* gist; its URL and any separate license were not recorded there, so the precise intermediate source is unverified. `putty/gruvbox-dark-hard.reg` is a separate **hard** variant, not an identical config. |
-| `gruvbox-material` | [sainnhe/gruvbox-material palette code](https://github.com/sainnhe/gruvbox-material/blob/master/autoload/gruvbox_material.vim) has an **Author: sainnhe; License: MIT License** header. [MIT LICENSE](https://github.com/sainnhe/gruvbox-material/blob/master/LICENSE), © 2020 sainnhe. The [README credits](https://github.com/sainnhe/gruvbox-material/blob/master/README.md#credits) explicitly attribute the underlying Gruvbox palette to morhetz, with adjustments by sainnhe; see the Gruvbox MIT statement above. | Local `gruvbox-material` Alacritty/Windows Terminal values use the upstream **hard dark background** `#1d2021` but **original Gruvbox foreground/accent values** (`#ebdbb2`, `#fb4934`, etc.), not the upstream default *material* foreground (`#d4be98`, `#ea6962`, etc.). Normal and bright ANSI colors repeat locally. Do not describe this as an exact export of the default material variant. |
-| `tokyonight-night` | [folke/tokyonight.nvim's Night Alacritty export](https://github.com/folke/tokyonight.nvim/blob/main/extras/alacritty/tokyonight_night.toml), [Night palette](https://github.com/folke/tokyonight.nvim/blob/main/lua/tokyonight/colors/night.lua) and [Apache-2.0 LICENSE](https://github.com/folke/tokyonight.nvim/blob/main/LICENSE) (the license text itself gives no named copyright holder). Its [README](https://github.com/folke/tokyonight.nvim/blob/main/README.md) calls this a port of Enkia's VS Code Tokyo Night; that [original theme file](https://github.com/tokyo-night/tokyo-night-vscode-theme/blob/master/themes/tokyo-night-color-theme.json) identifies **Enkia** and has an [MIT LICENSE.txt](https://github.com/tokyo-night/tokyo-night-vscode-theme/blob/master/LICENSE.txt), © 2018–present Enkia. | Local Alacritty normal/bright colors match folke's Night Alacritty export; local Windows Terminal uses those same bright values, which **differ** from folke's [Windows Terminal Night export](https://github.com/folke/tokyonight.nvim/blob/main/extras/windows_terminal/tokyonight_night.json). These two upstream licenses cover their respective upstream works; neither automatically licenses the local config. |
-| `kanagawa-wave` | [rebelot/kanagawa.nvim palette](https://github.com/rebelot/kanagawa.nvim/blob/master/lua/kanagawa/colors.lua), [Wave terminal mappings](https://github.com/rebelot/kanagawa.nvim/blob/master/lua/kanagawa/themes.lua), [Wave Alacritty export](https://github.com/rebelot/kanagawa.nvim/blob/master/extras/alacritty/kanagawa_wave.toml), and [MIT LICENSE](https://github.com/rebelot/kanagawa.nvim/blob/master/LICENSE), © 2021 Tommaso Laurenzi. | Local Alacritty/Windows Terminal mostly follow the Wave terminal colors, but normal black is `#16161d` (upstream palette `sumiInk0`) rather than the Alacritty export's `#090618`; local files add a cursor mapping and omit upstream Alacritty selection/indexed colors. |
-| `sonokai-shusia` | [sainnhe/sonokai `autoload/sonokai.vim`](https://github.com/sainnhe/sonokai/blob/master/autoload/sonokai.vim) has an **Author: sainnhe; License: MIT License** header and defines the `shusia` palette. [MIT LICENSE](https://github.com/sainnhe/sonokai/blob/master/LICENSE), © 2020 sainnhe. The [README](https://github.com/sainnhe/sonokai/blob/master/README.md) says Shusia is a modified **Monokai Pro** variant. | Local Alacritty/Windows Terminal values match selected Shusia hex values; cyan is assigned the palette's **orange** (`#ef9062`), and most bright ANSI values repeat normal ones. Sonokai's MIT notice does **not** establish a license for Monokai Pro itself; no Monokai Pro license or exact derivation of its config was verified here. |
-| `putty/gruvbox-dark-hard.reg` | The [gruvbox-contrib PuTTY file](https://github.com/morhetz/gruvbox-contrib/blob/master/putty/putty-gruvbox-dark-hard.reg) contains no copyright or license header; its [README](https://github.com/morhetz/gruvbox-contrib/blob/master/README.md) has no license notice and the [repository root](https://github.com/morhetz/gruvbox-contrib/tree/master) has no LICENSE file. The original Gruvbox repository's MIT/X11 statement does not by itself establish a license for this contributed file. | The local registry settings match the contributed file, apart from an added source comment. **The license and author of this specific contribution remain unverified**; do not treat its source link as a redistribution license. |
+| `gruvbox-dark` | [Gruvbox](https://github.com/morhetz/gruvbox) | [MIT/X11](https://github.com/morhetz/gruvbox#license) |
+| `gruvbox-material` | [Gruvbox Material](https://github.com/sainnhe/gruvbox-material) + [Gruvbox](https://github.com/morhetz/gruvbox) | [MIT](https://github.com/sainnhe/gruvbox-material/blob/master/LICENSE) |
+| `kanagawa-wave` | [Kanagawa](https://github.com/rebelot/kanagawa.nvim) | [MIT](https://github.com/rebelot/kanagawa.nvim/blob/master/LICENSE) |
+| `sonokai-shusia` | [Sonokai](https://github.com/sainnhe/sonokai) | [MIT](https://github.com/sainnhe/sonokai/blob/master/LICENSE) |
+| `tokyonight-night` | [TokyoNight](https://github.com/folke/tokyonight.nvim) / [original](https://github.com/tokyo-night/tokyo-night-vscode-theme) | [Apache-2.0](https://github.com/folke/tokyonight.nvim/blob/main/LICENSE) / [MIT](https://github.com/tokyo-night/tokyo-night-vscode-theme/blob/master/LICENSE.txt) |
+| PuTTY `gruvbox-dark-hard` | [gruvbox-contrib](https://github.com/morhetz/gruvbox-contrib) | |
 
-The OpenCode files use these palette names and colors but add application-specific semantic roles and generated/interpolated shades. The Claude Code files map those local semantic colors to Claude Code's custom theme tokens; they do not copy a Claude Code or Gemini CLI theme. Antigravity CLI has no custom theme file here: its documented `terminal` scheme uses the existing terminal palettes. The authorship/provenance of the local themes and any independent config-license obligations cannot be determined from color matches alone. If an upstream **config file** is copied rather than only palette values reused, inspect that particular file and its repository's notices before redistribution (MIT requires retaining its copyright and permission notice in copies/substantial portions; Apache-2.0 has additional redistribution/notice conditions). Gruvbox's upstream repository states MIT/X11 but does not provide a standalone license text or copyright line to copy. The contributed PuTTY file's license remains unverified; neither a source link nor these copied licenses resolves that gap.
+## MIT
+
+<details>
+<summary>Copyright notices and license text</summary>
+
+- Gruvbox Material / Sonokai: Copyright (c) 2020 sainnhe
+- Kanagawa: Copyright (c) 2021 Tommaso Laurenzi
+- Original Tokyo Night: Copyright (c) 2018-present Enkia
+
+```text
+MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+</details>
+
+## Apache-2.0
+
+<details>
+<summary>TokyoNight license text</summary>
+
+```text
+                                 Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+   1. Definitions.
+
+      "License" shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.
+
+      "Licensor" shall mean the copyright owner or entity authorized by
+      the copyright owner that is granting the License.
+
+      "Legal Entity" shall mean the union of the acting entity and all
+      other entities that control, are controlled by, or are under common
+      control with that entity. For the purposes of this definition,
+      "control" means (i) the power, direct or indirect, to cause the
+      direction or management of such entity, whether by contract or
+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
+      outstanding shares, or (iii) beneficial ownership of such entity.
+
+      "You" (or "Your") shall mean an individual or Legal Entity
+      exercising permissions granted by this License.
+
+      "Source" form shall mean the preferred form for making modifications,
+      including but not limited to software source code, documentation
+      source, and configuration files.
+
+      "Object" form shall mean any form resulting from mechanical
+      transformation or translation of a Source form, including but
+      not limited to compiled object code, generated documentation,
+      and conversions to other media types.
+
+      "Work" shall mean the work of authorship, whether in Source or
+      Object form, made available under the License, as indicated by a
+      copyright notice that is included in or attached to the work
+      (an example is provided in the Appendix below).
+
+      "Derivative Works" shall mean any work, whether in Source or Object
+      form, that is based on (or derived from) the Work and for which the
+      editorial revisions, annotations, elaborations, or other modifications
+      represent, as a whole, an original work of authorship. For the purposes
+      of this License, Derivative Works shall not include works that remain
+      separable from, or merely link (or bind by name) to the interfaces of,
+      the Work and Derivative Works thereof.
+
+      "Contribution" shall mean any work of authorship, including
+      the original version of the Work and any modifications or additions
+      to that Work or Derivative Works thereof, that is intentionally
+      submitted to Licensor for inclusion in the Work by the copyright owner
+      or by an individual or Legal Entity authorized to submit on behalf of
+      the copyright owner. For the purposes of this definition, "submitted"
+      means any form of electronic, verbal, or written communication sent
+      to the Licensor or its representatives, including but not limited to
+      communication on electronic mailing lists, source code control systems,
+      and issue tracking systems that are managed by, or on behalf of, the
+      Licensor for the purpose of discussing and improving the Work, but
+      excluding communication that is conspicuously marked or otherwise
+      designated in writing by the copyright owner as "Not a Contribution."
+
+      "Contributor" shall mean Licensor and any individual or Legal Entity
+      on behalf of whom a Contribution has been received by Licensor and
+      subsequently incorporated within the Work.
+
+   2. Grant of Copyright License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      copyright license to reproduce, prepare Derivative Works of,
+      publicly display, publicly perform, sublicense, and distribute the
+      Work and such Derivative Works in Source or Object form.
+
+   3. Grant of Patent License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      (except as stated in this section) patent license to make, have made,
+      use, offer to sell, sell, import, and otherwise transfer the Work,
+      where such license applies only to those patent claims licensable
+      by such Contributor that are necessarily infringed by their
+      Contribution(s) alone or by combination of their Contribution(s)
+      with the Work to which such Contribution(s) was submitted. If You
+      institute patent litigation against any entity (including a
+      cross-claim or counterclaim in a lawsuit) alleging that the Work
+      or a Contribution incorporated within the Work constitutes direct
+      or contributory patent infringement, then any patent licenses
+      granted to You under this License for that Work shall terminate
+      as of the date such litigation is filed.
+
+   4. Redistribution. You may reproduce and distribute copies of the
+      Work or Derivative Works thereof in any medium, with or without
+      modifications, and in Source or Object form, provided that You
+      meet the following conditions:
+
+      (a) You must give any other recipients of the Work or
+          Derivative Works a copy of this License; and
+
+      (b) You must cause any modified files to carry prominent notices
+          stating that You changed the files; and
+
+      (c) You must retain, in the Source form of any Derivative Works
+          that You distribute, all copyright, patent, trademark, and
+          attribution notices from the Source form of the Work,
+          excluding those notices that do not pertain to any part of
+          the Derivative Works; and
+
+      (d) If the Work includes a "NOTICE" text file as part of its
+          distribution, then any Derivative Works that You distribute must
+          include a readable copy of the attribution notices contained
+          within such NOTICE file, excluding those notices that do not
+          pertain to any part of the Derivative Works, in at least one
+          of the following places: within a NOTICE text file distributed
+          as part of the Derivative Works; within the Source form or
+          documentation, if provided along with the Derivative Works; or,
+          within a display generated by the Derivative Works, if and
+          wherever such third-party notices normally appear. The contents
+          of the NOTICE file are for informational purposes only and
+          do not modify the License. You may add Your own attribution
+          notices within Derivative Works that You distribute, alongside
+          or as an addendum to the NOTICE text from the Work, provided
+          that such additional attribution notices cannot be construed
+          as modifying the License.
+
+      You may add Your own copyright statement to Your modifications and
+      may provide additional or different license terms and conditions
+      for use, reproduction, or distribution of Your modifications, or
+      for any such Derivative Works as a whole, provided Your use,
+      reproduction, and distribution of the Work otherwise complies with
+      the conditions stated in this License.
+
+   5. Submission of Contributions. Unless You explicitly state otherwise,
+      any Contribution intentionally submitted for inclusion in the Work
+      by You to the Licensor shall be under the terms and conditions of
+      this License, without any additional terms or conditions.
+      Notwithstanding the above, nothing herein shall supersede or modify
+      the terms of any separate license agreement you may have executed
+      with Licensor regarding such Contributions.
+
+   6. Trademarks. This License does not grant permission to use the trade
+      names, trademarks, service marks, or product names of the Licensor,
+      except as required for reasonable and customary use in describing the
+      origin of the Work and reproducing the content of the NOTICE file.
+
+   7. Disclaimer of Warranty. Unless required by applicable law or
+      agreed to in writing, Licensor provides the Work (and each
+      Contributor provides its Contributions) on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+      implied, including, without limitation, any warranties or conditions
+      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+      PARTICULAR PURPOSE. You are solely responsible for determining the
+      appropriateness of using or redistributing the Work and assume any
+      risks associated with Your exercise of permissions under this License.
+
+   8. Limitation of Liability. In no event and under no legal theory,
+      whether in tort (including negligence), contract, or otherwise,
+      unless required by applicable law (such as deliberate and grossly
+      negligent acts) or agreed to in writing, shall any Contributor be
+      liable to You for damages, including any direct, indirect, special,
+      incidental, or consequential damages of any character arising as a
+      result of this License or out of the use or inability to use the
+      Work (including but not limited to damages for loss of goodwill,
+      work stoppage, computer failure or malfunction, or any and all
+      other commercial damages or losses), even if such Contributor
+      has been advised of the possibility of such damages.
+
+   9. Accepting Warranty or Additional Liability. While redistributing
+      the Work or Derivative Works thereof, You may choose to offer,
+      and charge a fee for, acceptance of support, warranty, indemnity,
+      or other liability obligations and/or rights consistent with this
+      License. However, in accepting such obligations, You may act only
+      on Your own behalf and on Your sole responsibility, not on behalf
+      of any other Contributor, and only if You agree to indemnify,
+      defend, and hold each Contributor harmless for any liability
+      incurred by, or claims asserted against, such Contributor by reason
+      of your accepting any such warranty or additional liability.
+
+   END OF TERMS AND CONDITIONS
+
+   APPENDIX: How to apply the Apache License to your work.
+
+      To apply the Apache License to your work, attach the following
+      boilerplate notice, with the fields enclosed by brackets "[]"
+      replaced with your own identifying information. (Don't include
+      the brackets!)  The text should be enclosed in the appropriate
+      comment syntax for the file format. We also recommend that a
+      file or class name and description of purpose be included on the
+      same "printed page" as the copyright notice for easier
+      identification within third-party archives.
+
+   Copyright [yyyy] [name of copyright owner]
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+```
+
+</details>
