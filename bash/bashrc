@@ -48,9 +48,10 @@ if [[ $TERM == xterm ]] ; then
     TERM=xterm-256color
 fi
 
-export DOTFILES="$HOME/.dotfiles"
+# Find the repository through this file's symlink, so the repository can live anywhere.
+__dotfiles=$(cd -- "$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")/.." && pwd)
 
-export PATH="$HOME/bin:$DOTFILES/bin:$HOME/.local/bin/:$PATH"
+export PATH="$HOME/bin:$__dotfiles/bin:$HOME/.local/bin/:$PATH"
 
 export VISUAL="vim"
 export EDITOR="$VISUAL"
@@ -111,7 +112,8 @@ alias week="date +%V"
 ### Customization
 ### ---------------------------------------------------------------------------
 
-[[ -f "$DOTFILES/bash/git_prompt.bash" ]] && . "$DOTFILES/bash/git_prompt.bash"
+[[ -f "$__dotfiles/bash/git_prompt.bash" ]] && . "$__dotfiles/bash/git_prompt.bash"
+unset __dotfiles
 
 function _prompt_command {
     local _exit_status="$?"

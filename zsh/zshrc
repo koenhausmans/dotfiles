@@ -6,10 +6,12 @@ if [[ $TERM == xterm ]] ; then
     TERM=xterm-256color
 fi
 
-export DOTFILES="$HOME/.dotfiles"
+# Find the repository through this file's symlink, so the repository can live anywhere.
+__dotfiles=${${(%):-%x}:A:h:h}
 
 typeset -U path
-path=("$HOME/bin" "$DOTFILES/bin" "$HOME/.local/bin" $path)
+path=("$HOME/bin" "$__dotfiles/bin" "$HOME/.local/bin" $path)
+unset __dotfiles
 
 export VISUAL="vim"
 export EDITOR="$VISUAL"

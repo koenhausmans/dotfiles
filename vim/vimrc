@@ -66,12 +66,8 @@ call plug#end()
 """ END PLUGIN MANAGER }}}
 """ LOAD MINIMAL VIMRC {{{
 
-if !empty($DOTFILES)
-    let s:vimrc_root = $DOTFILES
-else
-    let s:vimrc_root = expand(expand('<sfile>:p:h') . "/.dotfiles")
-endif
-exec "source " . expand(s:vimrc_root . "/vim/vimrc.minimal")
+" Follow the ~/.vimrc symlink into the repository and load vimrc.minimal beside this file
+exec "source " . fnameescape(fnamemodify(resolve(expand('<sfile>:p')), ':h') . "/vimrc.minimal")
 
 """ END LOAD MINIMAL VIMRC }}}
 """ PLUGIN INTEGRATION {{{

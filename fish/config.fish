@@ -1,10 +1,12 @@
 # Keep environment setup available to non-interactive fish commands, too.
-set -gx DOTFILES $HOME/.dotfiles
 set -gx VISUAL vim
 set -gx EDITOR $VISUAL
 
+# Find the repository through this file's symlink, so the repository can live anywhere.
+set -l dotfiles (path dirname (path dirname (path resolve (status filename))))
+
 # --path changes this shell's PATH without persisting fish_user_paths.
-fish_add_path --path $HOME/bin $DOTFILES/bin $HOME/.local/bin
+fish_add_path --path $HOME/bin $dotfiles/bin $HOME/.local/bin
 
 if status is-interactive
     set -g fish_greeting ''
