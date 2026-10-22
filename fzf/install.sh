@@ -7,7 +7,7 @@ FZF_REPO="https://github.com/junegunn/fzf"
 
 BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-source "$BASEDIR/../scripts/_helpers.sh"
+source "$BASEDIR/../lib/helpers.sh"
 
 info "Trying to install fzf"
 

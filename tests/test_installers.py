@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 import pty
+import re
 import select
 import shutil
 import signal
@@ -22,9 +23,8 @@ class InstallerTests(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory(prefix="dotfiles install ", dir="/tmp/opencode")
         self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name)
-        (self.root / "scripts").mkdir()
-        for name in ("install", "_helpers.sh"):
-            shutil.copy2(REPO / "scripts" / name, self.root / "scripts" / name)
+        shutil.copy2(REPO / "install.sh", self.root / "install.sh")
+        shutil.copytree(REPO / "lib", self.root / "lib")
         self.log = self.root / "installed"
 
     def component(self, name, *, nested=False):
@@ -70,11 +70,10 @@ class InstallerTests(unittest.TestCase):
                 _, status = os.waitpid(pid, 0)
         return os.waitstatus_to_exitcode(status), output.decode(errors="replace")
 
-    def run_installer(self, replies, *args):
-        return self.run_command(self.root / "scripts" / "install", replies, *args)
+    def run_installer(self, replies):
+        return self.run_command(self.root / "install.sh", replies)
 
     def nvim_installer(self):
-        shutil.copy2(REPO / "scripts" / "_links.sh", self.root / "scripts" / "_links.sh")
         folder = self.root / "nvim"
         folder.mkdir()
         shutil.copy2(REPO / "nvim" / "install.sh", folder / "install.sh")
@@ -82,7 +81,6 @@ class InstallerTests(unittest.TestCase):
         return folder / "install.sh"
 
     def themes_installer(self):
-        shutil.copy2(REPO / "scripts" / "_links.sh", self.root / "scripts" / "_links.sh")
         shutil.copytree(REPO / "themes", self.root / "themes")
         return self.root / "themes" / "install.sh"
 
@@ -145,20 +143,20 @@ class InstallerTests(unittest.TestCase):
                                   "FAKE_INSTALLED": installed, "FAKE_CHECKSUM": checksum,
                                   "PATH": f"{commands}:{os.environ['PATH']}"})
 
-    def test_yes_to_all_runs_only_known_components_with_exact_arguments(self):
+    def test_yes_to_all_runs_only_known_components_in_order(self):
         self.component("bash")
         self.component("fish")
         self.component("themes")
         self.component("bash", nested=True)
         self.component("unexpected")
 
-        status, output = self.run_installer("Y\n", "two words", "$(echo unsafe)")
+        status, output = self.run_installer("Y\n")
 
         self.assertEqual(status, 0, output)
         self.assertEqual(self.log.read_text().splitlines(), [
-            "bash:<two words><$(echo unsafe)>",
-            "fish:<two words><$(echo unsafe)>",
-            "themes:<two words><$(echo unsafe)>",
+            "bash:<>",
+            "fish:<>",
+            "themes:<>",
         ])
         self.assertEqual(output.count("Do you want to install"), 1)
 
@@ -255,7 +253,7 @@ class InstallerTests(unittest.TestCase):
         # Call the link helper through a stand-in installer with a custom destination.
         wrapper = self.root / "nvim" / "custom-install.sh"
         wrapper.write_text('#!/usr/bin/env bash\n'
-                           'source "$(dirname "$0")/../scripts/_links.sh"\n'
+                           'source "$(dirname "$0")/../lib/links.sh"\n'
                            'link_files "$1" "$2"\n')
         wrapper.chmod(0o755)
 
@@ -267,20 +265,74 @@ class InstallerTests(unittest.TestCase):
         self.assertNotIn("~", output)
         self.assertEqual(destination.read_text(), "existing\n")
 
-    def test_unknown_bootstrap_mode_is_rejected(self):
-        for name in ("bootstrap", "_links.sh"):
-            shutil.copy2(REPO / "scripts" / name, self.root / "scripts" / name)
-
-        result = subprocess.run([str(self.root / "scripts" / "bootstrap"), "tiny"],
+    def test_arguments_are_rejected(self):
+        result = subprocess.run([str(self.root / "install.sh"), "minimal"],
                                 capture_output=True, text=True, check=False)
 
         self.assertEqual(result.returncode, 1)
         self.assertIn("Usage:", result.stderr)
 
+    def test_bash_and_zsh_sync_shared_z_repo_once(self):
+        for name in ("bash", "zsh"):
+            shutil.copytree(REPO / name, self.root / name)
+        commands = self.root / "commands"
+        commands.mkdir()
+        git = commands / "git"
+        git.write_text('#!/usr/bin/env bash\n'
+                       'printf "%s\\n" "$*" >> "$INSTALL_LOG"\n'
+                       'if [[ $1 == clone ]]; then mkdir -p "${@: -1}"; fi\n')
+        git.chmod(0o755)
+
+        status, output = self.run_command(self.root / "install.sh", "Y\n", env={
+            "HOME": str(self.root), "PATH": f"{commands}:{os.environ['PATH']}"})
+
+        self.assertEqual(status, 0, output)
+        self.assertTrue((self.root / ".bashrc").is_symlink())
+        self.assertTrue((self.root / ".zshrc").is_symlink())
+        z_calls = [line for line in self.log.read_text().splitlines()
+                   if re.search(r"share/z( |$)", line)]
+        self.assertEqual(len(z_calls), 1)
+
+    def run_vim_installer(self, replies, env=None):
+        shutil.copytree(REPO / "vim", self.root / "vim")
+        commands = self.root / "commands"
+        commands.mkdir(exist_ok=True)
+        wget = commands / "wget"
+        wget.write_text('#!/usr/bin/env bash\n'
+                        'printf "wget:%s\\n" "$*" >> "$INSTALL_LOG"\n')
+        wget.chmod(0o755)
+        environment = {"HOME": str(self.root), "PATH": f"{commands}:{os.environ['PATH']}",
+                       **(env or {})}
+        return self.run_command(self.root / "vim" / "install.sh", replies, env=environment)
+
+    def test_vim_minimal_answer_links_minimal_config_and_fetches_colorscheme(self):
+        status, output = self.run_vim_installer("y\n")
+
+        self.assertEqual(status, 0, output)
+        self.assertEqual((self.root / ".vimrc").resolve(), self.root / "vim" / "vimrc.minimal")
+        self.assertIn("apprentice.vim", self.log.read_text())
+
+    def test_vim_full_answer_links_full_config_without_download(self):
+        status, output = self.run_vim_installer("n\n")
+
+        self.assertEqual(status, 0, output)
+        self.assertEqual((self.root / ".vimrc").resolve(), self.root / "vim" / "vimrc")
+        self.assertFalse(self.log.exists())
+
+    def test_vim_question_without_terminal_changes_nothing(self):
+        shutil.copytree(REPO / "vim", self.root / "vim")
+
+        result = subprocess.run([str(self.root / "vim" / "install.sh")], capture_output=True,
+                                text=True, check=False,
+                                env={**os.environ, "HOME": str(self.root)})
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("without a terminal", result.stderr)
+        self.assertFalse((self.root / ".vimrc").exists())
+
     def test_zsh_stops_after_a_failed_clone(self):
         folder = self.root / "zsh"
-        folder.mkdir()
-        shutil.copy2(REPO / "zsh" / "install.sh", folder / "install.sh")
+        shutil.copytree(REPO / "zsh", folder)
         commands = self.root / "commands"
         commands.mkdir()
         git = commands / "git"

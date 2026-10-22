@@ -5,7 +5,7 @@ BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
 fish_dir="$config_home/fish"
 
-source "$BASEDIR/../scripts/_links.sh"
+source "$BASEDIR/../lib/links.sh"
 
 mkdir -p "$fish_dir/conf.d" "$fish_dir/functions"
 link_files \

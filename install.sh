@@ -1,24 +1,33 @@
 #!/usr/bin/env bash
 # Based on: https://github.com/holman/dotfiles/blob/master/script/install
 
-## DO NOT CHANGE BELOW
-
 # Enable unofficial bash strict mode
 set -euo pipefail
 IFS=$'\n\t'
 
 BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-source "$BASEDIR/_helpers.sh"
+source "$BASEDIR/lib/helpers.sh"
 
-DOTFILES_ROOT="$(dirname "$BASEDIR")"
+if (( $# > 0 )); then
+    fail 'Usage: ./install.sh'
+fi
+
+# Check for root permissions
+if [ "$(whoami)" == "root" ] ; then
+    fail "Please execute without root permissions!"
+fi
+
+DOTFILES_SYNCED_REPOS_FILE=$(mktemp)
+trap 'rm -f -- "$DOTFILES_SYNCED_REPOS_FILE"' EXIT
+export DOTFILES_SYNCED_REPOS_FILE
 
 info 'Running installer scripts'
 
 install_all=false
 # Only these top-level components are allowed to supply install scripts.
-for component in bash fish fzf nvim themes vim zsh; do
-    installer="$DOTFILES_ROOT/$component/install.sh"
+for component in bash zsh fish git tmux screen vim nvim fzf themes; do
+    installer="$BASEDIR/$component/install.sh"
     [[ -f $installer ]] || continue
 
     if [[ $install_all != true ]]; then
@@ -41,7 +50,7 @@ for component in bash fish fzf nvim themes vim zsh; do
     fi
 
     info "Installing \e[1m$component/install.sh\e[0m"
-    if "$installer" "$@"; then
+    if "$installer"; then
         success "Finished installing \e[1m$component/install.sh\e[0m"
     else
         fail "Error while executing \e[1m$component/install.sh\e[0m"

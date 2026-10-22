@@ -10,7 +10,7 @@ Link the JSON files into Claude Code's global themes directory with:
 ./themes/claude-code/install.sh
 ```
 
-The installer skips Claude Code if `claude` is not on your `PATH`. It links into `$CLAUDE_CONFIG_DIR/themes` when that variable is set. Existing files at the link paths are handled as in `./scripts/bootstrap`. Because the files are symlinks, `git pull` updates installed themes. To copy them instead:
+The installer skips Claude Code if `claude` is not on your `PATH`. It links into `$CLAUDE_CONFIG_DIR/themes` when that variable is set. Existing files at the link paths are handled the same way as in the other installers. Because the files are symlinks, `git pull` updates installed themes. To copy them instead:
 
 ```sh
 mkdir -p ~/.claude/themes

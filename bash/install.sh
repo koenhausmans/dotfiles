@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-git_clone_or_pull () {
-    repo_path="$1"
-    repo_url="$2"
-    if [[ -d "$repo_path" ]] ; then
-        git -C "$repo_path" pull --quiet
-    else
-        git clone --quiet "$repo_url" "$repo_path"
-    fi
-}
+BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-Z_HOME="$HOME/.local/share/z/"
-git_clone_or_pull "$Z_HOME" "https://github.com/rupa/z"
+source "$BASEDIR/../lib/helpers.sh"
+source "$BASEDIR/../lib/links.sh"
 
+link_files \
+    "$BASEDIR/bash_profile" "$HOME/.bash_profile" \
+    "$BASEDIR/bashrc" "$HOME/.bashrc" \
+    "$BASEDIR/inputrc" "$HOME/.inputrc"
+
+git_clone_or_pull "$HOME/.local/share/z" "https://github.com/rupa/z"

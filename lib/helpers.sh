@@ -1,4 +1,4 @@
-#!/usr/bin/env/bash
+#!/usr/bin/env bash
 
 # Set up helper functions for outputting to the command line
 # A single message keeps the original %b formatting; a format plus arguments
@@ -36,4 +36,25 @@ fail () {
         printf '\n\n'
     } >&2
     exit 1
+}
+
+# Clone a repository, or fast-forward it when it already exists. install.sh
+# records each synced path in DOTFILES_SYNCED_REPOS_FILE so a repository that
+# several installers need is synced only once per run.
+git_clone_or_pull () {
+    local repo_path=${1%/} repo_url=$2 synced_file=${DOTFILES_SYNCED_REPOS_FILE:-}
+
+    if [[ -n $synced_file ]] && grep -qxF -- "$repo_path" "$synced_file"; then
+        return 0
+    fi
+
+    if [[ -d $repo_path ]]; then
+        git -C "$repo_path" pull --ff-only --quiet
+    else
+        git clone --quiet "$repo_url" "$repo_path"
+    fi
+
+    if [[ -n $synced_file ]]; then
+        printf '%s\n' "$repo_path" >> "$synced_file"
+    fi
 }

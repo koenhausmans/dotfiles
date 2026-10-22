@@ -5,7 +5,7 @@ BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 settings="$HOME/.gemini/antigravity-cli/settings.json"
 display_settings='~/.gemini/antigravity-cli/settings.json'
 
-source "$BASEDIR/../../scripts/_helpers.sh"
+source "$BASEDIR/../../lib/helpers.sh"
 
 # Print the current colorScheme as JSON ("get") or set it to "terminal"
 # ("set"), keeping all other settings.

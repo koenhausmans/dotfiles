@@ -198,7 +198,7 @@ class GitHelperTests(unittest.TestCase):
         result = subprocess.run(["git", "ctags"], cwd=linked, check=False,
                                 capture_output=True, text=True,
                                 env={**self.env, "GIT_CONFIG_GLOBAL":
-                                     str(REPO / "git" / "gitconfig.symlink")})
+                                     str(REPO / "git" / "gitconfig")})
 
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertTrue(marker.exists())

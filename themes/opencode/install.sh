@@ -5,7 +5,7 @@ BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
 themes_dir="$config_home/opencode/themes"
 
-source "$BASEDIR/../../scripts/_links.sh"
+source "$BASEDIR/../../lib/links.sh"
 
 if ! command -v opencode > /dev/null; then
     info 'OpenCode is not installed, skipping its themes'

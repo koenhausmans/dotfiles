@@ -3,7 +3,7 @@ set -euo pipefail
 
 BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-source "$BASEDIR/../scripts/_helpers.sh"
+source "$BASEDIR/../lib/helpers.sh"
 
 # Each installer checks whether its tool is installed and skips it otherwise.
 for tool in claude-code opencode antigravity-cli; do

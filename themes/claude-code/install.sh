@@ -4,7 +4,7 @@ set -euo pipefail
 BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 themes_dir="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/themes"
 
-source "$BASEDIR/../../scripts/_links.sh"
+source "$BASEDIR/../../lib/links.sh"
 
 if ! command -v claude > /dev/null; then
     info 'Claude Code is not installed, skipping its themes'

@@ -35,7 +35,7 @@ class PromptTests(unittest.TestCase):
                                        "# branch.upstream origin/main\n# branch.ab +2 -1\n"
                                        "# stash 1\n? new.txt")
         result = subprocess.run(
-            ["bash", "--noprofile", "--rcfile", str(REPO / "bash/bashrc.symlink"),
+            ["bash", "--noprofile", "--rcfile", str(REPO / "bash/bashrc"),
              "-ic", '_prompt_command; printf "%s\\n" "${PS1@P}"'],
             cwd=self.home, env=self.env, capture_output=True, text=True, check=False)
 
@@ -52,7 +52,7 @@ class PromptTests(unittest.TestCase):
                                        "1 MM N... 100644 100644 100644 abc abc file.txt")
 
         result = subprocess.run(
-            ["bash", "--noprofile", "--rcfile", str(REPO / "bash/bashrc.symlink"),
+            ["bash", "--noprofile", "--rcfile", str(REPO / "bash/bashrc"),
              "-ic", '_prompt_command; printf "%s\\n" "${PS1@P}"'],
             cwd=self.home, env=self.env, capture_output=True, text=True, check=False)
 
@@ -65,7 +65,7 @@ class PromptTests(unittest.TestCase):
                                        "# branch.upstream origin/topic\n# branch.ab +2 -1\n"
                                        "# stash 1\n? new.txt")
         result = subprocess.run(
-            ["zsh", "-f", "-c", f'source {REPO / "zsh/zshrc.symlink"}; precmd; '
+            ["zsh", "-f", "-c", f'source {REPO / "zsh/zshrc"}; precmd; '
                               'print -r -- "$RPROMPT"'],
             cwd=self.home, env=self.env, capture_output=True, text=True, check=False)
 

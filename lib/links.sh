@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source "$(dirname -- "${BASH_SOURCE[0]}")/_helpers.sh"
+source "$(dirname -- "${BASH_SOURCE[0]}")/helpers.sh"
 
 _link_display_path() {
     local path=$1

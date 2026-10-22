@@ -24,9 +24,9 @@ class ShellSyntaxTests(unittest.TestCase):
                 shell = "sh"
             elif name.endswith(".fish"):
                 shell = "fish"
-            elif name == "zsh/zshrc.symlink":
+            elif name == "zsh/zshrc":
                 shell = "zsh"
-            elif name in ("bash/bashrc.symlink", "bash/bash_profile.symlink", "bash/bashrc.local.wsl"):
+            elif name in ("bash/bashrc", "bash/bash_profile", "bash/bashrc.local.wsl"):
                 shell = "bash"
             else:
                 continue

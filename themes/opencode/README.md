@@ -10,7 +10,7 @@ To install them for all projects, link the JSON files into the global OpenCode t
 ./themes/opencode/install.sh
 ```
 
-The installer skips OpenCode if `opencode` is not on your `PATH`, and uses `$XDG_CONFIG_HOME` instead of `~/.config` when it is set. Existing files at the link paths are handled as in `./scripts/bootstrap`. Because the files are symlinks, `git pull` updates installed themes. To copy them instead:
+The installer skips OpenCode if `opencode` is not on your `PATH`, and uses `$XDG_CONFIG_HOME` instead of `~/.config` when it is set. Existing files at the link paths are handled the same way as in the other installers. Because the files are symlinks, `git pull` updates installed themes. To copy them instead:
 
 ```sh
 mkdir -p ~/.config/opencode/themes
