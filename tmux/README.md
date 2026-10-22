@@ -5,6 +5,11 @@ General:
 ========
 Run `tmux source-file ~/.tmux.conf` to reload the configuration; there is no reload shortcut.<br/>
 
+Suspend:
+========
+`<F12>`: Suspend tmux key bindings; all keys go to the inner application (e.g. a nested/remote tmux). The mode indicator shows ` ---- `. Leaves copy mode and turns off pane sync.<br/>
+`<F12>` (while suspended): Resume tmux key bindings<br/>
+
 Windows:
 ========
 `<C-a>*number*`: To go to the window with *number*<br/>
