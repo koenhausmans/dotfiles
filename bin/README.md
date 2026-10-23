@@ -33,6 +33,10 @@ For example, `./bin/sorted_disk_usage --size=g ~/Downloads` shows sizes in GiB. 
 
 Run these scripts inside a Git repository. The rename scripts change both local refs and refs on `origin`. Check the names and remote before you run them.
 
+### `git-land`
+
+Run `git land` on a feature branch to merge it into the local `main` (or `master`) branch and then delete the feature branch with `git branch -d`. The working tree must be clean. By default the merge uses `--ff-only` and fails if a fast-forward is not possible. Use `--no-ff` to create a merge commit, or `--rebase` to rebase the feature branch onto the target first and then fast-forward. If the rebase or merge fails, the script aborts it, switches back to the feature branch, and exits with an error. The script does not push.
+
 ### `git-remove-old-local-branches`
 
 Run `./bin/git-remove-old-local-branches` to fetch with `--prune` and delete local branches whose upstream is marked `[gone]`. The script skips the current branch. Git's normal `-d` check prevents deletion of unmerged branches. Use `-f` or `--force` to delete those branches with `git branch -D` instead. The script does not delete branches on the remote.

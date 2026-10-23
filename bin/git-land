@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+usage() {
+    printf 'Usage: %s [--no-ff | --rebase]\n' "$(basename "$0")" >&2
+    exit 1
+}
+
+Mode=ff-only
+case $# in
+    0) ;;
+    1)
+        case $1 in
+            --no-ff) Mode=no-ff ;;
+            --rebase) Mode=rebase ;;
+            *) usage ;;
+        esac
+        ;;
+    *) usage ;;
+esac
+
+if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
+    printf 'No git root directory found\n' >&2
+    exit 1
+fi
+
+if ! Current=$(git symbolic-ref --quiet --short HEAD); then
+    printf 'Not on a branch (detached HEAD)\n' >&2
+    exit 1
+fi
+
+if git show-ref --verify --quiet refs/heads/main; then
+    Target=main
+elif git show-ref --verify --quiet refs/heads/master; then
+    Target=master
+else
+    printf 'No local main or master branch found\n' >&2
+    exit 1
+fi
+
+if [[ "$Current" == "$Target" ]]; then
+    printf 'Already on %s; switch to a feature branch first\n' "$Target" >&2
+    exit 1
+fi
+
+if [[ -n "$(git status --porcelain --untracked-files=no)" ]]; then
+    printf 'Working tree has uncommitted changes\n' >&2
+    exit 1
+fi
+
+if [[ "$Mode" == rebase ]]; then
+    if ! git rebase "$Target"; then
+        git rebase --abort 2>/dev/null || true
+        printf 'Rebase of %s onto %s failed\n' "$Current" "$Target" >&2
+        exit 1
+    fi
+fi
+
+git switch "$Target"
+
+if [[ "$Mode" == no-ff ]]; then
+    MergeArgs=(--no-ff)
+else
+    MergeArgs=(--ff-only)
+fi
+
+if ! git merge "${MergeArgs[@]}" "$Current"; then
+    git merge --abort 2>/dev/null || true
+    git switch "$Current"
+    printf 'Merge of %s into %s failed\n' "$Current" "$Target" >&2
+    exit 1
+fi
+
+git branch -d "$Current"
