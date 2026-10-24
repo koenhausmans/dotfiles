@@ -1,0 +1,5 @@
+# Debian/Ubuntu's /etc/zsh/zshrc runs a full compinit unless this is set;
+# ~/.zshrc runs its own, cached compinit.
+skip_global_compinit=1
+
+[[ -r "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"

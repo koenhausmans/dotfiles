@@ -13,7 +13,8 @@ typeset -U path
 path=("$HOME/bin" "$__dotfiles/bin" "$HOME/.local/bin" $path)
 unset __dotfiles
 
-if (( $+commands[fnm] )); then
+# whence -p stops at the first match; $commands would hash every PATH directory.
+if whence -p fnm > /dev/null; then
     eval "$(fnm env --use-on-cd --version-file-strategy=recursive --shell zsh)"
 fi
 
@@ -25,6 +26,8 @@ export EDITOR="$VISUAL"
 ### ---------------------------------------------------------------------------
 
 ZSH_PLUGIN_FOLDER="$HOME/.local/share/zsh-plugins/"
+# Bind widgets once at the first prompt instead of rebinding before every prompt.
+ZSH_AUTOSUGGEST_MANUAL_REBIND=1
 [[ -r "$ZSH_PLUGIN_FOLDER/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && source "$ZSH_PLUGIN_FOLDER/zsh-autosuggestions/zsh-autosuggestions.zsh"
 [[ -r "$HOME/.local/share/z/z.sh" ]] && source "$HOME/.local/share/z/z.sh"
 
@@ -300,7 +303,7 @@ else
 fi
 unset zcompdump zcompdump_stat
 
-if (( $+commands[fnm] )); then
+if whence -p fnm > /dev/null; then
     eval "$(fnm completions --shell zsh)"
 fi
 
@@ -365,7 +368,7 @@ setopt correct
 ### ---------------------------------------------------------------------------
 # fzf ignores --tmux outside tmux; its Vim plugin drops it when fzf opens in a Vim window.
 export FZF_DEFAULT_OPTS="--tmux bottom,40%"
-[[ -t 0 ]] && (( $+commands[fzf] )) && source <(fzf --zsh)
+[[ -t 0 ]] && whence -p fzf > /dev/null && source <(fzf --zsh)
 
 
 ##
