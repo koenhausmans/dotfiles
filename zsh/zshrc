@@ -13,6 +13,10 @@ typeset -U path
 path=("$HOME/bin" "$__dotfiles/bin" "$HOME/.local/bin" $path)
 unset __dotfiles
 
+if (( $+commands[fnm] )); then
+    eval "$(fnm env --use-on-cd --version-file-strategy=recursive --shell zsh)"
+fi
+
 export VISUAL="vim"
 export EDITOR="$VISUAL"
 
@@ -289,10 +293,16 @@ if [[ -f $zcompdump ]]; then
 fi
 if [[ ! -f $zcompdump ]] || (( EPOCHSECONDS - zcompdump_stat[1] > 86400 )); then
     compinit -d "$zcompdump"
+    # compinit leaves an unchanged dump untouched; mark this audit as done.
+    touch "$zcompdump"
 else
     compinit -C -d "$zcompdump"
 fi
 unset zcompdump zcompdump_stat
+
+if (( $+commands[fnm] )); then
+    eval "$(fnm completions --shell zsh)"
+fi
 
 WORDCHARS=''
 

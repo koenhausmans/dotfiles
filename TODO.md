@@ -1,7 +1,11 @@
 Dotfiles:
 =========
 
+- [ ] Map fdfind on Ubuntu to fd. Or why is this not the case on Ubuntu?
 
+ZSH:
+----
+- [ ] Investigate speeding up zsh startup, currently 0.35s? Or is fish an alternative that's superior?
  
 Neovim ToDo:
 ============

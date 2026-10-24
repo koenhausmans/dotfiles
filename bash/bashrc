@@ -53,6 +53,10 @@ __dotfiles=$(cd -- "$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")/.." &&
 
 export PATH="$HOME/bin:$__dotfiles/bin:$HOME/.local/bin/:$PATH"
 
+if command -v fnm > /dev/null; then
+    eval "$(fnm env --use-on-cd --version-file-strategy=recursive --shell bash)"
+fi
+
 export VISUAL="vim"
 export EDITOR="$VISUAL"
 

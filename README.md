@@ -10,7 +10,7 @@ Run the installers with:
  > `./install.sh`
 
 The script takes no arguments. It asks about each component in this order: Bash,
-Zsh, Fish, Git, tmux, screen, Vim, Neovim, fzf, and themes. Choose `y` for one
+Zsh, Fish, Git, tmux, screen, Vim, Neovim, fzf, fnm, and themes. Choose `y` for one
 component, `Y` for this and all remaining components, or `n` to skip one. Each
 component's `install.sh` links its own files into your home directory or
 `~/.config` and fetches anything it needs. This repository has no Git submodules.
@@ -27,6 +27,14 @@ version is already installed. The shell configurations load fzf's key bindings
 from the installed binary. Inside tmux, fzf opens in a popup. After you move
 from an older version of this repository, remove the old `~/.fzf` checkout and
 run `:PlugInstall` in Vim and Neovim.
+
+`./fnm/install.sh` installs the latest [fnm](https://github.com/Schniz/fnm)
+release binary to `~/.local/bin/fnm`. It needs `curl` and `unzip`, but not
+`sudo`. Upstream publishes no checksums, so the download is not verified. If no
+default Node.js version exists, it installs the latest LTS and makes it the
+default. Run it again to upgrade. Bash, Zsh, and Fish load fnm only when it is
+installed, and switch Node.js versions when you enter a directory with a
+`.nvmrc` or `.node-version` file.
 
 ### Fish: ###
 

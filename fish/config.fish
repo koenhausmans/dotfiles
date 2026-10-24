@@ -8,6 +8,10 @@ set -l dotfiles (path dirname (path dirname (path resolve (status filename))))
 # --path changes this shell's PATH without persisting fish_user_paths.
 fish_add_path --path $HOME/bin $dotfiles/bin $HOME/.local/bin
 
+if type -q fnm
+    fnm env --use-on-cd --version-file-strategy=recursive --shell fish | source
+end
+
 if status is-interactive
     set -g fish_greeting ''
 
