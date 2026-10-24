@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+usage() {
+    printf 'Usage: %s [--rebase]\n' "$(basename "$0")" >&2
+    exit 1
+}
+
+Rebase=false
+case $# in
+    0) ;;
+    1) [[ $1 == --rebase ]] && Rebase=true || usage ;;
+    *) usage ;;
+esac
+
+if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
+    printf 'No git root directory found\n' >&2
+    exit 1
+fi
+
+if ! git remote get-url origin >/dev/null 2>&1; then
+    printf 'No origin remote found\n' >&2
+    exit 1
+fi
+
+if git show-ref --verify --quiet refs/heads/main; then
+    Target=main
+elif git show-ref --verify --quiet refs/heads/master; then
+    Target=master
+else
+    printf 'No local main or master branch found\n' >&2
+    exit 1
+fi
+
+Current=$(git symbolic-ref --quiet --short HEAD || true)
+
+if [[ "$Current" == "$Target" ]]; then
+    if $Rebase; then
+        printf 'Already on %s; --rebase needs a feature branch\n' "$Target" >&2
+        exit 1
+    fi
+    git fetch origin "$Target"
+    git merge --ff-only "origin/$Target"
+    exit 0
+fi
+
+git fetch origin "$Target:$Target"
+
+if $Rebase; then
+    if [[ -z "$Current" ]]; then
+        printf 'Not on a branch (detached HEAD)\n' >&2
+        exit 1
+    fi
+    if [[ -n "$(git status --porcelain --untracked-files=no)" ]]; then
+        printf 'Working tree has uncommitted changes\n' >&2
+        exit 1
+    fi
+    if ! git rebase "$Target"; then
+        git rebase --abort 2>/dev/null || true
+        printf 'Rebase of %s onto %s failed\n' "$Current" "$Target" >&2
+        exit 1
+    fi
+fi

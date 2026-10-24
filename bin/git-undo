@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if [[ $# -ne 0 ]]; then
+    printf 'Usage: %s\n' "$(basename "$0")" >&2
+    exit 1
+fi
+
+if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
+    printf 'No git root directory found\n' >&2
+    exit 1
+fi
+
+if ! git rev-parse --verify --quiet HEAD~1 >/dev/null; then
+    printf 'HEAD has no parent commit to undo to\n' >&2
+    exit 1
+fi
+
+if git rev-parse --verify --quiet HEAD^2 >/dev/null; then
+    printf 'HEAD is a merge commit; undo it manually\n' >&2
+    exit 1
+fi
+
+Sha=$(git rev-parse --short HEAD)
+Subject=$(git log -1 --format=%s HEAD)
+
+if Upstream=$(git rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2>/dev/null) \
+    && git merge-base --is-ancestor HEAD "$Upstream"; then
+    printf 'Warning: %s is already on %s; you will need to force-push\n' "$Sha" "$Upstream" >&2
+fi
+
+git reset --soft HEAD~1
+printf 'Undid %s %s (restore with: git reset --soft %s)\n' "$Sha" "$Subject" "$Sha"

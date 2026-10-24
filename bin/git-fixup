@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if [[ $# -gt 1 ]]; then
+    printf 'Usage: %s [commit]\n' "$(basename "$0")" >&2
+    exit 1
+fi
+
+if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
+    printf 'No git root directory found\n' >&2
+    exit 1
+fi
+
+if ! Current=$(git symbolic-ref --quiet --short HEAD); then
+    printf 'Not on a branch (detached HEAD)\n' >&2
+    exit 1
+fi
+
+if git show-ref --verify --quiet refs/heads/main; then
+    Target=main
+elif git show-ref --verify --quiet refs/heads/master; then
+    Target=master
+else
+    printf 'No local main or master branch found\n' >&2
+    exit 1
+fi
+
+if [[ "$Current" == "$Target" ]]; then
+    printf 'On %s; switch to a feature branch first\n' "$Target" >&2
+    exit 1
+fi
+
+if git diff --cached --quiet; then
+    printf 'Nothing staged\n' >&2
+    exit 1
+fi
+
+if [[ $# -eq 1 ]]; then
+    if ! Commit=$(git rev-parse --verify --quiet "$1^{commit}"); then
+        printf 'Commit not found: %s\n' "$1" >&2
+        exit 1
+    fi
+else
+    if ! command -v fzf >/dev/null; then
+        printf 'fzf not found; pass a commit instead\n' >&2
+        exit 1
+    fi
+    Commits=$(git log --oneline "$Target..HEAD")
+    if [[ -z "$Commits" ]]; then
+        printf 'No commits on %s that are not on %s\n' "$Current" "$Target" >&2
+        exit 1
+    fi
+    Choice=$(printf '%s\n' "$Commits" | fzf --no-sort --reverse --height=40%) || exit 1
+    Commit=$(git rev-parse --verify "${Choice%% *}^{commit}")
+fi
+
+if ! git merge-base --is-ancestor "$Commit" HEAD || git merge-base --is-ancestor "$Commit" "$Target"; then
+    printf 'Commit is not on %s..%s\n' "$Target" "$Current" >&2
+    exit 1
+fi
+
+git commit -q --fixup="$Commit"
+
+if git rev-parse --verify --quiet "$Commit~1" >/dev/null; then
+    Base=("$Commit~1")
+else
+    Base=(--root)
+fi
+
+if ! GIT_SEQUENCE_EDITOR=true git rebase -q -i --autosquash --autostash "${Base[@]}"; then
+    git rebase --abort 2>/dev/null || true
+    printf 'Autosquash failed; the fixup! commit is kept. Resolve with: git rebase -i --autosquash %s\n' "$Target" >&2
+    exit 1
+fi
+
+printf 'Fixed up %s\n' "$(git log -1 --format='%h %s' "$Commit")"

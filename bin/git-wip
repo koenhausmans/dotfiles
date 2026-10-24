@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+Force=false
+case $# in
+    0) ;;
+    1) [[ $1 == --force ]] && Force=true || { printf 'Usage: %s [--force]\n' "$(basename "$0")" >&2; exit 1; } ;;
+    *) printf 'Usage: %s [--force]\n' "$(basename "$0")" >&2; exit 1 ;;
+esac
+
+if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
+    printf 'No git root directory found\n' >&2
+    exit 1
+fi
+
+Current=$(git symbolic-ref --quiet --short HEAD || true)
+if [[ ( "$Current" == main || "$Current" == master ) ]] && ! $Force; then
+    printf 'Warning: on %s; use --force to commit WIP here anyway\n' "$Current" >&2
+    exit 1
+fi
+
+git add -A
+if git diff --cached --quiet; then
+    printf 'Nothing to commit\n' >&2
+    exit 1
+fi
+
+git commit --no-verify -q -m WIP
+printf 'Committed WIP %s\n' "$(git rev-parse --short HEAD)"

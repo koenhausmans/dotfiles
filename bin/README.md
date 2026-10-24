@@ -33,9 +33,17 @@ For example, `./bin/sorted_disk_usage --size=g ~/Downloads` shows sizes in GiB. 
 
 Run these scripts inside a Git repository. The rename scripts change both local refs and refs on `origin`. Check the names and remote before you run them.
 
+### `git-fixup`
+
+Run `git fixup [commit]` on a feature branch to fold the staged changes into an earlier commit on that branch. Without a commit, the script shows the branch's commits in `fzf` so you can pick one. It runs `git commit --fixup` and then `git rebase -i --autosquash --autostash` without opening an editor. Unstaged changes are kept. The commit must be on the branch and not on `main` (or `master`). If the rebase fails, the script aborts it and keeps the `fixup!` commit.
+
 ### `git-land`
 
 Run `git land` on a feature branch to merge it into the local `main` (or `master`) branch and then delete the feature branch with `git branch -d`. The working tree must be clean. By default the merge uses `--ff-only` and fails if a fast-forward is not possible. Use `--no-ff` to create a merge commit, or `--rebase` to rebase the feature branch onto the target first and then fast-forward. If the rebase or merge fails, the script aborts it, switches back to the feature branch, and exits with an error. The script does not push.
+
+### `git-recent`
+
+Run `git recent [-n count]` to list local branches by last commit date, newest first, with the commit age and subject. The default count is 20. If `fzf` is installed and the output is a terminal, you pick a branch and the script switches to it.
 
 ### `git-remove-old-local-branches`
 
@@ -48,3 +56,19 @@ Run `./bin/git-rename-branch <old-branch> <new-branch>` to switch to a local bra
 ### `git-rename-tag`
 
 Run `./bin/git-rename-tag <old-tag> <new-tag>` to create a new tag from an existing local tag, push the new tag to `origin`, and delete the old tag locally and on `origin`. The old local tag must exist, and the new local tag must not exist. The new tag is lightweight, even if the old tag was annotated. You need permission to push and delete tags on `origin`.
+
+### `git-start`
+
+Run `git start <branch>` to run `git-sync` and create a new branch from the local `main` (or `master`). The working tree must be clean. If the sync fails, for example when you are offline, the script prints a warning and branches from the local target.
+
+### `git-sync`
+
+Run `git sync` to fetch `origin` and fast-forward the local `main` (or `master`). On a feature branch, the script updates the target without checking it out. Use `--rebase` on a feature branch to also rebase it onto the target. The command fails if the local target has diverged from `origin`. If the rebase fails, the script aborts it.
+
+### `git-undo`
+
+Run `git undo` to remove the last commit with `git reset --soft HEAD~1`. The changes stay staged. The script refuses merge commits and root commits. It warns if the commit is already on the upstream branch. It prints the commit hash so you can restore it.
+
+### `git-wip` and `git-unwip`
+
+Run `git wip` to stage all changes, including untracked files, and commit them as `WIP` without running hooks. On `main` or `master` the script stops unless you add `--force`. Run `git unwip` to remove that commit with a mixed reset, so the changes become unstaged again. `git unwip` only acts if the HEAD commit message is exactly `WIP`.

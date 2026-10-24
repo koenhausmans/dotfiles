@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+usage() {
+    printf 'Usage: %s [-n count]\n' "$(basename "$0")" >&2
+    exit 1
+}
+
+Count=20
+case $# in
+    0) ;;
+    2) [[ $1 == -n && $2 =~ ^[1-9][0-9]*$ ]] && Count=$2 || usage ;;
+    *) usage ;;
+esac
+
+if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
+    printf 'No git root directory found\n' >&2
+    exit 1
+fi
+
+List=$(git for-each-ref --sort=-committerdate --count="$Count" \
+    --format='%(HEAD) %(refname:short)%09%(committerdate:relative)%09%(contents:subject)' \
+    refs/heads/ | column -t -s $'\t')
+
+if [[ -z "$List" ]]; then
+    exit 0
+fi
+
+if [[ -t 1 ]] && command -v fzf >/dev/null; then
+    Choice=$(printf '%s\n' "$List" | fzf --no-sort --reverse --height=40%) || exit 0
+    Branch=$(sed -E 's/^[* ] +//; s/ .*//' <<<"$Choice")
+    git switch "$Branch"
+else
+    printf '%s\n' "$List"
+fi

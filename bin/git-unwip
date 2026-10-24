@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if [[ $# -ne 0 ]]; then
+    printf 'Usage: %s\n' "$(basename "$0")" >&2
+    exit 1
+fi
+
+if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
+    printf 'No git root directory found\n' >&2
+    exit 1
+fi
+
+if ! git rev-parse --verify --quiet HEAD >/dev/null || [[ "$(git log -1 --format=%B HEAD)" != WIP ]]; then
+    printf 'HEAD is not a WIP commit\n' >&2
+    exit 1
+fi
+
+if ! git rev-parse --verify --quiet HEAD~1 >/dev/null; then
+    printf 'WIP commit has no parent commit\n' >&2
+    exit 1
+fi
+
+git reset -q HEAD~1
+printf 'Removed WIP commit\n'

@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+Name=${1:-}
+
+if [[ $# -ne 1 || -z "$Name" ]]; then
+    printf 'Usage: %s {branch}\n' "$(basename "$0")" >&2
+    exit 1
+fi
+
+if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
+    printf 'No git root directory found\n' >&2
+    exit 1
+fi
+
+git check-ref-format --branch "$Name" >/dev/null
+if git show-ref --verify --quiet "refs/heads/$Name"; then
+    printf 'Branch already exists: %s\n' "$Name" >&2
+    exit 1
+fi
+
+if git show-ref --verify --quiet refs/heads/main; then
+    Target=main
+elif git show-ref --verify --quiet refs/heads/master; then
+    Target=master
+else
+    printf 'No local main or master branch found\n' >&2
+    exit 1
+fi
+
+if [[ -n "$(git status --porcelain --untracked-files=no)" ]]; then
+    printf 'Working tree has uncommitted changes\n' >&2
+    exit 1
+fi
+
+if ! "$(dirname "$0")/git-sync"; then
+    printf 'Warning: sync failed; branching from local %s\n' "$Target" >&2
+fi
+
+git switch -c "$Name" "$Target"
