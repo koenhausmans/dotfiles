@@ -9,6 +9,8 @@ sudo apt install curl git bash vim neovim zsh fish tmux exuberant-ctags build-es
 
 `install.sh` asks per component: `y` yes, `Y` yes to all, `n` skip.
 Existing files are skipped, backed up or overwritten on request; re-running is safe.
+For file conflicts, uppercase `S`/`O`/`B` applies skip/overwrite/backup across all
+remaining components in this run; lowercase `s`/`o`/`b` applies to one file.
 
 | Component | Installs |
 |---|---|

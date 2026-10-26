@@ -14,14 +14,23 @@ _link_display_path() {
 }
 
 # Link source/destination pairs. Uppercase choices apply to later conflicts in
-# this call; matching symlinks are always left alone.
+# this installer process, or across components when install.sh shares a choice
+# file. Matching symlinks are always left alone.
 link_files() {
     if (( $# % 2 != 0 )); then
         printf 'link_files requires source/destination pairs\n' >&2
         return 2
     fi
 
-    local src dst display_src display_dst action all_action='' backup
+    local src dst display_src display_dst action backup
+    local all_action=${_dotfiles_link_all_action:-} choice_file=${DOTFILES_LINK_CHOICE_FILE:-}
+    if [[ -n $choice_file ]]; then
+        all_action=$(< "$choice_file")
+        case $all_action in
+            ''|s|o|b) ;;
+            *) printf 'Invalid shared link choice\n' >&2; return 1 ;;
+        esac
+    fi
     while (( $# > 0 )); do
         src=$1
         dst=$2
@@ -55,7 +64,13 @@ link_files() {
                     esac
                 done
                 case $action in
-                    [SOB]) all_action=${action,,} ;;
+                    [SOB])
+                        all_action=${action,,}
+                        _dotfiles_link_all_action=$all_action
+                        if [[ -n $choice_file ]]; then
+                            printf '%s\n' "$all_action" > "$choice_file" || return 1
+                        fi
+                        ;;
                 esac
             fi
 

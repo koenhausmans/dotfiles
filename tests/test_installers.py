@@ -46,12 +46,15 @@ class InstallerTests(unittest.TestCase):
             environment = {**os.environ, "INSTALL_LOG": str(self.log), **(env or {})}
             os.execve(str(command), [str(command), *args], environment)
         output = bytearray()
+        pending = list(replies) if isinstance(replies, list) else []
+        reply_offset = 0
         try:
-            os.write(fd, replies.encode())
+            if isinstance(replies, str):
+                os.write(fd, replies.encode())
             while True:
                 ready, _, _ = select.select([fd], [], [], 5)
                 if not ready:
-                    self.fail("installer did not finish")
+                    self.fail("installer did not finish:\n" + output.decode(errors="replace"))
                 try:
                     data = os.read(fd, 4096)
                 except OSError as exc:
@@ -61,6 +64,14 @@ class InstallerTests(unittest.TestCase):
                 if not data:
                     break
                 output.extend(data)
+                while pending:
+                    prompt, reply = pending[0]
+                    position = output.find(prompt.encode(), reply_offset)
+                    if position == -1:
+                        break
+                    reply_offset = position + len(prompt.encode())
+                    pending.pop(0)
+                    os.write(fd, reply.encode())
         finally:
             os.close(fd)
             done, status = os.waitpid(pid, os.WNOHANG)
@@ -203,6 +214,141 @@ class InstallerTests(unittest.TestCase):
             self.assertIn(choice, output)
         self.assertIn("Skipped: ~/.config/nvim/init.vim", output)
         self.assertEqual(destination.read_text(), "existing\n")
+
+    def link_component(self, name):
+        folder = self.root / name
+        folder.mkdir(parents=True)
+        script = folder / "install.sh"
+        body = '#!/usr/bin/env bash\nset -euo pipefail\nsource "$HOME/lib/links.sh"\n'
+        destinations = []
+        for number in range(2):
+            source = folder / f"source-{number}"
+            source.write_text("new\n")
+            destination = self.root / f".{name.replace('/', '-')}-{number}"
+            destination.write_text("existing\n")
+            destinations.append(destination)
+            body += (f'link_files "$HOME/{name}/source-{number}" '
+                     f'"$HOME/{destination.name}"\n')
+        script.write_text(body)
+        script.chmod(0o755)
+        return script, destinations
+
+    def shared_link_install(self, choice):
+        _, first = self.link_component("bash")
+        _, second = self.link_component("screen")
+        temporary = self.root / "temporary files"
+        temporary.mkdir()
+        replies = [("Do you want to install", "Y"), ("ackup all? ", choice + "\n")]
+        replies += [("ackup all? ", "s\n")] * 3
+        status, output = self.run_command(self.root / "install.sh", replies,
+                                          env={"HOME": str(self.root), "TMPDIR": str(temporary)})
+
+        self.assertEqual(status, 0, output)
+        self.assertEqual(output.count("File already exists:"), 1, output)
+        self.assertEqual(list(temporary.iterdir()), [])
+        return first + second, output
+
+    def test_overwrite_all_applies_across_calls_and_components(self):
+        destinations, output = self.shared_link_install("O")
+        for destination in destinations:
+            self.assertTrue(destination.is_symlink(), output)
+            self.assertEqual(destination.read_text(), "new\n")
+
+    def test_skip_all_applies_across_calls_and_components(self):
+        destinations, output = self.shared_link_install("S")
+        for destination in destinations:
+            self.assertFalse(destination.is_symlink(), output)
+            self.assertEqual(destination.read_text(), "existing\n")
+
+    def test_backup_all_applies_across_calls_and_components(self):
+        destinations, output = self.shared_link_install("B")
+        for destination in destinations:
+            self.assertTrue(destination.is_symlink(), output)
+            self.assertEqual(destination.read_text(), "new\n")
+            self.assertEqual(Path(str(destination) + ".backup").read_text(), "existing\n")
+
+    def test_uppercase_link_choice_is_reset_for_next_top_level_run(self):
+        destinations, _ = self.shared_link_install("S")
+        replies = [("Do you want to install", "Y"), ("ackup all? ", "o\n")]
+        replies += [("ackup all? ", "s\n")] * 3
+
+        status, output = self.run_command(self.root / "install.sh", replies,
+                                          env={"HOME": str(self.root)})
+
+        self.assertEqual(status, 0, output)
+        self.assertEqual(output.count("File already exists:"), 4, output)
+        self.assertTrue(destinations[0].is_symlink())
+        for destination in destinations[1:]:
+            self.assertFalse(destination.is_symlink())
+            self.assertEqual(destination.read_text(), "existing\n")
+
+    def test_standalone_link_choice_is_local_to_one_component_run(self):
+        installer, destinations = self.link_component("screen")
+        status, output = self.run_command(installer, [("ackup all? ", "S\n")],
+                                          env={"HOME": str(self.root)})
+        self.assertEqual(status, 0, output)
+        self.assertEqual(output.count("File already exists:"), 1, output)
+
+        status, output = self.run_command(installer, [("ackup all? ", "o\n"),
+                                                     ("ackup all? ", "s\n")],
+                                          env={"HOME": str(self.root)})
+        self.assertEqual(status, 0, output)
+        self.assertEqual(output.count("File already exists:"), 2, output)
+        self.assertTrue(destinations[0].is_symlink())
+        self.assertFalse(destinations[1].is_symlink())
+
+    def test_overwrite_all_reaches_nested_theme_installers(self):
+        _, destinations = self.link_component("bash")
+        for tool in ("claude-code", "opencode"):
+            _, links = self.link_component(f"themes/{tool}")
+            destinations.extend(links)
+        shutil.copy2(REPO / "themes/install.sh", self.root / "themes/install.sh")
+        replies = [("Do you want to install", "Y"), ("ackup all? ", "O\n")]
+        replies += [("ackup all? ", "s\n")] * 5
+
+        status, output = self.run_command(self.root / "install.sh", replies,
+                                          env={"HOME": str(self.root)})
+
+        self.assertEqual(status, 0, output)
+        self.assertEqual(output.count("File already exists:"), 1, output)
+        for destination in destinations:
+            self.assertTrue(destination.is_symlink(), output)
+
+    def test_shared_overwrite_refuses_directories_and_cleans_up_after_failure(self):
+        self.link_component("bash")
+        _, destinations = self.link_component("screen")
+        destinations[0].unlink()
+        destinations[0].mkdir()
+        (destinations[0] / "keep").write_text("safe\n")
+        temporary = self.root / "temporary files"
+        temporary.mkdir()
+
+        status, output = self.run_command(self.root / "install.sh",
+                                          [("Do you want to install", "Y"),
+                                           ("ackup all? ", "O\n")],
+                                          env={"HOME": str(self.root), "TMPDIR": str(temporary)})
+
+        self.assertEqual(status, 1, output)
+        self.assertIn("Cannot overwrite directory:", output)
+        self.assertEqual((destinations[0] / "keep").read_text(), "safe\n")
+        self.assertEqual(list(temporary.iterdir()), [])
+
+    def test_shared_backup_refuses_existing_backup(self):
+        self.link_component("bash")
+        _, destinations = self.link_component("screen")
+        backup = Path(str(destinations[0]) + ".backup")
+        backup.write_text("previous backup\n")
+
+        status, output = self.run_command(self.root / "install.sh",
+                                          [("Do you want to install", "Y"),
+                                           ("ackup all? ", "B\n")],
+                                          env={"HOME": str(self.root)})
+
+        self.assertEqual(status, 1, output)
+        self.assertIn("Backup already exists:", output)
+        self.assertEqual(backup.read_text(), "previous backup\n")
+        self.assertFalse(destinations[0].is_symlink())
+        self.assertEqual(destinations[0].read_text(), "existing\n")
 
     def test_link_backup_and_repeat_install_keep_files_safe(self):
         installer = self.nvim_installer()
