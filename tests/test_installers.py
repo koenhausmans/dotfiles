@@ -476,5 +476,30 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(settings.read_text(), '{\n  // comment\n}\n')
 
 
+    def run_tools_installer(self, path):
+        shutil.copytree(REPO / "tools", self.root / "tools", dirs_exist_ok=True)
+        return subprocess.run([str(self.root / "tools" / "install.sh")], capture_output=True,
+                              text=True, check=False, start_new_session=True,
+                              env={**os.environ, "HOME": str(self.root),
+                                   "PATH": path})
+
+    def test_tools_links_ubuntu_names_once(self):
+        path = self.tool_path("fdfind", "batcat")
+        first = self.run_tools_installer(path)
+        self.assertEqual(first.returncode, 0, first.stderr)
+        bin_dir = self.root / ".local" / "bin"
+        self.assertEqual(os.readlink(bin_dir / "fd").rsplit("/", 1)[1], "fdfind")
+        self.assertEqual(os.readlink(bin_dir / "bat").rsplit("/", 1)[1], "batcat")
+        second = self.run_tools_installer(path)
+        self.assertEqual(second.returncode, 0, second.stderr)
+        self.assertIn("Already linked", second.stdout)
+
+    def test_tools_skips_missing_and_native_commands(self):
+        result = self.run_tools_installer(self.tool_path("fd"))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Already available: fd", result.stdout)
+        self.assertIn("Skipping bat", result.stdout)
+        self.assertFalse((self.root / ".local" / "bin").exists())
+
 if __name__ == "__main__":
     unittest.main()

@@ -99,8 +99,15 @@ Required packages (Ubuntu):
  * build-essential
  * ripgrep
  * fd-find
+ * bat
 
-On Ubuntu, `fd-find` installs the file-search command as `fdfind`. The Vim and Neovim configurations accept either `fdfind` or `fd` for fzf file pickers; if neither is installed, they use `rg --files` when available.
+Install them all at once (add `neovim` for Nvim):
+
+```sh
+sudo apt install curl git bash python3 python3-pip python3-setuptools vim zsh fish tmux exuberant-ctags g++ build-essential ripgrep fd-find bat
+```
+
+On Ubuntu, `fd-find` installs the file-search command as `fdfind` and `bat` installs its command as `batcat`, because other packages already use the names `fd` and `bat`. `tools/install.sh` links them as `fd` and `bat` in `~/.local/bin`. The Vim and Neovim configurations accept either `fdfind` or `fd` for fzf file pickers; if neither is installed, they use `rg --files` when available.
 
 Required packages (Nvim):
 -------------------------
