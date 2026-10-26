@@ -8,17 +8,17 @@ Dotfiles:
         curl: (22) The requested URL returned error: 502
         [FAIL] Could not find the latest uv release
 - [x] Is it not logical to move link_tool of bat to bat/install.sh and hence the link_tool helper to lib/helper.sh?
-
----
-
-- [ ] Improve ctags / rust tags / python tags? Clangd?
 - [x] Include information about the fonts to use and info on how to setup Windows Terminal configuration.
         Font face: Pragmasevka Nerd Font (Add link to the font download)
         Line height: 1,3
         Font weight: Thin
         Padding: 2
         Scrollbar visibility: Hidden
-- [ ] Create a `./install.sh server` command to install only commands useful for servers. Next to that, update the README to have the option to only install tools relevant for servers. These are the onces I think that are useful:
+
+---
+
+- [ ] Improve ctags / rust tags / python tags? Clangd?
+- [x] Create a `./install.sh server` command to install only commands useful for servers. Next to that, update the README to have the option to only install tools relevant for servers. These are the onces I think that are useful:
         - bash, vim (with minimal!), screen, tmux, bin
         - For the normal installer, use the non-minimal vim by default.
 - [ ] Can you clean-up the tests, I don't things testcases are really relevant for such a repository.

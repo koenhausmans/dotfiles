@@ -1,3 +1,7 @@
+`install.sh` links the full `vimrc`. `./install.sh server` (or
+`DOTFILES_PROFILE=server vim/install.sh`) links `vimrc.minimal` instead and
+downloads the apprentice colorscheme.
+
 Vim Script - Keyboard shortcuts:
 ================================
 

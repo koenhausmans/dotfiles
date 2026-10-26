@@ -7,6 +7,13 @@ sudo apt install curl git bash vim neovim zsh fish tmux exuberant-ctags build-es
 ./install.sh
 ```
 
+On a server, install only bash, vim (minimal), screen and tmux (`bin` comes with bash):
+
+```sh
+sudo apt install curl git bash vim tmux screen
+./install.sh server
+```
+
 `install.sh` asks per component: `y` yes, `Y` yes to all, `n` skip.
 Existing files are skipped, backed up or overwritten on request; re-running is safe.
 For file conflicts, uppercase `S`/`O`/`B` applies skip/overwrite/backup across all
@@ -15,7 +22,7 @@ remaining components in this run; lowercase `s`/`o`/`b` applies to one file.
 | Component | Installs |
 |---|---|
 | bash, zsh, fish, git, tmux, screen | links the configuration |
-| vim | full or minimal (`vimrc.minimal`) configuration |
+| vim | full configuration; minimal (`vimrc.minimal`) with `server` |
 | nvim | Neovim configuration |
 | fzf | latest `.deb` release (checksum verified, needs `sudo`) |
 | tools | links Ubuntu's `fdfind` as `fd` |

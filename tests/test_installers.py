@@ -446,30 +446,32 @@ class InstallerTests(unittest.TestCase):
                        **(env or {})}
         return self.run_command(self.root / "vim" / "install.sh", replies, env=environment)
 
-    def test_vim_minimal_answer_links_minimal_config_and_fetches_colorscheme(self):
-        status, output = self.run_vim_installer("y\n")
+    def test_vim_server_profile_links_minimal_config_and_fetches_colorscheme(self):
+        status, output = self.run_vim_installer("", env={"DOTFILES_PROFILE": "server"})
 
         self.assertEqual(status, 0, output)
         self.assertEqual((self.root / ".vimrc").resolve(), self.root / "vim" / "vimrc.minimal")
         self.assertIn("apprentice.vim", self.log.read_text())
 
-    def test_vim_full_answer_links_full_config_without_download(self):
-        status, output = self.run_vim_installer("n\n")
+    def test_vim_default_links_full_config_without_download(self):
+        status, output = self.run_vim_installer("")
 
         self.assertEqual(status, 0, output)
         self.assertEqual((self.root / ".vimrc").resolve(), self.root / "vim" / "vimrc")
         self.assertFalse(self.log.exists())
 
-    def test_vim_question_without_terminal_changes_nothing(self):
-        shutil.copytree(REPO / "vim", self.root / "vim")
+    def test_server_profile_runs_only_server_components(self):
+        for name in ("bash", "vim", "screen", "tmux", "zsh"):
+            (self.root / name).mkdir(exist_ok=True)
+            installer = self.root / name / "install.sh"
+            installer.write_text(f'#!/usr/bin/env bash\necho "ran:{name}:$DOTFILES_PROFILE" >> "$INSTALL_LOG"\n')
+            installer.chmod(0o755)
 
-        result = subprocess.run([str(self.root / "vim" / "install.sh")], capture_output=True,
-                                text=True, check=False,
-                                env={**os.environ, "HOME": str(self.root)})
+        status, output = self.run_command(self.root / "install.sh", "Y", "server")
 
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("without a terminal", result.stderr)
-        self.assertFalse((self.root / ".vimrc").exists())
+        self.assertEqual(status, 0, output)
+        self.assertEqual(sorted(self.log.read_text().split()),
+                         sorted(f"ran:{n}:server" for n in ("bash", "vim", "screen", "tmux")))
 
     def test_zsh_stops_after_a_failed_clone(self):
         folder = self.root / "zsh"

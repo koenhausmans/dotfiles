@@ -9,9 +9,16 @@ BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source "$BASEDIR/lib/helpers.sh"
 
-if (( $# > 0 )); then
-    fail 'Usage: ./install.sh'
+profile=full
+case ${1-} in
+    '') ;;
+    server) profile=server ;;
+    *) fail 'Usage: ./install.sh [server]' ;;
+esac
+if (( $# > 1 )); then
+    fail 'Usage: ./install.sh [server]'
 fi
+export DOTFILES_PROFILE=$profile
 
 # Check for root permissions
 if [ "$(whoami)" == "root" ] ; then
@@ -28,7 +35,9 @@ info 'Running installer scripts'
 
 install_all=false
 # Only these top-level components are allowed to supply install scripts.
-for component in bash zsh fish git tmux screen vim nvim fzf tools bat fnm uv themes; do
+components=(bash zsh fish git tmux screen vim nvim fzf tools bat fnm uv themes)
+[[ $profile == server ]] && components=(bash vim screen tmux)
+for component in "${components[@]}"; do
     installer="$BASEDIR/$component/install.sh"
     [[ -f $installer ]] || continue
 
