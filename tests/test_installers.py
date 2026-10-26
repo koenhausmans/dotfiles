@@ -2,7 +2,6 @@
 
 import errno
 import hashlib
-import json
 import os
 import pty
 import re
@@ -87,7 +86,7 @@ class InstallerTests(unittest.TestCase):
     def tool_path(self, *tools):
         """Return a PATH with the commands theme installers use and stand-in tools."""
         folder = Path(tempfile.mkdtemp(dir=self.root))
-        for name in ("bash", "dirname", "ln", "mkdir", "mv", "python3", "readlink", "rm"):
+        for name in ("bash", "dirname", "ln", "mkdir", "mv", "readlink", "rm"):
             (folder / name).symlink_to(shutil.which(name))
         for name in tools:
             (folder / name).write_text("#!/usr/bin/env bash\n")
@@ -100,12 +99,6 @@ class InstallerTests(unittest.TestCase):
         environment.update(HOME=str(self.root), PATH=self.tool_path(*tools), **env)
         return subprocess.run([str(installer)], capture_output=True, text=True, check=False,
                               env=environment, start_new_session=True)
-
-    def antigravity_settings(self, text):
-        settings = self.root / ".gemini" / "antigravity-cli" / "settings.json"
-        settings.parent.mkdir(parents=True)
-        settings.write_text(text)
-        return settings
 
     def run_fzf_installer(self, *, installed="", checksum=None):
         """Run fzf/install.sh with stand-ins for the download and package tools."""
@@ -388,8 +381,7 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("Claude Code is not installed, skipping its themes", result.stdout)
         self.assertIn("OpenCode is not installed, skipping its themes", result.stdout)
-        self.assertIn("Antigravity CLI is not installed, skipping its color scheme", result.stdout)
-        for config in (".claude", ".config", ".gemini"):
+        for config in (".claude", ".config"):
             self.assertFalse((self.root / config).exists(), config)
 
     def test_theme_installers_link_themes_for_installed_tools_once(self):
@@ -421,60 +413,6 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(sorted(path.name for path in linked.iterdir()), themes)
         self.assertFalse((self.root / ".claude").exists())
-
-    def test_antigravity_creates_settings_with_terminal_color_scheme(self):
-        self.themes_installer()
-
-        result = self.run_theme_installer(self.root / "themes" / "antigravity-cli" / "install.sh", "agy")
-
-        self.assertEqual(result.returncode, 0, result.stderr)
-        settings = self.root / ".gemini" / "antigravity-cli" / "settings.json"
-        self.assertEqual(json.loads(settings.read_text()), {"colorScheme": "terminal"})
-
-    def test_antigravity_asks_before_replacing_a_color_scheme(self):
-        self.themes_installer()
-        installer = self.root / "themes" / "antigravity-cli" / "install.sh"
-        original = '{"colorScheme": "tokyo night", "trustedWorkspaces": ["/work"]}\n'
-        settings = self.antigravity_settings(original)
-        env = {"HOME": str(self.root), "PATH": self.tool_path("agy")}
-
-        status, output = self.run_command(installer, "n\n", env=env)
-
-        self.assertEqual(status, 0, output)
-        self.assertIn('\x1b[1;36m"tokyo night"\x1b[0m', output)
-        self.assertEqual(settings.read_text(), original)
-
-        status, output = self.run_command(installer, "y\n", env=env)
-
-        self.assertEqual(status, 0, output)
-        self.assertEqual(json.loads(settings.read_text()),
-                         {"colorScheme": "terminal", "trustedWorkspaces": ["/work"]})
-
-        status, output = self.run_command(installer, "", env=env)
-
-        self.assertEqual(status, 0, output)
-        self.assertIn("already uses the terminal color scheme", output)
-
-    def test_antigravity_keeps_settings_it_cannot_safely_change(self):
-        self.themes_installer()
-        installer = self.root / "themes" / "antigravity-cli" / "install.sh"
-        settings = self.antigravity_settings('{"colorScheme": "tokyo night"}\n')
-
-        result = self.run_theme_installer(installer, "agy")
-
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn('Cannot replace Antigravity CLI color scheme "tokyo night" without a terminal',
-                      result.stderr)
-        self.assertEqual(settings.read_text(), '{"colorScheme": "tokyo night"}\n')
-
-        settings.write_text('{\n  // comment\n}\n')
-
-        result = self.run_theme_installer(installer, "agy")
-
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("Could not read Antigravity CLI settings", result.stderr)
-        self.assertEqual(settings.read_text(), '{\n  // comment\n}\n')
-
 
     def run_tools_installer(self, path):
         shutil.copytree(REPO / "tools", self.root / "tools", dirs_exist_ok=True)
