@@ -6,6 +6,11 @@ if (( $# != 1 )); then
     exit 2
 fi
 
+# A lone dash means stdin to both bat and sed, even after --.
+if [[ $1 == - ]]; then
+    set -- ./-
+fi
+
 if [[ -f $1 ]]; then
     if command -v bat > /dev/null; then
         viewer=bat

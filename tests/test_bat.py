@@ -65,6 +65,20 @@ class BatTests(unittest.TestCase):
         self.assertEqual(len(result.stdout.splitlines()), 300)
         self.assertEqual(result.stdout.splitlines()[-1], "line 300")
 
+    def test_file_named_dash_is_not_read_from_stdin(self):
+        (self.home / "-").write_text("file contents\n")
+        result = subprocess.run([str(PREVIEW), "-"], input="wrong stdin\n",
+                                env=self.env, cwd=self.home, capture_output=True,
+                                text=True, timeout=10)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout, "file contents\n")
+        for name in ("batcat", "bat"):
+            with self.subTest(binary=name):
+                self.fake_bat(name)
+                result = self.preview("-")
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(result.stdout.splitlines()[-2:], ["--", "./-"])
+
     def test_preview_does_not_read_pipes_or_missing_files(self):
         fifo = self.home / "fifo"
         os.mkfifo(fifo)
