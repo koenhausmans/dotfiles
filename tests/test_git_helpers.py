@@ -204,5 +204,58 @@ class GitHelperTests(unittest.TestCase):
         self.assertTrue(marker.exists())
 
 
+    def target(self):
+        return subprocess.run(["bash", "-c", f'source "{REPO}/lib/git.sh"; git_target'],
+                              cwd=self.work, env=self.env, capture_output=True,
+                              text=True, check=False)
+
+    def test_target_prefers_develop_over_main(self):
+        self.git("branch", "main")
+        self.git("branch", "develop")
+        self.assertEqual(self.target().stdout, "develop\n")
+
+    def test_target_falls_back_to_main(self):
+        self.git("branch", "main")
+        self.assertEqual(self.target().stdout, "main\n")
+
+    def test_target_config_overrides_develop(self):
+        self.git("branch", "main")
+        self.git("branch", "develop")
+        self.git("config", "dotfiles.target", "main")
+        self.assertEqual(self.target().stdout, "main\n")
+
+    def test_target_without_known_branch_fails(self):
+        result = self.target()
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("No local develop, main or master", result.stderr)
+
+    def test_start_branches_from_develop(self):
+        self.git("branch", "main")
+        self.git("switch", "-c", "develop")
+        (self.work / "develop-only").write_text("x\n")
+        self.git("add", "develop-only")
+        self.git("commit", "-m", "develop")
+        result = self.helper("git-start", "feature")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.git("rev-parse", "feature").stdout,
+                         self.git("rev-parse", "develop").stdout)
+
+    def test_trail_marks_unpushed_and_fork_point(self):
+        self.git("branch", "develop")
+        self.git("switch", "-c", "feature")
+        self.git("commit", "--allow-empty", "-m", "local")
+        result = self.helper("git-trail")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("forked from", result.stdout)
+        self.assertIn("◆", result.stdout)
+        self.assertIn("local", result.stdout)
+
+    def test_trail_on_detached_head(self):
+        self.git("switch", "--detach")
+        result = self.helper("git-trail")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("detached HEAD", result.stdout)
+        self.assertEqual(result.stderr, "")
+
 if __name__ == "__main__":
     unittest.main()

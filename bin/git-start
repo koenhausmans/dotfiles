@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+source "$(dirname "$(readlink -f "$0")")/../lib/git.sh"
+
 Name=${1:-}
 
 if [[ $# -ne 1 || -z "$Name" ]]; then
@@ -20,14 +22,7 @@ if git show-ref --verify --quiet "refs/heads/$Name"; then
     exit 1
 fi
 
-if git show-ref --verify --quiet refs/heads/main; then
-    Target=main
-elif git show-ref --verify --quiet refs/heads/master; then
-    Target=master
-else
-    printf 'No local main or master branch found\n' >&2
-    exit 1
-fi
+Target=$(git_target) || exit 1
 
 if [[ -n "$(git status --porcelain --untracked-files=no)" ]]; then
     printf 'Working tree has uncommitted changes\n' >&2

@@ -31,7 +31,6 @@ if status is-interactive
     abbr -a gdc 'git diff --cached'
     abbr -a gdt 'git diff-tree --no-commit-id --name-only -r'
     abbr -a gl 'git log --stat'
-    abbr -a glo 'git log --color=auto --date=short --pretty=format:"%C(auto,yellow)%h%C(reset) %<(100,trunc)%s %C(auto,green)%ad  %C(auto,blue)<%ae>%C(reset)"'
     abbr -a gpush 'git push'
     abbr -a gpull 'git pull --rebase'
     abbr -a gs 'git status -sb'

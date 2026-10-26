@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$(dirname "$(readlink -f "$0")")/../lib/git.sh"
+
+usage() {
+    printf 'Usage: %s [-b base] [-c context] [-g] [git log args...]\n' "$(basename "$0")" >&2
+    exit 1
+}
+
+Base=
+Context=3
+Graph=()
+Args=()
+while (( $# )); do
+    case $1 in
+        -b|--base) (( $# >= 2 )) || usage; Base=$2; shift 2 ;;
+        -c|--context) (( $# >= 2 )) || usage; Context=$2; shift 2 ;;
+        -g|--graph) Graph=(--graph); shift ;;
+        -h|--help) usage ;;
+        *) Args+=("$1"); shift ;;
+    esac
+done
+
+if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
+    printf 'No git root directory found\n' >&2
+    exit 1
+fi
+
+if [[ -z "$Base" ]]; then
+    Base=$(git_target 2>/dev/null || true)
+fi
+
+Current=$(git symbolic-ref --quiet --short HEAD || true)
+Upstream=
+if [[ -n "$Current" ]]; then
+    Upstream=$(git for-each-ref --format='%(upstream:short)' "refs/heads/$Current")
+    if [[ -n "$Upstream" ]] && ! git rev-parse --verify --quiet '@{u}' >/dev/null; then
+        Upstream=
+    fi
+fi
+
+Fork=
+if [[ -n "$Base" && -n "$Current" && "$Current" != "$Base" ]]; then
+    Fork=$(git merge-base --fork-point "$Base" HEAD 2>/dev/null \
+        || git merge-base "$Base" HEAD 2>/dev/null || true)
+fi
+
+Unpushed=
+if [[ -n "$Upstream" ]]; then
+    Unpushed=$(git rev-list '@{u}..HEAD' | tr '\n' ' ')
+fi
+
+Yellow=$'\e[33m' Green=$'\e[32m' Blue=$'\e[34m' Magenta=$'\e[35m' Red=$'\e[31m' Dim=$'\e[2m' Reset=$'\e[0m'
+
+header() {
+    if [[ -z "$Current" ]]; then
+        printf '%s(detached HEAD)%s\n' "$Dim" "$Reset"
+        return
+    fi
+    local Line="$Green$Current$Reset" Ahead Behind Count
+    if [[ -n "$Upstream" ]]; then
+        read -r Ahead Behind < <(git rev-list --left-right --count 'HEAD...@{u}')
+        Line+=" → $Blue$Upstream$Reset"
+        (( Ahead )) && Line+=" $Green↑$Ahead$Reset"
+        (( Behind )) && Line+=" $Red↓$Behind$Reset"
+        (( Ahead + Behind )) || Line+=" ${Dim}(in sync)$Reset"
+    else
+        Line+=" ${Dim}(no upstream)$Reset"
+    fi
+    if [[ -n "$Fork" ]]; then
+        Count=$(git rev-list --count "$Fork..HEAD")
+        Line+="  $Dim·$Reset  forked from $Magenta$Base$Reset @ $Yellow$(git rev-parse --short "$Fork")$Reset"
+        Line+=" $Dim($(git log -1 --format=%ad --date=short "$Fork"), $Count commits ago)$Reset"
+    fi
+    printf '%s\n' "$Line"
+}
+
+Range=()
+if (( ${#Args[@]} == 0 )) && [[ -n "$Fork" ]]; then
+    Range=(HEAD)
+    if Stop=$(git rev-parse --verify --quiet "$Fork~$Context"); then
+        Range+=("^$Stop")
+    fi
+fi
+
+Columns=$(tput cols 2>/dev/null || printf '140')
+Width=$(( Columns - 50 ))
+(( Width >= 30 )) || Width=30
+
+Format="%x1f%H%x1f%C(yellow)%h%C(reset)%C(auto)%d%C(reset) %<($Width,trunc)%s %C(green)%ad %C(blue)<%ae>%C(reset)"
+
+if [[ -t 1 ]]; then
+    Pager=(${GIT_PAGER:-less -FRX})
+else
+    Pager=(cat)
+fi
+
+{
+    header
+    git log --color=always --date=short "${Graph[@]}" --pretty=format:"$Format" \
+        "${Range[@]}" "${Args[@]}"
+    printf '\n'
+} | awk -v fork="$Fork" -v unpushed="$Unpushed" -v green="$Green" -v magenta="$Magenta" -v reset="$Reset" '
+    BEGIN { n = split(unpushed, list, " "); for (i = 1; i <= n; i++) up[list[i]] = 1 }
+    NR == 1 { print; next }
+    {
+        start = index($0, "\037")
+        if (start == 0) { print "  " $0; next }
+        rest = substr($0, start + 1)
+        stop = index(rest, "\037")
+        hash = substr(rest, 1, stop - 1)
+        mark = (hash == fork) ? magenta "◆" reset : (hash in up) ? green "↑" reset : " "
+        print substr($0, 1, start - 1) mark " " substr(rest, stop + 1)
+    }' | "${Pager[@]}"

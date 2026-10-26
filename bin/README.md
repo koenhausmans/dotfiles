@@ -31,15 +31,15 @@ For example, `./bin/sorted_disk_usage --size=g ~/Downloads` shows sizes in GiB. 
 
 ## Git tools
 
-Run these scripts inside a Git repository. The rename scripts change both local refs and refs on `origin`. Check the names and remote before you run them.
+Run these scripts inside a Git repository. Scripts that work against a target branch use the first local branch of `develop`, `main` and `master`. Run `git config dotfiles.target <branch>` in a repository to choose another target. The rename scripts change both local refs and refs on `origin`. Check the names and remote before you run them.
 
 ### `git-fixup`
 
-Run `git fixup [commit]` on a feature branch to fold the staged changes into an earlier commit on that branch. Without a commit, the script shows the branch's commits in `fzf` so you can pick one. It runs `git commit --fixup` and then `git rebase -i --autosquash --autostash` without opening an editor. Unstaged changes are kept. The commit must be on the branch and not on `main` (or `master`). If the rebase fails, the script aborts it and keeps the `fixup!` commit.
+Run `git fixup [commit]` on a feature branch to fold the staged changes into an earlier commit on that branch. Without a commit, the script shows the branch's commits in `fzf` so you can pick one. It runs `git commit --fixup` and then `git rebase -i --autosquash --autostash` without opening an editor. Unstaged changes are kept. The commit must be on the branch and not on the target branch. If the rebase fails, the script aborts it and keeps the `fixup!` commit.
 
 ### `git-land`
 
-Run `git land` on a feature branch to merge it into the local `main` (or `master`) branch and then delete the feature branch with `git branch -d`. The working tree must be clean. By default the merge uses `--ff-only` and fails if a fast-forward is not possible. Use `--no-ff` to create a merge commit, or `--rebase` to rebase the feature branch onto the target first and then fast-forward. If the rebase or merge fails, the script aborts it, switches back to the feature branch, and exits with an error. The script does not push.
+Run `git land` on a feature branch to merge it into the local target branch and then delete the feature branch with `git branch -d`. The working tree must be clean. By default the merge uses `--ff-only` and fails if a fast-forward is not possible. Use `--no-ff` to create a merge commit, or `--rebase` to rebase the feature branch onto the target first and then fast-forward. If the rebase or merge fails, the script aborts it, switches back to the feature branch, and exits with an error. The script does not push.
 
 ### `git-recent`
 
@@ -59,11 +59,15 @@ Run `./bin/git-rename-tag <old-tag> <new-tag>` to create a new tag from an exist
 
 ### `git-start`
 
-Run `git start <branch>` to run `git-sync` and create a new branch from the local `main` (or `master`). The working tree must be clean. If the sync fails, for example when you are offline, the script prints a warning and branches from the local target.
+Run `git start <branch>` to run `git-sync` and create a new branch from the local target branch. The working tree must be clean. If the sync fails, for example when you are offline, the script prints a warning and branches from the local target.
 
 ### `git-sync`
 
-Run `git sync` to fetch `origin` and fast-forward the local `main` (or `master`). On a feature branch, the script updates the target without checking it out. Use `--rebase` on a feature branch to also rebase it onto the target. The command fails if the local target has diverged from `origin`. If the rebase fails, the script aborts it.
+Run `git sync` to fetch `origin` and fast-forward the local target branch. On a feature branch, the script updates the target without checking it out. Use `--rebase` on a feature branch to also rebase it onto the target. The command fails if the local target has diverged from `origin`. If the rebase fails, the script aborts it.
+
+### `git-trail`
+
+Run `git trail` to show a one-line log with the upstream and fork point of the current branch. The first line shows the branch, its upstream, the ahead and behind counts, and the commit where the branch forked from the target. In the log, `↑` marks commits that are not pushed and `◆` marks the fork point. Without arguments on a feature branch, the log stops 3 commits below the fork point. Use `-c count` to change that number, `-b branch` to compare with another base, and `-g` to show the graph. Other arguments go to `git log`, for example `git trail -20` or `git trail --all`.
 
 ### `git-undo`
 
@@ -71,4 +75,4 @@ Run `git undo` to remove the last commit with `git reset --soft HEAD~1`. The cha
 
 ### `git-wip` and `git-unwip`
 
-Run `git wip` to stage all changes, including untracked files, and commit them as `WIP` without running hooks. On `main` or `master` the script stops unless you add `--force`. Run `git unwip` to remove that commit with a mixed reset, so the changes become unstaged again. `git unwip` only acts if the HEAD commit message is exactly `WIP`.
+Run `git wip` to stage all changes, including untracked files, and commit them as `WIP` without running hooks. On `develop`, `main`, `master` or the target branch the script stops unless you add `--force`. Run `git unwip` to remove that commit with a mixed reset, so the changes become unstaged again. `git unwip` only acts if the HEAD commit message is exactly `WIP`.
