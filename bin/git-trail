@@ -132,8 +132,8 @@ Format='%x1f%H%x1f%h%x1f%D%x1f%s%x1f%ad%x1f%ae'
     {
         prefix = $1
         mark = ($2 == fork) ? "\033[35m◆" reset : ($2 in up) ? "\033[32m↑" reset : " "
-        email = cut($7, 23)
-        tail = sprintf("  %s %-25s", $6, "<" email ">")
+        email = cut($7, 22)
+        tail = sprintf("  %s %-24s", $6, "<" email ">")
         room = columns - visible(prefix) - 2 - length($3) - 1 - length(tail)
         refs = $4
         if (refs != "" && length(refs) + 3 > room / 2) refs = cut(refs, int(room / 2) - 3)
