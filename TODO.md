@@ -3,9 +3,17 @@ Dotfiles:
 
 - [x] Map fdfind on Ubuntu to fd. Or why is this not the case on Ubuntu?
 - [x] Integrate batcat with shared defaults and shell file previews.
+
+---
+
 - [ ] The link_files overwrite O setting is not kept in other components. Can you fix?
 - [ ] Improve ctags / rust tags / python tags? Clangd?
 - [ ] Include information about the fonts to use and info on how to setup Windows Terminal configuration.
+        Font face: Pragmasevka Nerd Font (Add link to the font download)
+        Line height: 1,3
+        Font weight: Thin
+        Padding: 2
+        Scrollbar visibility: Hidden
  
 Neovim ToDo:
 ============
@@ -27,4 +35,3 @@ Collection plugins to consider:
 -------------------------------
 - [ ] snacks.nvim
 - [ ] mini.nvim
-
