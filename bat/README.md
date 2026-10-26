@@ -1,8 +1,8 @@
 # bat
 
-Install Ubuntu's `bat` package, then select `tools` and `bat` in `./install.sh`.
-The tools component provides the `bat` command for Ubuntu's `batcat` binary.
-The bat component links `config` to `$XDG_CONFIG_HOME/bat/config`, or
+Install Ubuntu's `bat` package, then select `bat` in `./install.sh`.
+The installer links Ubuntu's `batcat` binary as `~/.local/bin/bat` when no
+`bat` command exists, and links `config` to `$XDG_CONFIG_HOME/bat/config`, or
 `~/.config/bat/config` when `XDG_CONFIG_HOME` is unset or empty.
 
 ## Display and previews

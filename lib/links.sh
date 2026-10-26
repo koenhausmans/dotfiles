@@ -102,3 +102,18 @@ link_files() {
         success 'Linked: %s -> %s' "$display_dst" "$display_src"
     done
 }
+
+# Ubuntu installs some tools under other names to avoid package conflicts
+link_tool() {
+    local name=$1 ubuntu_name=$2 target
+    if [[ -L $HOME/.local/bin/$name ]] || ! command -v "$name" > /dev/null; then
+        if target=$(command -v "$ubuntu_name"); then
+            mkdir -p "$HOME/.local/bin"
+            link_files "$target" "$HOME/.local/bin/$name"
+        else
+            info 'Skipping %s: neither %s nor %s is installed' "$name" "$name" "$ubuntu_name"
+        fi
+    else
+        success 'Already available: %s' "$name"
+    fi
+}

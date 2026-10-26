@@ -18,8 +18,8 @@ remaining components in this run; lowercase `s`/`o`/`b` applies to one file.
 | vim | full or minimal (`vimrc.minimal`) configuration |
 | nvim | Neovim configuration |
 | fzf | latest `.deb` release (checksum verified, needs `sudo`) |
-| tools | links Ubuntu's `fdfind` and `batcat` as `fd` and `bat` |
-| bat | links shared display and paging defaults |
+| tools | links Ubuntu's `fdfind` as `fd` |
+| bat | links Ubuntu's `batcat` as `bat` plus shared display and paging defaults |
 | fnm | fnm in `~/.local/bin` plus the latest Node.js LTS |
 | uv | uv in `~/.local/bin` (checksum verified) plus `ruff` |
 | themes | Claude Code and OpenCode themes |

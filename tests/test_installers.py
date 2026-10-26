@@ -562,9 +562,9 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(sorted(path.name for path in linked.iterdir()), themes)
         self.assertFalse((self.root / ".claude").exists())
 
-    def run_tools_installer(self, path):
-        shutil.copytree(REPO / "tools", self.root / "tools", dirs_exist_ok=True)
-        return subprocess.run([str(self.root / "tools" / "install.sh")], capture_output=True,
+    def run_tools_installer(self, path, component="tools"):
+        shutil.copytree(REPO / component, self.root / component, dirs_exist_ok=True)
+        return subprocess.run([str(self.root / component / "install.sh")], capture_output=True,
                               text=True, check=False, start_new_session=True,
                               env={**os.environ, "HOME": str(self.root),
                                    "PATH": path})
@@ -587,21 +587,24 @@ class InstallerTests(unittest.TestCase):
                                      self.root / "bat/config")
 
     def test_tools_links_ubuntu_names_once(self):
-        path = self.tool_path("fdfind", "batcat")
-        first = self.run_tools_installer(path)
-        self.assertEqual(first.returncode, 0, first.stderr)
         bin_dir = self.root / ".local" / "bin"
-        self.assertEqual(os.readlink(bin_dir / "fd").rsplit("/", 1)[1], "fdfind")
-        self.assertEqual(os.readlink(bin_dir / "bat").rsplit("/", 1)[1], "batcat")
-        second = self.run_tools_installer(path)
-        self.assertEqual(second.returncode, 0, second.stderr)
-        self.assertIn("Already linked", second.stdout)
+        for component, name, ubuntu_name in (("tools", "fd", "fdfind"), ("bat", "bat", "batcat")):
+            with self.subTest(component=component):
+                path = self.tool_path(ubuntu_name)
+                first = self.run_tools_installer(path, component)
+                self.assertEqual(first.returncode, 0, first.stderr)
+                self.assertEqual(os.readlink(bin_dir / name).rsplit("/", 1)[1], ubuntu_name)
+                second = self.run_tools_installer(path, component)
+                self.assertEqual(second.returncode, 0, second.stderr)
+                self.assertIn("Already linked", second.stdout)
 
     def test_tools_skips_missing_and_native_commands(self):
-        result = self.run_tools_installer(self.tool_path("fd"))
-        self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("Already available: fd", result.stdout)
-        self.assertIn("Skipping bat", result.stdout)
+        native = self.run_tools_installer(self.tool_path("fd"))
+        self.assertEqual(native.returncode, 0, native.stderr)
+        self.assertIn("Already available: fd", native.stdout)
+        missing = self.run_tools_installer(self.tool_path(), "bat")
+        self.assertEqual(missing.returncode, 0, missing.stderr)
+        self.assertIn("Skipping bat", missing.stdout)
         self.assertFalse((self.root / ".local" / "bin").exists())
 
     def run_uv_installer(self, *, installed=False, checksum=None):
