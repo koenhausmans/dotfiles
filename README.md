@@ -22,7 +22,7 @@ Existing files are skipped, backed up or overwritten on request; re-running is s
 | themes | Claude Code and OpenCode themes |
 
 Prompts use Powerline glyphs; pick a terminal font that has them.
-Windows Terminal, Alacritty and PuTTY themes are installed by hand (see `themes/`).
+Windows Terminal ([README](themes/windows-terminal/README.md)), [Alacritty](themes/alacritty/) and [PuTTY](themes/putty/) themes are installed by hand.
 
 ## Local customizations
 
@@ -34,4 +34,9 @@ The fish template `fish/config.local.fish.template` lists the prompt options.
 
 ## More
 
-`bin/`, `git/`, `nvim/`, `tmux/`, `vim/` and `themes/*/` have their own README.
+- [bin](bin/README.md): git helpers (`git trail`, `git start`, `git land`, ...) and other scripts
+- [git](git/README.md): useful git commands
+- [nvim](nvim/README.md): Neovim configuration
+- [tmux](tmux/README.md): keyboard shortcuts
+- [vim](vim/README.md): keyboard shortcuts
+- Themes: [Claude Code](themes/claude-code/README.md), [OpenCode](themes/opencode/README.md), [Windows Terminal](themes/windows-terminal/README.md)
