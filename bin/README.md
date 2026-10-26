@@ -67,7 +67,7 @@ Run `git sync` to fetch `origin` and fast-forward the local target branch. On a 
 
 ### `git-trail`
 
-Run `git trail` to show a one-line log with the upstream and fork point of the current branch. The first line shows the branch, its upstream, the ahead and behind counts, and the commit where the branch forked from the target. In the log, `↑` marks commits that are not pushed and `◆` marks the fork point. Without arguments on a feature branch, the log stops 3 commits below the fork point. Use `-c count` to change that number, `-b branch` to compare with another base, and `-g` to show the graph. Other arguments go to `git log`, for example `git trail -20` or `git trail --all`.
+Run `git trail` to show a one-line log with the upstream and fork point of the current branch. The first line shows the branch, its upstream, the ahead and behind counts, and the commit where the branch forked from the target. In the log, `↑` marks commits that are not pushed and `◆` marks the fork point. Each line is cut to the terminal width: long ref lists and subjects end in `…`. Without arguments on a feature branch, the log stops 3 commits below the fork point. Use `-c count` to change that number, `-b branch` to compare with another base, and `-g` to show the graph. Other arguments go to `git log`, for example `git trail -20` or `git trail --all`.
 
 ### `git-undo`
 
