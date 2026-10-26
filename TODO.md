@@ -14,14 +14,14 @@ Dotfiles:
         Font weight: Thin
         Padding: 2
         Scrollbar visibility: Hidden
-
----
-
-- [ ] Improve ctags / rust tags / python tags? Clangd?
 - [x] Create a `./install.sh server` command to install only commands useful for servers. Next to that, update the README to have the option to only install tools relevant for servers. These are the onces I think that are useful:
         - bash, vim (with minimal!), screen, tmux, bin
         - For the normal installer, use the non-minimal vim by default.
-- [ ] Can you clean-up the tests, I don't things testcases are really relevant for such a repository.
+
+---
+
+- [x] Can you clean-up the tests, I don't things testcases are really relevant for such a repository.
+- [ ] Improve ctags / rust tags / python tags? Clangd?
 
  
 Neovim ToDo:

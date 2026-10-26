@@ -34,6 +34,14 @@ remaining components in this run; lowercase `s`/`o`/`b` applies to one file.
 Prompts use Powerline glyphs; use a Nerd Font such as Pragmasevka ([setup](themes/windows-terminal/README.md#font-and-appearance)).
 Windows Terminal ([README](themes/windows-terminal/README.md)), [Alacritty](themes/alacritty/) and [PuTTY](themes/putty/) themes are installed by hand.
 
+## Tests
+
+```sh
+python3 -m unittest discover tests
+```
+
+Shell syntax is checked for every tracked script; installer smoke tests cover the `server` profile and Vim.
+
 ## Local customizations
 
 Machine-specific settings go in files that aren't tracked in this repo:
