@@ -33,6 +33,13 @@ Install these tools inside WSL. The server executable must be on the Linux `PATH
 | C/C++ | clangd | Install clangd. Provide `compile_commands.json` for project-specific compiler flags and include paths. |
 | Typst | Tinymist | Install a Linux release or build it with Cargo. Make sure `tinymist` is on `PATH`. |
 
+```sh
+sudo apt install clangd
+npm install -g basedpyright        # or: uv tool install basedpyright
+rustup component add rust-analyzer rustfmt rust-src
+cargo install --locked tinymist    # only for Typst
+```
+
 Open a matching file and use `:LspInfo` to check that its server attached. `:checkhealth vim.lsp` can help diagnose problems.
 
 ## Formatters

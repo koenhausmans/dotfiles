@@ -292,7 +292,7 @@ set path+=**
 set path+=/usr/include
 
 " Update the ctags path
-set tags=./.tags;,tags
+set tags^=./.git/tags;,./.tags;
 
 function! StripTrailingWhitespaces()
     exe "normal mz"

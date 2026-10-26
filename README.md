@@ -3,7 +3,7 @@
 ## Install
 
 ```sh
-sudo apt install curl git bash vim neovim zsh fish tmux exuberant-ctags build-essential ripgrep fd-find bat
+sudo apt install curl git bash vim neovim zsh fish tmux universal-ctags build-essential ripgrep fd-find bat
 ./install.sh
 ```
 

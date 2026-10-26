@@ -40,3 +40,14 @@ Remote commands:
 | `git rebase <branch>` | Rebases <branch> into the current branch |
 | `git branch -dr <remote/branch>` | Deletes a branch on the remote |
 | `git push <remote> --delete <branch>` | Deletes the remote branch `<remote>/<branch>` | 
+
+
+Tags:
+-----
+
+The git template hooks (`post-commit`, `post-merge`, `post-checkout`, `post-rewrite`) regenerate tags in the background with Universal Ctags.
+
+- Tags go to `.git/tags`; in a worktree they go to `.tags` in the worktree root.
+- Run `git ctags` to regenerate them manually.
+- Existing repositories need `git init` once to receive the hooks.
+- Vim and Neovim find the file with `set tags^=./.git/tags;,./.tags;`.
