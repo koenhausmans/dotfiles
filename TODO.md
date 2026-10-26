@@ -3,10 +3,16 @@ Dotfiles:
 
 - [x] Map fdfind on Ubuntu to fd. Or why is this not the case on Ubuntu?
 - [x] Integrate batcat with shared defaults and shell file previews.
+- [x] The link_files overwrite O setting is not kept in other components. Can you fix?
 
 ---
 
-- [ ] The link_files overwrite O setting is not kept in other components. Can you fix?
+- [x] Trying to install uv results in error 502:
+        curl: (22) The requested URL returned error: 502
+        [FAIL] Could not find the latest uv release
+
+
+- [ ] Is it not logical to move link_tool of bat to bat/install.sh and hence the link_tool helper to lib/helper.sh?
 - [ ] Improve ctags / rust tags / python tags? Clangd?
 - [ ] Include information about the fonts to use and info on how to setup Windows Terminal configuration.
         Font face: Pragmasevka Nerd Font (Add link to the font download)

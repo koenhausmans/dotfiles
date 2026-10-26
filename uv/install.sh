@@ -24,7 +24,7 @@ case $machine in
 esac
 
 # The latest-release redirect avoids the GitHub API and its rate limit.
-latest_url=$(curl -fsSLI -o /dev/null -w '%{url_effective}' "$UV_REPO/releases/latest") \
+latest_url=$(curl -fsSI --retry 3 -o /dev/null -w '%{redirect_url}' "$UV_REPO/releases/latest") \
     || fail "Could not find the latest uv release"
 version=${latest_url##*/}
 [[ $version =~ ^[0-9]+(\.[0-9]+)+$ ]] || fail "Could not read the uv version from $latest_url"
@@ -38,7 +38,7 @@ else
 
     info "Downloading uv $version..."
     for file in "$asset.tar.gz" "$asset.tar.gz.sha256"; do
-        curl -fsSL -o "$tmp/$file" "$UV_REPO/releases/download/$version/$file" \
+        curl -fsSL --retry 3 -o "$tmp/$file" "$UV_REPO/releases/download/$version/$file" \
             || fail "Could not download $file"
     done
     (cd "$tmp" && sha256sum --check --status "$asset.tar.gz.sha256") \
