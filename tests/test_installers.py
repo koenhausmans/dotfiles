@@ -439,5 +439,78 @@ class InstallerTests(unittest.TestCase):
         self.assertIn("Skipping bat", result.stdout)
         self.assertFalse((self.root / ".local" / "bin").exists())
 
+    def run_uv_installer(self, *, installed=False, checksum=None):
+        """Run uv/install.sh with a stand-in download and a fake uv release."""
+        folder = self.root / "uv"
+        folder.mkdir(exist_ok=True)
+        shutil.copy2(REPO / "uv" / "install.sh", folder / "install.sh")
+        release = self.root / "release"
+        asset = release / "uv-x86_64-unknown-linux-gnu"
+        asset.mkdir(parents=True, exist_ok=True)
+        (asset / "uv").write_text(
+            '#!/usr/bin/env bash\n'
+            'case $1 in\n'
+            '    --version) echo "uv 0.13.5 (x86_64-unknown-linux-gnu)" ;;\n'
+            '    tool) printf "uv:%s\\n" "$*" >> "$INSTALL_LOG"\n'
+            '          [[ $2 == list && -n $FAKE_RUFF ]] && echo "ruff v0.14.0" ;;\n'
+            'esac\n'
+            'exit 0\n')
+        (asset / "uvx").write_text("#!/usr/bin/env bash\n")
+        for name in ("uv", "uvx"):
+            (asset / name).chmod(0o755)
+        tarball = release / "uv-x86_64-unknown-linux-gnu.tar.gz"
+        subprocess.run(["tar", "-czf", str(tarball), "-C", str(release), asset.name], check=True)
+        if checksum is None:
+            checksum = hashlib.sha256(tarball.read_bytes()).hexdigest()
+        (release / (tarball.name + ".sha256")).write_text(f"{checksum}  {tarball.name}\n")
+        if installed:
+            bin_dir = self.root / ".local" / "bin"
+            bin_dir.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(asset / "uv", bin_dir / "uv")
+        commands = self.root / "commands"
+        commands.mkdir(exist_ok=True)
+        (commands / "curl").write_text(
+            '#!/usr/bin/env bash\n'
+            'printf "curl:%s\\n" "$*" >> "$INSTALL_LOG"\n'
+            'while (( $# )); do\n'
+            '    case $1 in\n'
+            '        -w) printf "https://github.com/astral-sh/uv/releases/tag/0.13.5"; exit 0 ;;\n'
+            '        -o) out=$2; shift ;;\n'
+            '    esac\n'
+            '    shift\n'
+            'done\n'
+            'cp "$FAKE_RELEASE/${out##*/}" "$out"\n')
+        (commands / "curl").chmod(0o755)
+        return subprocess.run([str(folder / "install.sh")], capture_output=True, text=True,
+                              check=False, env={**os.environ,
+                                  "HOME": str(self.root), "INSTALL_LOG": str(self.log),
+                                  "FAKE_RELEASE": str(release), "FAKE_RUFF": "",
+                                  "PATH": f"{commands}:{os.environ['PATH']}"})
+
+    def test_uv_is_installed_after_checksum_check_with_ruff(self):
+        result = self.run_uv_installer()
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        bin_dir = self.root / ".local" / "bin"
+        self.assertTrue(os.access(bin_dir / "uv", os.X_OK))
+        self.assertTrue(os.access(bin_dir / "uvx", os.X_OK))
+        log = self.log.read_text()
+        self.assertIn("releases/download/0.13.5/uv-x86_64-unknown-linux-gnu.tar.gz.sha256", log)
+        self.assertIn("uv:tool install ruff", log)
+
+    def test_current_uv_is_not_downloaded_again(self):
+        result = self.run_uv_installer(installed=True)
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("uv 0.13.5 is already installed", result.stdout)
+        self.assertNotIn("releases/download", self.log.read_text())
+
+    def test_uv_checksum_mismatch_is_not_installed(self):
+        result = self.run_uv_installer(checksum="0" * 64)
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Checksum mismatch", result.stderr)
+        self.assertFalse((self.root / ".local" / "bin" / "uv").exists())
+
 if __name__ == "__main__":
     unittest.main()

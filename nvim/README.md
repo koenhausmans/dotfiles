@@ -43,7 +43,7 @@ conform.nvim runs the appropriate formatter on save. Each formatter must be on t
 | --- | --- | --- |
 | C/C++ | clang-format | Install clangd or clang-format separately. Style is controlled by a `.clang-format` file in the project root. |
 | Rust | rustfmt | Included with rustup. Add the `rustfmt` component if missing. |
-| Python | ruff | Install with `pip install ruff` or your system package manager. Handles both formatting and import sorting. |
+| Python | ruff | Installed by `uv/install.sh` (`uv tool install ruff`). Handles both formatting and import sorting. |
 | Lua | stylua | Install a release binary from the stylua GitHub releases page. |
 | Typst | typstyle | Build with `cargo install typstyle` or install a release binary. Falls back to Tinymist's built-in formatter if not found. |
 
