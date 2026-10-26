@@ -1,0 +1,5 @@
+# Show line numbers and Git changes without a header or grid.
+--style=numbers,changes
+
+# Page long terminal output, but keep short output and pipes unpaged.
+--paging=auto

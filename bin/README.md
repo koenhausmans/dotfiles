@@ -4,6 +4,12 @@ Run these scripts from the repository with `./bin/<name>`, or add this directory
 
 ## System tools
 
+### `fzf-file-preview`
+
+Used by the shells' fzf Ctrl-T picker. Run `./bin/fzf-file-preview PATH` to preview
+the first 300 lines with `bat` or `batcat`, or plain text when neither is present.
+Directories show up to 100 lines of a listing. Special files are not read.
+
 ### `cpu_scaling_governer`
 
 Shows the current CPU scaling governor and a menu of governors to select. Run `./bin/cpu_scaling_governer` in a terminal. It needs `cpufreq-info`, `cpufreq-set`, and `sudo`. Your system must support the governor you select. The script uses `sudo cpufreq-set -r -g` to apply your choice.

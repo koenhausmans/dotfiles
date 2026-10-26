@@ -164,6 +164,9 @@ HISTFILESIZE=2000
 
 # fzf ignores --tmux outside tmux; its Vim plugin drops it when fzf opens in a Vim window.
 export FZF_DEFAULT_OPTS="--tmux bottom,40%"
+if [[ -z ${FZF_CTRL_T_OPTS+x} ]] && { command -v bat > /dev/null || command -v batcat > /dev/null; }; then
+    export FZF_CTRL_T_OPTS="--preview 'fzf-file-preview {}'"
+fi
 if [[ $- == *i* ]] && command -v fzf > /dev/null; then
     eval "$(fzf --bash)"
 fi
@@ -183,5 +186,5 @@ load_z
 
 # Customize to your needs...
 if [[ -f $HOME/.bashrc.local ]]; then
-    source $HOME/.bashrc.local
+    source "$HOME/.bashrc.local"
 fi

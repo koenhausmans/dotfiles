@@ -2,7 +2,7 @@ Dotfiles:
 =========
 
 - [x] Map fdfind on Ubuntu to fd. Or why is this not the case on Ubuntu?
-- [ ] Is it possible to integrate batcat better into this dotfiles?
+- [x] Integrate batcat with shared defaults and shell file previews.
 - [ ] The link_files overwrite O setting is not kept in other components. Can you fix?
 - [ ] Improve ctags / rust tags / python tags? Clangd?
 - [ ] Include information about the fonts to use and info on how to setup Windows Terminal configuration.

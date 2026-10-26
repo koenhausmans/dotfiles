@@ -43,6 +43,11 @@ if status is-interactive
     if type -q fzf
         # fzf ignores --tmux outside tmux; its Vim plugin drops it when fzf opens in a Vim window.
         set -gx FZF_DEFAULT_OPTS "--tmux bottom,40%"
+        if not set -q FZF_CTRL_T_OPTS
+            if type -q bat; or type -q batcat
+                set -gx FZF_CTRL_T_OPTS "--preview 'fzf-file-preview {}'"
+            end
+        end
         fzf --fish | source
     end
 end

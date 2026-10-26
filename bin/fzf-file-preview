@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (( $# != 1 )); then
+    printf 'Usage: fzf-file-preview PATH\n' >&2
+    exit 2
+fi
+
+if [[ -f $1 ]]; then
+    if command -v bat > /dev/null; then
+        viewer=bat
+    elif command -v batcat > /dev/null; then
+        viewer=batcat
+    else
+        exec sed -n '1,300p;300q' -- "$1"
+    fi
+    exec "$viewer" --color=always --style=numbers,changes --paging=never \
+        --line-range=:300 -- "$1"
+fi
+
+if [[ -d $1 ]]; then
+    ls -lah --color=always -- "$1" | sed -n '1,100p'
+    exit
+fi
+
+printf 'Cannot preview: %s\n' "$1"

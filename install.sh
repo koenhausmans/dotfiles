@@ -26,7 +26,7 @@ info 'Running installer scripts'
 
 install_all=false
 # Only these top-level components are allowed to supply install scripts.
-for component in bash zsh fish git tmux screen vim nvim fzf tools fnm uv themes; do
+for component in bash zsh fish git tmux screen vim nvim fzf tools bat fnm uv themes; do
     installer="$BASEDIR/$component/install.sh"
     [[ -f $installer ]] || continue
 

@@ -139,6 +139,7 @@ class InstallerTests(unittest.TestCase):
     def test_yes_to_all_runs_only_known_components_in_order(self):
         self.component("bash")
         self.component("fish")
+        self.component("bat")
         self.component("themes")
         self.component("bash", nested=True)
         self.component("unexpected")
@@ -149,6 +150,7 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(self.log.read_text().splitlines(), [
             "bash:<>",
             "fish:<>",
+            "bat:<>",
             "themes:<>",
         ])
         self.assertEqual(output.count("Do you want to install"), 1)
@@ -420,6 +422,23 @@ class InstallerTests(unittest.TestCase):
                               text=True, check=False, start_new_session=True,
                               env={**os.environ, "HOME": str(self.root),
                                    "PATH": path})
+
+    def test_bat_config_is_linked_in_default_and_xdg_locations(self):
+        shutil.copytree(REPO / "bat", self.root / "bat")
+        installer = self.root / "bat" / "install.sh"
+        for config_home in (self.root / ".config", self.root / "custom config"):
+            with self.subTest(config_home=config_home):
+                env = {key: value for key, value in os.environ.items()
+                       if key != "XDG_CONFIG_HOME"}
+                env["HOME"] = str(self.root)
+                if config_home.name != ".config":
+                    env["XDG_CONFIG_HOME"] = str(config_home)
+                for _ in range(2):
+                    result = subprocess.run([str(installer)], capture_output=True,
+                                            text=True, env=env, start_new_session=True)
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    self.assertEqual((config_home / "bat/config").resolve(),
+                                     self.root / "bat/config")
 
     def test_tools_links_ubuntu_names_once(self):
         path = self.tool_path("fdfind", "batcat")
