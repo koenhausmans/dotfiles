@@ -24,7 +24,7 @@ remaining components in this run; lowercase `s`/`o`/`b` applies to one file.
 | uv | uv in `~/.local/bin` (checksum verified) plus `ruff` |
 | themes | Claude Code and OpenCode themes |
 
-Prompts use Powerline glyphs; pick a terminal font that has them.
+Prompts use Powerline glyphs; use a Nerd Font such as Pragmasevka ([setup](themes/windows-terminal/README.md#font-and-appearance)).
 Windows Terminal ([README](themes/windows-terminal/README.md)), [Alacritty](themes/alacritty/) and [PuTTY](themes/putty/) themes are installed by hand.
 
 ## Local customizations

@@ -40,6 +40,35 @@
    }
    ```
 
+## Font and appearance
+
+Install [Pragmasevka Nerd Font](https://github.com/shytikov/pragmasevka/releases)
+on Windows: download the Nerd Font archive and install its `.ttf` files. Its
+Nerd Font glyphs cover the Powerline prompts.
+
+Add these settings under `"profiles"` → `"defaults"`, or set them in the
+Settings UI under **Defaults** (or a single profile) → **Appearance**:
+
+```jsonc
+"defaults": {
+    "font": {
+        "face": "Pragmasevka Nerd Font",
+        "weight": "thin",
+        "cellHeight": "1.3"
+    },
+    "padding": "2",
+    "scrollbarState": "hidden"
+}
+```
+
+| Settings UI | JSON key | Value |
+| --- | --- | --- |
+| Font face | `font.face` | `Pragmasevka Nerd Font` |
+| Font weight | `font.weight` | `Thin` |
+| Line height | `font.cellHeight` | `1.3` |
+| Padding | `padding` | `2` |
+| Scrollbar visibility | `scrollbarState` | `Hidden` |
+
 ## Available themes
 
 | File | Scheme name |
