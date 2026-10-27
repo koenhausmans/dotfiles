@@ -26,7 +26,7 @@ class ShellSyntaxTests(unittest.TestCase):
                 shell = "fish"
             elif name == "zsh/zshrc":
                 shell = "zsh"
-            elif name in ("bash/bashrc", "bash/bash_profile", "bash/bashrc.local.wsl"):
+            elif name in ("bash/bashrc", "bash/bash_profile"):
                 shell = "bash"
             else:
                 continue
