@@ -47,7 +47,6 @@ The fish template `fish/config.local.fish.template` lists the prompt options.
 - [bat](bat/README.md): display defaults and file previews
 - [Bash](bash/README.md) and [Zsh](zsh/README.md): shell setup and managed dependencies
 - [bin](bin/README.md): git helpers (`git trail`, `git start`, `git land`, ...) and other scripts
-- [fzf](fzf/README.md): package installation details
 - [fish](fish/README.md): prompt behavior and customization
 - [git](git/README.md): useful git commands
 - [nvim](nvim/README.md): Neovim configuration

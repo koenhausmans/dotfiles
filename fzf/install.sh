@@ -53,8 +53,4 @@ checksum=$(awk -v file="$deb" '$2 == file' "$tmp/$checksums")
 info "Installing fzf $version (requires sudo)..."
 sudo dpkg -i "$tmp/$deb" > /dev/null || fail "Could not install $deb"
 
-if [[ -d $HOME/.fzf ]]; then
-    info "The old fzf checkout in ~/.fzf is no longer used and can be removed"
-fi
-
 success "Finished installing fzf $version"
