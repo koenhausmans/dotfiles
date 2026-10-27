@@ -1,53 +1,35 @@
-Git - Usefull commands:
-=======================
+# Git configuration
 
-Local Changes:
---------------
+`git/install.sh` installs `git/gitconfig` as `~/.gitconfig`.
 
-| Command | Alternative | Description |
-| --- | --- | --- |
-| `git status --short --branch` | `git status -sb` | Short summary of local changes |
-| `git log --stat` | | Shows file statistics with log messages |
-| `git log --pretty=oneline` | | Shows the log messages in one line |
-| `git log --abbrev-commit` | | Shows only a partial SHA1 hash for the commits |
-| `git log --graph` | | Shows a graph of the different branches |
-| `git diff` | | Shows the difference for all files |
-| `git diff --cached` | | Shows all staged differences |
-| `git commit -i` | | Do an interactive commit |
+## Aliases
 
-Branches:
----------
-
-| Command | Description |
+| Alias | Command |
 | --- | --- |
-| `git checkout -b <local-branch> <remote>/<branch>` | Checkout `<local-branch>` that tracks upstream branch `<remote>/<branch>` |
-| `git checkout --track <remote>/<branch>` | Checkout `<branch>` that tracks upstream branch `<remote>/<branch>` |
-| `git checkout -t <remote>/<branch>` | Checkout `<branch>` that tracks upstream branch `<remote>/<branch>` |
-| `git checkout <branch>` | Checks out `<branch>` and tracks upstream branch i.f.f. there exists a branch named `<branch>` on one remote |
-| `git branch -vv` | Show all branches including the upstream branches |
-| `git branch -r` | Show all remote branches |
+| `git lg` | Graph log with abbreviated commit, refs, subject, age, and author. |
+| `git changes` | Short status with branch information. |
+| `git ctags` | Regenerate tags using the repository's `ctags` hook. |
+| `git dt` | List files changed by a commit. |
+| `git pl` | Pull with rebase. |
+| `git ps` | Push. |
 
+## Defaults
 
-Remote commands:
-----------------
+- Ignores patterns from `git/gitignore_global`.
+- Caches credentials for one hour.
+- Uses Vimdiff for diffs and merges, with `diff3` conflict markers.
+- Enables Git's command autocorrection and simple push behavior.
+- Uses the repository's Git template directory to install hooks when a
+  repository is initialized.
 
-| Command | Description |
-| --- | --- |
-| `git pull --rebase` | Pull upstream branch and rebase to the new version |
-| `git push` | Push the local changes to the upstream branch |
-| `git push -u <remote> <branch>` | Push a local branch to a remote and set up tracking information |
-| `git fetch` | Receive all changes from a remote location |
-| `git rebase <branch>` | Rebases <branch> into the current branch |
-| `git branch -dr <remote/branch>` | Deletes a branch on the remote |
-| `git push <remote> --delete <branch>` | Deletes the remote branch `<remote>/<branch>` | 
+## Ctags
 
+The template's `post-commit`, `post-merge`, `post-checkout`, and `post-rewrite`
+hooks regenerate tags in the background with Universal Ctags. Tags are written
+to `.git/tags`, or `.tags` in a linked worktree. Run `git ctags` to regenerate
+them manually. Existing repositories need `git init` once to receive the
+template hooks. Vim and Neovim search these tag files automatically.
 
-Tags:
------
+## Local settings
 
-The git template hooks (`post-commit`, `post-merge`, `post-checkout`, `post-rewrite`) regenerate tags in the background with Universal Ctags.
-
-- Tags go to `.git/tags`; in a worktree they go to `.tags` in the worktree root.
-- Run `git ctags` to regenerate them manually.
-- Existing repositories need `git init` once to receive the hooks.
-- Vim and Neovim find the file with `set tags^=./.git/tags;,./.tags;`.
+`~/.gitconfig.local` is included for machine-specific settings.

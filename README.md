@@ -48,7 +48,7 @@ The fish template `fish/config.local.fish.template` lists the prompt options.
 - [Bash](bash/README.md) and [Zsh](zsh/README.md): shell setup and managed dependencies
 - [bin](bin/README.md): git helpers (`git trail`, `git start`, `git land`, ...) and other scripts
 - [fish](fish/README.md): prompt behavior and customization
-- [git](git/README.md): useful git commands
+- [git](git/README.md): Git-specific configuration
 - [nvim](nvim/README.md): Neovim configuration
 - [tmux](tmux/README.md): keyboard shortcuts
 - [vim](vim/README.md): keyboard shortcuts
