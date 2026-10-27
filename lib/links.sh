@@ -22,10 +22,13 @@ link_files() {
         return 2
     fi
 
-    local src dst display_src display_dst action backup
+    local src dst display_src display_dst action backup link_target
     local all_action=${_dotfiles_link_all_action:-} choice_file=${DOTFILES_LINK_CHOICE_FILE:-}
     if [[ -n $choice_file ]]; then
-        all_action=$(< "$choice_file")
+        all_action=$(< "$choice_file") || {
+            printf 'Cannot read shared link choice: %s\n' "$choice_file" >&2
+            return 1
+        }
         case $all_action in
             ''|s|o|b) ;;
             *) printf 'Invalid shared link choice\n' >&2; return 1 ;;
@@ -38,9 +41,15 @@ link_files() {
         display_src=$(_link_display_path "$src")
         display_dst=$(_link_display_path "$dst")
 
-        if [[ -L $dst && $(readlink -- "$dst") == "$src" ]]; then
-            info 'Already linked: %s' "$display_dst"
-            continue
+        if [[ -L $dst ]]; then
+            link_target=$(readlink -- "$dst") || {
+                printf 'Cannot inspect existing link: %s\n' "$display_dst" >&2
+                return 1
+            }
+            if [[ $link_target == "$src" ]]; then
+                info 'Already linked: %s' "$display_dst"
+                continue
+            fi
         fi
 
         if [[ -e $dst || -L $dst ]]; then
@@ -68,7 +77,10 @@ link_files() {
                         all_action=${action,,}
                         _dotfiles_link_all_action=$all_action
                         if [[ -n $choice_file ]]; then
-                            printf '%s\n' "$all_action" > "$choice_file" || return 1
+                            printf '%s\n' "$all_action" > "$choice_file" || {
+                                printf 'Cannot save shared link choice: %s\n' "$choice_file" >&2
+                                return 1
+                            }
                         fi
                         ;;
                 esac
@@ -85,7 +97,10 @@ link_files() {
                         printf 'Backup already exists: %s\n' "$(_link_display_path "$backup")" >&2
                         return 1
                     fi
-                    mv -- "$dst" "$backup"
+                    mv -- "$dst" "$backup" || {
+                        printf 'Cannot back up %s to %s\n' "$display_dst" "$(_link_display_path "$backup")" >&2
+                        return 1
+                    }
                     success 'Backed up: %s' "$(_link_display_path "$backup")"
                     ;;
                 [oO])
@@ -93,12 +108,18 @@ link_files() {
                         printf 'Cannot overwrite directory: %s (use backup or skip)\n' "$display_dst" >&2
                         return 1
                     fi
-                    rm -- "$dst"
+                    rm -- "$dst" || {
+                        printf 'Cannot remove %s\n' "$display_dst" >&2
+                        return 1
+                    }
                     ;;
             esac
         fi
 
-        ln -s -- "$src" "$dst"
+        ln -s -- "$src" "$dst" || {
+            printf 'Cannot link %s to %s\n' "$display_dst" "$display_src" >&2
+            return 1
+        }
         success 'Linked: %s -> %s' "$display_dst" "$display_src"
     done
 }
@@ -108,7 +129,10 @@ link_tool() {
     local name=$1 ubuntu_name=$2 target
     if [[ -L $HOME/.local/bin/$name ]] || ! command -v "$name" > /dev/null; then
         if target=$(command -v "$ubuntu_name"); then
-            mkdir -p "$HOME/.local/bin"
+            mkdir -p "$HOME/.local/bin" || {
+                printf 'Cannot create %s\n' "$(_link_display_path "$HOME/.local/bin")" >&2
+                return 1
+            }
             link_files "$target" "$HOME/.local/bin/$name"
         else
             info 'Skipping %s: neither %s nor %s is installed' "$name" "$name" "$ubuntu_name"

@@ -31,8 +31,8 @@ latest_url=$(curl -fsSLI -o /dev/null -w '%{url_effective}' "$FZF_REPO/releases/
 version=${latest_url##*/v}
 [[ $version =~ ^[0-9]+(\.[0-9]+)+$ ]] || fail "Could not read the fzf version from $latest_url"
 
-installed=$(dpkg-query -W -f='${Version}' fzf 2> /dev/null || true)
-if [[ $installed == "$version" ]]; then
+installed=$(dpkg-query -W -f='${Status}\t${Version}' fzf 2> /dev/null || true)
+if [[ $installed == "install ok installed"$'\t'"$version" ]]; then
     success "fzf $version is already installed"
     exit 0
 fi
