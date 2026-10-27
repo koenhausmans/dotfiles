@@ -256,8 +256,22 @@ if &history < 1000
     set history=1000
 endif
 
-" Command line mapping to write with root permissions
-cmap w!! w !sudo tee > /dev/null %
+" Write the current file with root permissions
+function! s:SudoWrite() abort
+    if empty(bufname('%')) || &buftype !=# ''
+        throw 'SudoWrite requires a named file buffer'
+    endif
+
+    execute 'write !sudo tee -- ' . shellescape(expand('%:p'), 1) . ' >/dev/null'
+    if v:shell_error != 0
+        throw 'SudoWrite failed; buffer has not been marked saved'
+    endif
+
+    setlocal nomodified
+endfunction
+
+command! SudoWrite call <SID>SudoWrite()
+cnoreabbrev <expr> w!! getcmdtype() ==# ':' && getcmdline() ==# 'w!!' ? 'SudoWrite' : 'w!!'
 
 " Command line expansion for the current working directory
 cabbr <expr> %% expand('%:p:h')

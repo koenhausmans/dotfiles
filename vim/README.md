@@ -10,11 +10,13 @@ Vim Script - Keyboard shortcuts:
 File open/close:
 ----------------
 `<leader>w`: Saves a file<br/>
-`<leader>W`: Saves a file with sudo rights<br/>
 `<leader>wq`: Saves a file and closes it<br/>
-`<leader>Wq`: Saves a file with sudo rights and closes it<br/>
 `<leader>q`: Close the file<br/>
 `<leader>Q`: Close the file without warning<br/>
+
+Use `:SudoWrite` (or `:w!!`) to save the whole current file with root permissions.
+It requires a named file buffer and marks it saved only after a successful write.
+It overwrites the file directly, without a backup or atomic replacement.
 
 Buffer shortcuts:
 -----------------

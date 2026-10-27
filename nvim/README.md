@@ -196,7 +196,11 @@ Auto-pairs inserts matching brackets and quotes automatically. Terminal support 
 
 ## Commands and themes
 
-Use `:StripTrailingWhitespaces` to remove trailing whitespace. In command-line mode, `:bd` expands to `:Bdelete`, `%%` inserts the current file's directory, and `w!!` writes through `sudo`.
+Use `:StripTrailingWhitespaces` to remove trailing whitespace. In command-line mode, `:bd` expands to `:Bdelete` and `%%` inserts the current file's directory.
+
+Use `:SudoWrite` (or `:w!!`) to save the whole current file with root permissions.
+It requires a named file buffer and marks it saved only after a successful write.
+It overwrites the file directly, without a backup or atomic replacement.
 
 Use `:Markview` to toggle inline rendering on or off. `:Markview enable` and `:Markview disable` control it explicitly. Rendering is on by default for Markdown and Typst buffers.
 

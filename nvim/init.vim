@@ -427,7 +427,22 @@ if exists("&wildignorecase")
     set wildignorecase
 endif
 
-cmap w!! w !sudo tee > /dev/null %
+function! s:SudoWrite() abort
+    if empty(bufname('%')) || &buftype !=# ''
+        throw 'SudoWrite requires a named file buffer'
+    endif
+
+    execute 'write !sudo tee -- ' . shellescape(expand('%:p'), 1) . ' >/dev/null'
+    if v:shell_error != 0
+        throw 'SudoWrite failed; buffer has not been marked saved'
+    endif
+
+    setlocal nomodified
+endfunction
+
+command! SudoWrite call <SID>SudoWrite()
+cnoreabbrev <expr> w!! getcmdtype() ==# ':' && getcmdline() ==# 'w!!' ? 'SudoWrite' : 'w!!'
+
 cabbr <expr> %% expand('%:p:h')
 
 """ END COMMAND LINE BEHAVIOR }}}
