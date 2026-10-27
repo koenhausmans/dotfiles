@@ -8,7 +8,7 @@ _git_prompt() {
 
     local status line branch='' oid='' xy staged=0 unstaged=0 untracked=0 stash=0 ahead=0
     local plus minus
-    status=$(command git status --porcelain=v2 --branch --show-stash 2>/dev/null) || return 0
+    status=$(command git --no-optional-locks status --porcelain=v2 --branch --show-stash 2>/dev/null) || return 0
 
     while IFS= read -r line; do
         case $line in

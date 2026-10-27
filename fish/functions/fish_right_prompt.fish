@@ -1,6 +1,6 @@
 function fish_right_prompt --description 'Themed Git branch and status'
     # One status read supplies branch, dirty state, stash, and divergence.
-    set -l git_lines (command git status --porcelain=v2 --branch --show-stash 2>/dev/null)
+    set -l git_lines (command git --no-optional-locks status --porcelain=v2 --branch --show-stash 2>/dev/null)
     if test $status -ne 0
         return
     end
@@ -59,13 +59,25 @@ function fish_right_prompt --description 'Themed Git branch and status'
     end
 
     if test $dirty -eq 1
-        printf ' ±'
+        if __dotfiles_prompt_ascii
+            printf ' *'
+        else
+            printf ' ±'
+        end
     end
     if test $ahead -gt 0
-        printf ' ↑%s' $ahead
+        if __dotfiles_prompt_ascii
+            printf ' +%s' $ahead
+        else
+            printf ' ↑%s' $ahead
+        end
     end
     if test $behind -gt 0
-        printf ' ↓%s' $behind
+        if __dotfiles_prompt_ascii
+            printf ' -%s' $behind
+        else
+            printf ' ↓%s' $behind
+        end
     end
     if test $stash -gt 0
         printf ' S'

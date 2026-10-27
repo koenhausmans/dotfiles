@@ -142,8 +142,33 @@ function _prompt_command {
     else
         PS1+="${_blue}\$${_rst} "
     fi
+    return "$_exit_status"
 }
-PROMPT_COMMAND=_prompt_command
+
+_dotfiles_register_prompt_command() {
+    local declaration
+    local -a existing_hooks
+    declaration=$(declare -p PROMPT_COMMAND 2>/dev/null) || declaration=''
+    # z.sh appends to PROMPT_COMMAND as a string, so preserve array hooks as
+    # separate commands in a scalar before sourcing it.
+    if [[ $declaration == 'declare -a'* ]]; then
+        existing_hooks=("${PROMPT_COMMAND[@]}")
+        unset PROMPT_COMMAND
+        if ((${#existing_hooks[@]})); then
+            printf -v PROMPT_COMMAND '%s\n' "${existing_hooks[@]}"
+        fi
+    fi
+
+    case $'\n'$PROMPT_COMMAND$'\n' in
+        *$'\n'_prompt_command$'\n'*) return 0 ;;
+    esac
+    if [[ -n $PROMPT_COMMAND ]]; then
+        PROMPT_COMMAND="_prompt_command"$'\n'"$PROMPT_COMMAND"
+    else
+        PROMPT_COMMAND=_prompt_command
+    fi
+}
+_dotfiles_register_prompt_command
 
 ### ---------------------------------------------------------------------------
 ### History
@@ -176,7 +201,7 @@ fi
 ### ---------------------------------------------------------------------------
 load_z() {
     local Z_HOME="$HOME/.local/share/z/"
-    [[ -f "$Z_HOME/z.sh" ]] && . $Z_HOME/z.sh
+    [[ -f "$Z_HOME/z.sh" ]] && . "$Z_HOME/z.sh"
 }
 load_z
 

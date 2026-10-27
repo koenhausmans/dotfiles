@@ -79,13 +79,15 @@ precmd() {
     local git_lines line oid plus minus
     local sep=$'\ue0b0' lsep=$'\ue0b6' br=$'\ue0a0'
 
-    (( prompt_ascii )) || [[ $TERM == linux || $TTY == /dev/tty[0-9]* ]] && ascii=1
+    if (( prompt_ascii )) || [[ $TERM == linux || $TERM == dumb || $TTY == /dev/tty[0-9]* ]]; then
+        ascii=1
+    fi
 
     if [[ -n $SSH_CONNECTION ]] || [[ $USER != ${DEFAULT_USER:-$USER} ]]; then
         host='%n@%m '
     fi
 
-    if git_lines=$(command git status --porcelain=v2 --branch --show-stash 2>/dev/null); then
+    if git_lines=$(command git --no-optional-locks status --porcelain=v2 --branch --show-stash 2>/dev/null); then
         for line in ${(f)git_lines}; do
             case $line in
                 '# branch.head '*) branch=${line#'# branch.head '} ;;
@@ -103,7 +105,11 @@ precmd() {
         done
     fi
     if [[ $branch == '(detached)' ]]; then
-        branch="➦ ${oid[1,7]}"
+        if (( ascii )); then
+            branch="detached ${oid[1,7]}"
+        else
+            branch="➦ ${oid[1,7]}"
+        fi
         is_detached=1
     fi
 
@@ -114,9 +120,9 @@ precmd() {
         PROMPT="${host}%~"
         if [[ -n $branch ]]; then
             RPROMPT="[git:${branch}"
-            (( ahead > 0 )) && RPROMPT+=" ↑${ahead}"
-            (( behind > 0 )) && RPROMPT+=" ↓${behind}"
-            [[ -n $git_dirty ]] && RPROMPT+=' ±'
+            [[ -n $git_dirty ]] && RPROMPT+=' *'
+            (( ahead > 0 )) && RPROMPT+=" +${ahead}"
+            (( behind > 0 )) && RPROMPT+=" -${behind}"
             RPROMPT+="${stash}]"
         fi
         (( exit_code == 0 )) && PROMPT+=' [ok] ' || PROMPT+=" [exit:${exit_code}] "
@@ -376,7 +382,7 @@ fi
 ##
 ## Allow for machine-specific local changes
 ##
-[[ -f $HOME/.zshrc.local ]] && source $HOME/.zshrc.local
+[[ -f $HOME/.zshrc.local ]] && source "$HOME/.zshrc.local"
 
 # Keep highlighting last so it can wrap all widgets installed above.
 [[ -r "$ZSH_PLUGIN_FOLDER/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && source "$ZSH_PLUGIN_FOLDER/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
