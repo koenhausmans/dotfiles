@@ -15,3 +15,8 @@ needed and link it from the root's **More** section. Move detailed root sections
 to their component README, retaining a short link. Keep each explanation in one
 place; use relative links for references. Before finishing, check that links
 resolve and the root remains a quick-start page rather than a feature manual.
+
+# Validation
+
+Existing shell-syntax and installer smoke tests: `python3 -m unittest discover tests`.
+Keep these tests; do not add test suites or CI automation.
