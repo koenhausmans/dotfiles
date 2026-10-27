@@ -37,7 +37,7 @@ For example, `./bin/sorted_disk_usage --size=g ~/Downloads` shows sizes in GiB. 
 
 ## Git tools
 
-Run these scripts inside a Git repository. Scripts that work against a target branch use the first local branch of `develop`, `main` and `master`. Run `git config dotfiles.target <branch>` in a repository to choose another target. The rename scripts change both local refs and refs on `origin`. Check the names and remote before you run them.
+Run these scripts inside a Git repository. Scripts that work against a target branch use the first local branch of `develop`, `main` and `master`. Run `git config dotfiles.target <branch>` in a repository to choose another target.
 
 ### `git-fixup`
 
@@ -54,14 +54,6 @@ Run `git recent [-n count]` to list local branches by last commit date, newest f
 ### `git-remove-old-local-branches`
 
 Run `./bin/git-remove-old-local-branches` to fetch with `--prune` and delete local branches whose upstream is marked `[gone]`. The script skips the current branch. Git's normal `-d` check prevents deletion of unmerged branches. Use `-f` or `--force` to delete those branches with `git branch -D` instead. The script does not delete branches on the remote.
-
-### `git-rename-branch`
-
-Run `./bin/git-rename-branch <old-branch> <new-branch>` to switch to a local branch, push it to `origin` under the new name, rename it locally, and delete the old name on `origin`. The old local branch must exist, and the new local branch must not exist. You need permission to push and delete branches on `origin`.
-
-### `git-rename-tag`
-
-Run `./bin/git-rename-tag <old-tag> <new-tag>` to create a new tag from an existing local tag, push the new tag to `origin`, and delete the old tag locally and on `origin`. The old local tag must exist, and the new local tag must not exist. The new tag is lightweight, even if the old tag was annotated. You need permission to push and delete tags on `origin`.
 
 ### `git-start`
 
