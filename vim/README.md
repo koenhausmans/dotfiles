@@ -3,6 +3,11 @@
 updates the apprentice colorscheme. The existing colorscheme stays active if
 the download fails.
 
+On first start, the full configuration attempts to download vim-plug. Then run
+`:PlugInstall`, wait for it to finish, and restart Vim. If vim-plug cannot be
+downloaded or plugins are missing, Vim reports the failed path or plugin names
+and keeps the minimal bindings active; retry the displayed recovery steps.
+
 Vim Script - Keyboard shortcuts:
 ================================
 

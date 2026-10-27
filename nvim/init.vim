@@ -3,6 +3,9 @@
 let mapleader = ','
 nnoremap <leader>, ,
 let s:has_fzf = executable('fzf')
+let g:tmux_navigator_disable_when_zoomed = 1
+let s:plugins_ready = 0
+let s:missing_plugins = []
 
 if executable('fd')
     let $FZF_DEFAULT_COMMAND = 'fd --type f'
@@ -14,11 +17,25 @@ endif
 
 let s:nvim_config_dir = stdpath('config')
 let s:plug_path = s:nvim_config_dir . '/autoload/plug.vim'
-if empty(glob(s:plug_path))
-    execute 'silent !curl -fLo ' . shellescape(s:plug_path) . ' --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-    autocmd VimEnter * PlugInstall
+let s:plug_url = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+if !filereadable(s:plug_path)
+    let s:plug_dir = fnamemodify(s:plug_path, ':h')
+    let s:plug_tmp = s:plug_path . '.tmp-' . getpid()
+    if executable('curl') && (isdirectory(s:plug_dir) || mkdir(s:plug_dir, 'p'))
+        call delete(s:plug_tmp)
+        call system('curl -fL --silent --show-error -o ' . shellescape(s:plug_tmp) . ' ' . shellescape(s:plug_url))
+        if v:shell_error == 0 && filereadable(s:plug_tmp) && getfsize(s:plug_tmp) > 0 && rename(s:plug_tmp, s:plug_path) == 0
+            echom '[dotfiles] vim-plug installed. Run :PlugInstall, wait for it to finish, then restart Neovim.'
+        else
+            call delete(s:plug_tmp)
+            echom '[dotfiles] Could not install vim-plug at ' . s:plug_path . '. Retry when online, or run: curl -fLo ' . shellescape(s:plug_path) . ' --create-dirs ' . s:plug_url . ' ; then restart Neovim.'
+        endif
+    else
+        echom '[dotfiles] vim-plug is missing and curl or its destination is unavailable. Install it at ' . s:plug_path . ' and restart Neovim.'
+    endif
 endif
 
+if filereadable(s:plug_path) && executable('git')
 call plug#begin()
 
 " Colorschemes: Additional colorschemes that can be used
@@ -78,14 +95,32 @@ Plug 'folke/which-key.nvim'
 
 call plug#end()
 
+for [s:plugin_name, s:plugin] in items(g:plugs)
+    if !isdirectory(s:plugin.dir)
+        call add(s:missing_plugins, s:plugin_name)
+    endif
+endfor
+
+let s:plugins_ready = empty(s:missing_plugins)
+if !s:plugins_ready
+    echom '[dotfiles] Missing Neovim plugins: ' . join(s:missing_plugins, ', ') . '. Run :PlugInstall, wait for completion, then restart Neovim.'
+endif
+elseif filereadable(s:plug_path)
+    echom '[dotfiles] Git is required by vim-plug. Install Git, then restart Neovim.'
+endif
+
 """ END PLUGIN MANAGER }}}
 """ PLUGIN INTEGRATION {{{
+if s:plugins_ready
 
 lua require('diffview').setup({ use_icons = true })
 lua require('treesitter-context').setup()
 lua require('ibl').setup()
 lua require('nvim-surround').setup()
 lua require('Comment').setup()
+lua require('flash').setup()
+lua vim.keymap.set({'n', 'x', 'o'}, 's', function() require('flash').jump() end, { desc = 'Flash jump' })
+lua vim.keymap.set({'n', 'o'}, 'S', function() require('flash').treesitter() end, { desc = 'Flash Treesitter select' })
 lua require('markview').setup()
 lua require('illuminate').configure()
 
@@ -139,6 +174,8 @@ require('which-key').add({
   { ']q',  desc = 'Quickfix' },
   { ']l',  desc = 'Loclist' },
   { ']f',  desc = 'File in dir' },
+  { ']m',  desc = 'Next function start' },
+  { ']M',  desc = 'Next function end' },
   { ']e',  desc = 'Move line down' },
 
   { '[',   group = 'Prev' },
@@ -149,6 +186,8 @@ require('which-key').add({
   { '[q',  desc = 'Quickfix' },
   { '[l',  desc = 'Loclist' },
   { '[f',  desc = 'File in dir' },
+  { '[m',  desc = 'Previous function start' },
+  { '[M',  desc = 'Previous function end' },
   { '[e',  desc = 'Move line up' },
 })
 END
@@ -156,7 +195,7 @@ END
 lua << END
 require('nvim-treesitter.configs').setup({
   ensure_installed = {
-    'bash', 'c', 'cpp', 'lua', 'python', 'rust', 'toml', 'typst', 'vim', 'vimdoc',
+    'bash', 'c', 'cpp', 'lua', 'markdown', 'markdown_inline', 'python', 'rust', 'toml', 'typst', 'vim', 'vimdoc',
   },
   highlight = { enable = true },
   indent    = { enable = true },
@@ -176,10 +215,10 @@ require('nvim-treesitter.configs').setup({
     move = {
       enable              = true,
       set_jumps           = true,
-      goto_next_start     = { [']f'] = '@function.outer' },
-      goto_next_end       = { [']F'] = '@function.outer' },
-      goto_previous_start = { ['[f'] = '@function.outer' },
-      goto_previous_end   = { ['[F'] = '@function.outer' },
+      goto_next_start     = { [']m'] = '@function.outer' },
+      goto_next_end       = { [']M'] = '@function.outer' },
+      goto_previous_start = { ['[m'] = '@function.outer' },
+      goto_previous_end   = { ['[M'] = '@function.outer' },
     },
   },
 })
@@ -259,11 +298,11 @@ require("oil").setup({
 vim.keymap.set("n", "-", "<cmd>Oil<cr>", { desc = "Open parent directory" })
 END
 
-let g:tmux_navigator_disable_when_zoomed = 1
-
 let g:AutoPairsMultilineClose = 0
 
 cabbrev bd Bdelete
+
+endif
 
 """ END PLUGIN INTEGRATION }}}
 """ MISC EDITOR BEHAVIOR {{{
@@ -294,11 +333,14 @@ set path+=/usr/include
 " Update the ctags path
 set tags^=./.git/tags;,./.tags;
 
-function! StripTrailingWhitespaces()
-    exe "normal mz"
-    %s/\s\+$//ge
-    exe "normal `z"
-endfunc
+function! StripTrailingWhitespaces() abort
+    let l:view = winsaveview()
+    try
+        keeppatterns keepmarks keepjumps %s/\s\+$//ge
+    finally
+        call winrestview(l:view)
+    endtry
+endfunction
 
 command! StripTrailingWhitespaces call StripTrailingWhitespaces()
 
@@ -370,12 +412,42 @@ nnoremap <silent> $ g$
 nnoremap <silent> 0 g^
 nnoremap ' `
 
-if empty(glob(stdpath('data') . '/plugged/vim-tmux-navigator/'))
-    nnoremap <c-j> <c-w>j
-    nnoremap <c-k> <c-w>k
-    nnoremap <c-h> <c-w>h
-    nnoremap <c-l> <c-w>l
-endif
+lua << END
+local navigator = {
+  ['<C-h>'] = { 'TmuxNavigateLeft', 'h' },
+  ['<C-j>'] = { 'TmuxNavigateDown', 'j' },
+  ['<C-k>'] = { 'TmuxNavigateUp', 'k' },
+  ['<C-l>'] = { 'TmuxNavigateRight', 'l' },
+}
+local function navigate(command, direction)
+  if vim.fn.exists(':' .. command) == 2 then
+    vim.cmd(command)
+  else
+    vim.cmd.wincmd(direction)
+  end
+end
+vim.api.nvim_create_autocmd('VimEnter', {
+  group = vim.api.nvim_create_augroup('DotfilesNavigator', { clear = true }),
+  callback = function()
+    if vim.fn.exists(':TmuxNavigateLeft') == 2 then
+      return
+    end
+    for key, target in pairs(navigator) do
+      local command, direction = target[1], target[2]
+      vim.keymap.set('n', key, function() navigate(command, direction) end, { silent = true })
+    end
+    for key, target in pairs(navigator) do
+      local direction = target[2]
+      vim.keymap.set('t', key, function()
+        if vim.bo.filetype == 'fzf' then
+          return key
+        end
+        return '<C-\\><C-n><C-w>' .. direction
+      end, { expr = true, silent = true })
+    end
+  end,
+})
+END
 
 """ END NORMAL MODE BEHAVIOR }}}
 """ VISUAL MODE BEHAVIOR {{{
@@ -448,7 +520,7 @@ cabbr <expr> %% expand('%:p:h')
 """ END COMMAND LINE BEHAVIOR }}}
 """ LEADER KEY BEHAVIOR {{{
 
-if s:has_fzf
+if s:plugins_ready && s:has_fzf
     nnoremap <silent> <leader>b :Buffers<cr>
     nnoremap <silent> <leader>f :Files<cr>
     nnoremap <silent> <leader>t :Tags<cr>
@@ -469,14 +541,16 @@ nnoremap          <leader>y "+y
 xnoremap          <leader>y "+y
 nnoremap          <leader>p "+p
 
-nnoremap <silent> <leader>gs :Git<cr>
-nnoremap <silent> <leader>gd :DiffviewOpen<cr>
-nnoremap <silent> <leader>gc :DiffviewClose<cr>
-nnoremap <silent> <leader>gh :DiffviewFileHistory %<cr>
-nnoremap <silent> <leader>gb :Git blame<cr>
-nnoremap <silent> <leader>gl :Git log<cr>
+if s:plugins_ready
+    nnoremap <silent> <leader>gs :Git<cr>
+    nnoremap <silent> <leader>gd :DiffviewOpen<cr>
+    nnoremap <silent> <leader>gc :DiffviewClose<cr>
+    nnoremap <silent> <leader>gh :DiffviewFileHistory %<cr>
+    nnoremap <silent> <leader>gb :Git blame<cr>
+    nnoremap <silent> <leader>gl :Git log<cr>
+endif
 
-if s:has_fzf && executable('rg')
+if s:plugins_ready && s:has_fzf && executable('rg')
     nnoremap          <leader>/ :Rg<space>
     nnoremap <silent> <leader>sw :call fzf#vim#grep('rg --column --line-number --no-heading --color=always --smart-case --word-regexp -- ' . fzf#shellescape(expand('<cword>')), fzf#vim#with_preview(), 0)<cr>
 else
@@ -539,6 +613,7 @@ set shortmess+=c
 """ END CODE COMPLETION BEHAVIOR }}}
 """ FORMATTER {{{
 
+if s:plugins_ready
 lua << END
 require("conform").setup({
   formatters_by_ft = {
@@ -549,11 +624,12 @@ require("conform").setup({
     lua        = { "stylua" },
     typst      = { "typstyle" },
   },
-  format_on_save = {
-    timeout_ms = 500,
-    lsp_fallback = true,
-  },
+  default_format_opts = { lsp_format = 'fallback' },
+  format_on_save = { timeout_ms = 500, lsp_format = 'fallback' },
 })
+vim.keymap.set('n', '<leader>lf', function()
+  require('conform').format({ async = true, lsp_format = 'fallback' })
+end, { silent = true, desc = 'Format buffer' })
 END
 
 """ END FORMATTER }}}
@@ -567,7 +643,12 @@ require('blink.cmp').setup({
     ['<C-p>']  = { 'select_prev', 'fallback' },
     ['<C-n>']  = { 'select_next', 'fallback' },
     -- Blink's fallback cannot replay auto-pairs' script-local <CR> mapping.
-    ['<CR>']   = { 'accept', function() return vim.keycode('<CR><C-R>=AutoPairsReturn()<CR>') end },
+      ['<CR>']   = { 'accept', function()
+        if vim.fn.exists('*AutoPairsReturn') == 1 then
+          return vim.keycode('<CR><C-R>=AutoPairsReturn()<CR>')
+        end
+        return vim.keycode('<CR>')
+      end },
     ['<Tab>']  = { 'accept', 'fallback' },
     ['<C-e>']  = { 'hide' },
   },
@@ -608,8 +689,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
     vim.keymap.set('n', '<leader>la', vim.lsp.buf.code_action, opts)
     vim.keymap.set('n', '<leader>ld', vim.diagnostic.open_float, opts)
     vim.keymap.set('n', '<leader>lq', vim.diagnostic.setloclist, opts)
-    vim.keymap.set('n', '<leader>lf', function() vim.lsp.buf.format({ async = true }) end, opts)
-
     require('lsp_signature').on_attach({
       doc_lines = 0,
       handler_opts = { border = 'none' },
@@ -622,5 +701,6 @@ vim.lsp.enable('rust_analyzer')
 vim.lsp.enable('clangd')
 vim.lsp.enable('tinymist')
 END
+endif
 
 """ }}}

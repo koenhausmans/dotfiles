@@ -1,6 +1,13 @@
 # Neovim configuration
 
-This configuration uses Neovim 0.11 or newer and Vim-plug for plugins. Run Neovim and its external tools inside WSL. The leader key is `,`.
+This configuration requires Neovim 0.11.3 or newer and Vim-plug for plugins.
+Run Neovim and its external tools inside WSL. The leader key is `,`.
+
+On first start, the configuration attempts to download vim-plug. If the
+download succeeds, run `:PlugInstall`, wait for it to finish, and restart
+Neovim. If vim-plug or plugins are missing, Neovim reports the path or plugin
+names and keeps its built-in settings and mappings available. Retry the
+displayed recovery steps, then restart.
 
 ## What it configures
 
@@ -44,7 +51,10 @@ Open a matching file and use `:LspInfo` to check that its server attached. `:che
 
 ## Formatters
 
-conform.nvim runs the appropriate formatter on save. Each formatter must be on the Linux `PATH`.
+conform.nvim selects the configured formatter list for both `,lf` and
+format-on-save. It uses LSP formatting only when no configured formatter is
+available, so `,lf` also works without an attached LSP. Each external formatter
+must be on the Linux `PATH`.
 
 | Language | Formatter | Installation note |
 | --- | --- | --- |
@@ -58,7 +68,7 @@ Use `,lf` to trigger formatting manually. Format-on-save can be bypassed with `:
 
 ## Bindings configured in `init.vim`
 
-These bindings use normal mode unless marked otherwise. LSP bindings work only in buffers with an attached server.
+These bindings use normal mode unless marked otherwise. LSP navigation and action bindings work only in buffers with an attached server; `,lf` uses Conform independently.
 
 Press `,` and pause to see the which-key popup with labelled completions for all leader bindings.
 
@@ -99,8 +109,10 @@ On Ubuntu, install `fd-find` to provide `fdfind`; on systems with `fd`, that com
 
 | Keys | Action |
 | --- | --- |
-| `s` | Jump to any visible position: type two characters, then the label shown. |
-| `S` | Treesitter-select mode: jump to a syntax node by label. |
+| `s` | Flash jump: type a search string, then the label shown. Works in normal, visual, and operator-pending mode. |
+| `S` | Flash Treesitter selection. Works in normal and operator-pending mode; visual `S` remains nvim-surround. |
+| `[m` / `]m` | Go to the previous / next Treesitter function start. |
+| `[M` / `]M` | Go to the previous / next Treesitter function end. |
 | `j` / `k` | Move by display line without a count, or by file line with a count. |
 | `0` / `$` | Move to the first nonblank / last character of the display line. |
 | `'` | Jump to an exact mark position. |
@@ -109,7 +121,7 @@ On Ubuntu, install `fd-find` to provide `fdfind`; on systems with `fd`, that com
 | `,p` | Paste from the system clipboard. |
 | `Ctrl-h/j/k/l` | Move between splits, or between tmux panes with vim-tmux-navigator. |
 
-The clipboard bindings use the `+` register. They do not change Neovim's default clipboard setting. Without vim-tmux-navigator, `Ctrl-h/j/k/l` still moves between splits.
+The clipboard bindings use the `+` register. They do not change Neovim's default clipboard setting. Without vim-tmux-navigator, `Ctrl-h/j/k/l` still moves between splits. In an embedded fzf picker, those keys go to fzf instead of switching panes.
 
 ### LSP and completion
 
@@ -149,9 +161,9 @@ Edit filenames directly in the buffer and save with `:w` to rename or move files
 
 | Keys | Action |
 | --- | --- |
-| `s` | Open the jump picker: type two characters, then the label to jump. |
+| `s` | Open the jump picker: enter search text, then the label to jump. |
 | `S` | Open the treesitter-select picker: jump to and select a syntax node. |
-| `f` / `F` / `t` / `T` | Enhanced single-character motions with labels when multiple matches exist. |
+| `f` / `F` / `t` / `T` | Enhanced single-character motions. Flash's default configuration does not add jump labels to these motions. |
 | `;` / `,` | Repeat the last flash motion forward / backward. |
 
 ### illuminate
@@ -207,3 +219,14 @@ Use `:Markview` to toggle inline rendering on or off. `:Markview enable` and `:M
 Use `:TSContextToggle` to hide or show the treesitter scope header at the top of the window.
 
 Use `:colorscheme` to change themes. Available themes: `kanagawa-wave`, `gruvbox-material`, `tokyonight-night`, and `sonokai` (shusia variant). `:Colors` opens a picker when fzf is available. Neovim saves and restores theme changes across sessions.
+
+## Plugin updates and rollback
+
+Before updating, save the installed plugin revisions with
+`:PlugSnapshot ~/.config/nvim/plugins-before.vim`. Run `:PlugUpdate`, review
+the changes with `:PlugDiff`, and restart Neovim after the update completes.
+To restore the saved revisions, run
+`:source ~/.config/nvim/plugins-before.vim`, wait for vim-plug to finish, then
+restart. Use the actual config directory if `XDG_CONFIG_HOME` is set. A
+snapshot pins plugin Git revisions; it does not include Treesitter parsers,
+language servers, or formatter binaries.

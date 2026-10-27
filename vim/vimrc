@@ -1,12 +1,29 @@
 """ PLUGIN MANAGER (VIM-PLUG) {{{
 
-" Auto-install vim-plug
-if empty(glob('~/.vim/autoload/plug.vim'))
-    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    autocmd VimEnter * PlugInstall
+let s:plug_path = expand('~/.vim/autoload/plug.vim')
+let s:plug_url = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+let s:plugins_ready = 0
+let s:missing_plugins = []
+
+if !filereadable(s:plug_path)
+    let s:plug_dir = fnamemodify(s:plug_path, ':h')
+    let s:plug_tmp = s:plug_path . '.tmp-' . getpid()
+    if executable('curl') && (isdirectory(s:plug_dir) || mkdir(s:plug_dir, 'p'))
+        call delete(s:plug_tmp)
+        call system('curl -fL --silent --show-error -o ' . shellescape(s:plug_tmp) . ' ' . shellescape(s:plug_url))
+        if v:shell_error == 0 && filereadable(s:plug_tmp) && getfsize(s:plug_tmp) > 0 && rename(s:plug_tmp, s:plug_path) == 0
+            echom '[dotfiles] vim-plug installed. Run :PlugInstall, wait for it to finish, then restart Vim.'
+        else
+            call delete(s:plug_tmp)
+            echom '[dotfiles] Could not install vim-plug at ' . s:plug_path . '. Retry when online, or run: curl -fLo ' . shellescape(s:plug_path) . ' --create-dirs ' . s:plug_url . ' ; then restart Vim.'
+        endif
+    else
+        echom '[dotfiles] vim-plug is missing and curl or its destination is unavailable. Install it at ' . s:plug_path . ' and restart Vim.'
+    endif
 endif
 
-call plug#begin('~/.vim/plugged')
+if filereadable(s:plug_path) && executable('git')
+    call plug#begin('~/.vim/plugged')
 
 " Colorschemes: Additional colorschemes that can be used
 Plug 'morhetz/gruvbox'
@@ -61,7 +78,21 @@ Plug 'tpope/vim-commentary'
 " Auto Pairs: Provides automatic matching brackets / quotes
 Plug 'jiangmiao/auto-pairs'
 
-call plug#end()
+    call plug#end()
+
+    for [s:plugin_name, s:plugin] in items(g:plugs)
+        if !isdirectory(s:plugin.dir)
+            call add(s:missing_plugins, s:plugin_name)
+        endif
+    endfor
+
+    let s:plugins_ready = empty(s:missing_plugins)
+    if !s:plugins_ready
+        echom '[dotfiles] Missing Vim plugins: ' . join(s:missing_plugins, ', ') . '. Run :PlugInstall, wait for completion, then restart Vim.'
+    endif
+elseif filereadable(s:plug_path)
+    echom '[dotfiles] Git is required by vim-plug. Install Git, then restart Vim.'
+endif
 
 """ END PLUGIN MANAGER }}}
 """ LOAD MINIMAL VIMRC {{{
@@ -81,6 +112,7 @@ elseif executable('rg')
     let $FZF_DEFAULT_COMMAND = 'rg --files'
 endif
 
+if s:plugins_ready
 if executable('fzf')
     command! LocalFiles execute 'Files' expand('%:h')
 
@@ -107,5 +139,6 @@ let g:surround_{char2nr("*")} = "/* \r */"
 
 " Git-Gutter integration
 let g:gitgutter_map_keys = 0
+endif
 
 """ END PLUGIN INTEGRATION }}}

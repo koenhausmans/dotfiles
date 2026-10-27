@@ -176,13 +176,45 @@ noremap <silent> $ g$
 " Remap VIM 0 to first non-blank character
 noremap <silent> 0 g^
 
-" Navigate the vim splits with shortcuts
-if empty(glob("~/.vim/plugged/vim-tmux-navigator/"))
-    nnoremap <c-j> <c-w>j
-    nnoremap <c-k> <c-w>k
-    nnoremap <c-h> <c-w>h
-    nnoremap <c-l> <c-w>l
-endif
+" Use vim-tmux-navigator when its commands loaded; otherwise use split moves.
+let g:tmux_navigator_disable_when_zoomed = 1
+function! s:Navigate(command, direction) abort
+    if exists(':' . a:command) == 2
+        execute a:command
+    else
+        execute 'wincmd ' . a:direction
+    endif
+endfunction
+
+function! s:TerminalNavigate(key, direction) abort
+    if &filetype ==# 'fzf'
+        return a:key
+    endif
+    return "\<C-\\>\<C-n>\<C-w>" . a:direction
+endfunction
+
+function! s:SetupNavigatorFallback() abort
+    if exists(':TmuxNavigateLeft') == 2
+        return
+    endif
+
+    nnoremap <silent> <C-h> :call <SID>Navigate('TmuxNavigateLeft', 'h')<CR>
+    nnoremap <silent> <C-j> :call <SID>Navigate('TmuxNavigateDown', 'j')<CR>
+    nnoremap <silent> <C-k> :call <SID>Navigate('TmuxNavigateUp', 'k')<CR>
+    nnoremap <silent> <C-l> :call <SID>Navigate('TmuxNavigateRight', 'l')<CR>
+
+    if has('terminal')
+        tnoremap <expr> <C-h> <SID>TerminalNavigate("\<C-h>", 'h')
+        tnoremap <expr> <C-j> <SID>TerminalNavigate("\<C-j>", 'j')
+        tnoremap <expr> <C-k> <SID>TerminalNavigate("\<C-k>", 'k')
+        tnoremap <expr> <C-l> <SID>TerminalNavigate("\<C-l>", 'l')
+    endif
+endfunction
+
+augroup DotfilesNavigator
+    autocmd!
+    autocmd VimEnter * call <SID>SetupNavigatorFallback()
+augroup END
 
 """ END NORMAL MODE BEHAVIOR }}}
 """ VISUAL MODE BEHAVIOR {{{
@@ -281,10 +313,13 @@ cabbr <expr> %% expand('%:p:h')
 
 " Delete trailing white space on save, useful for Python and CoffeeScript ;)
 function! StripTrailingWhitespaces()
-  exe "normal mz"
-  %s/\s\+$//ge
-  exe "normal `z"
-endfunc
+    let l:view = winsaveview()
+    try
+        keeppatterns keepmarks keepjumps %s/\s\+$//ge
+    finally
+        call winrestview(l:view)
+    endtry
+endfunction
 
 " Leader key mappnigs
 nnoremap          ,b       :b <C-d>
