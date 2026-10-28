@@ -220,6 +220,13 @@ Use `:TSContextToggle` to hide or show the treesitter scope header at the top of
 
 Use `:colorscheme` to change themes. Available themes: `kanagawa-wave`, `gruvbox-material`, `tokyonight-night`, and `sonokai` (shusia variant). `:Colors` opens a picker when fzf is available. Neovim saves and restores theme changes across sessions.
 
+Split borders use heavy lines and the matching [tmux theme](../tmux/tmux.conf)'s
+border colors. Borders beside the active split use the accent color; other
+borders use the inactive color. Colors update on theme and focus changes.
+Neovim colors separators through the window on their left or above, so a shared
+edge in a nested layout can also receive the active color. Other colorschemes
+keep their own separator colors.
+
 ## Plugin updates and rollback
 
 Before updating, save the installed plugin revisions with

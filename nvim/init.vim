@@ -366,6 +366,105 @@ let g:sonokai_enable_italic = 1
 set background=dark
 set cursorline
 
+lua << END
+-- Match tmux's inactive/active border colors for each supported theme.
+local split_colors = {
+  ['gruvbox-material'] = { inactive = '#504945', active = '#83a598' },
+  ['kanagawa-wave'] = { inactive = '#363646', active = '#7e9cd8' },
+  ['tokyonight-night'] = { inactive = '#292e42', active = '#7aa2f7' },
+  sonokai = { inactive = '#3b3e48', active = '#76cce0' },
+}
+local split_focused = true
+local split_active_win
+local function split_palette()
+  local theme = vim.g.colors_name
+  -- Kanagawa reports "kanagawa" for all three variants.
+  if theme == 'kanagawa' and package.loaded.kanagawa then
+    theme = 'kanagawa-' .. (package.loaded.kanagawa._CURRENT_THEME or 'wave')
+  end
+  return split_colors[theme]
+end
+local function split_bounds(win)
+  local pos = vim.api.nvim_win_get_position(win)
+  local height = vim.api.nvim_win_get_height(win)
+  return { top = pos[1], left = pos[2], bottom = pos[1] + height,
+    right = pos[2] + vim.api.nvim_win_get_width(win) }
+end
+local function update_split_highlights()
+  local current = vim.api.nvim_get_current_win()
+  if vim.api.nvim_win_get_config(current).relative ~= '' then
+    current = split_active_win
+    if not current or not vim.api.nvim_win_is_valid(current)
+      or vim.api.nvim_win_get_tabpage(current) ~= vim.api.nvim_get_current_tabpage() then
+      return
+    end
+  else
+    split_active_win = current
+  end
+  local colors = split_palette()
+  local active = split_bounds(current)
+  for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+    if vim.api.nvim_win_get_config(win).relative == '' then
+      local bounds = split_bounds(win)
+      -- Neovim draws a separator with the left/upper window's highlight.
+      local touches_active = win == current
+        or (bounds.right == active.left - 1
+          and bounds.top < active.bottom and bounds.bottom > active.top)
+        or (bounds.bottom == active.top - 1
+          and bounds.left < active.right and bounds.right > active.left)
+      local highlights = {}
+      for entry in vim.wo[win].winhighlight:gmatch('[^,]+') do
+        if not entry:match('^WinSeparator:DotfilesSplit') then
+          table.insert(highlights, entry)
+        end
+      end
+      if colors then
+        -- Replace only the separator mapping; preserve other window highlights.
+        for i = #highlights, 1, -1 do
+          if highlights[i]:match('^WinSeparator:') then
+            table.remove(highlights, i)
+          end
+        end
+        table.insert(highlights, 'WinSeparator:'
+          .. (split_focused and touches_active and 'DotfilesSplitActive' or 'DotfilesSplitInactive'))
+      end
+      local value = table.concat(highlights, ',')
+      if vim.wo[win].winhighlight ~= value then
+        vim.wo[win].winhighlight = value
+      end
+    end
+  end
+end
+local split_group = vim.api.nvim_create_augroup('DotfilesSplitBorders', { clear = true })
+vim.api.nvim_create_autocmd('ColorScheme', {
+  group = split_group,
+  callback = function()
+    local colors = split_palette()
+    if colors then
+      vim.api.nvim_set_hl(0, 'DotfilesSplitInactive', { fg = colors.inactive, bg = 'NONE' })
+      vim.api.nvim_set_hl(0, 'DotfilesSplitActive', { fg = colors.active, bg = 'NONE' })
+    end
+    update_split_highlights()
+  end,
+})
+-- SafeState also catches window moves that change positions but not dimensions.
+vim.api.nvim_create_autocmd({ 'VimEnter', 'WinEnter', 'TabEnter', 'WinResized', 'SafeState' }, {
+  group = split_group,
+  callback = update_split_highlights,
+})
+vim.api.nvim_create_autocmd('WinClosed', {
+  group = split_group,
+  callback = function() vim.schedule(update_split_highlights) end,
+})
+vim.api.nvim_create_autocmd({ 'FocusGained', 'FocusLost' }, {
+  group = split_group,
+  callback = function(event)
+    split_focused = event.event == 'FocusGained'
+    update_split_highlights()
+  end,
+})
+END
+
 " The saved theme in plugin/last-used-colorscheme.vim overrides this fallback.
 silent! colorscheme kanagawa-wave
 " silent! colorscheme tokyonight-moon
@@ -490,6 +589,7 @@ set foldopen+=jump
 
 set splitbelow
 set splitright
+set fillchars+=vert:┃,horiz:━,horizup:┻,horizdown:┳,vertleft:┫,vertright:┣,verthoriz:╋
 
 """ END WINDOW BEHAVIOR }}}
 """ COMMAND LINE BEHAVIOR {{{
