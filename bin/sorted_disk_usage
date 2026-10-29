@@ -43,13 +43,49 @@ while (( $# > 0 )); do
         -r|--root) root_command=(sudo); shift ;;
         -q|--quiet) quiet=true; shift ;;
         -h|--help) show_help; exit 0 ;;
-        --) shift; additional_options+=("$@"); break ;;
+        --) additional_options+=("$@"); break ;;
         *) additional_options+=("$1"); shift ;;
     esac
 done
 
+sort_options=(-h)
+skip_argument=false
+for option in "${additional_options[@]}"; do
+    if $skip_argument; then
+        skip_argument=false
+        continue
+    fi
+    case $option in
+        --) break ;;
+        --nu|--nul|--null) sort_options+=(-z) ;;
+        --*)
+            # GNU du also accepts unambiguous long-option abbreviations.
+            for argument_option in --block-size --max-depth --threshold --exclude --exclude-from --files0-from; do
+                if [[ $argument_option == "$option"* ]]; then
+                    skip_argument=true
+                    break
+                fi
+            done
+            ;;
+        -*)
+            # du permits clustered short options, such as -a0. These options
+            # take arguments, so their remaining characters are not flags.
+            flags=${option#-}
+            while [[ -n $flags ]]; do
+                case ${flags:0:1} in
+                    0) sort_options+=(-z); break ;;
+                    B|d|t|X)
+                        [[ ${#flags} -gt 1 ]] || skip_argument=true
+                        break ;;
+                esac
+                flags=${flags:1}
+            done
+            ;;
+    esac
+done
+
 if $quiet; then
-    "${root_command[@]}" du --block-size="$block_size" --max-depth=1 "${additional_options[@]}" 2>/dev/null | sort -n
+    "${root_command[@]}" du --block-size="$block_size" --max-depth=1 "${additional_options[@]}" 2>/dev/null | sort "${sort_options[@]}"
 else
-    "${root_command[@]}" du --block-size="$block_size" --max-depth=1 "${additional_options[@]}" | sort -n
+    "${root_command[@]}" du --block-size="$block_size" --max-depth=1 "${additional_options[@]}" | sort "${sort_options[@]}"
 fi

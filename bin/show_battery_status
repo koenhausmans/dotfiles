@@ -1,3 +1,24 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-upower -i $(upower -e | grep BAT) | grep -E "state|to\ full|percentage|time\ to\ empty"
+set -euo pipefail
+export LC_ALL=C
+
+devices=$(upower -e)
+found=false
+while IFS= read -r device; do
+    [[ -n $device ]] || continue
+    details=$(upower -i "$device")
+    if ! awk '/^[[:space:]]*battery[[:space:]]*$/ { found = 1 } END { exit !found }' <<< "$details"; then
+        continue
+    fi
+    if $found; then
+        printf '\n'
+    fi
+    found=true
+    printf 'Battery: %s\n' "${device##*/}"
+    awk '/^[[:space:]]*(state:|percentage:|time to full:|time to empty:)/' <<< "$details"
+done <<< "$devices"
+
+if ! $found; then
+    printf 'No battery found.\n'
+fi

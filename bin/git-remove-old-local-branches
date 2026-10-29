@@ -2,18 +2,23 @@
 
 set -euo pipefail
 
+case $# in
+    0) delete_flag=-d ;;
+    1)
+        case $1 in
+            -f|--force) delete_flag=-D ;;
+            *) printf 'Usage: %s [-f|--force]\n' "$(basename "$0")" >&2; exit 2 ;;
+        esac
+        ;;
+    *) printf 'Usage: %s [-f|--force]\n' "$(basename "$0")" >&2; exit 2 ;;
+esac
+
 if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
     printf 'No git root directory found\n' >&2
     exit 1
 fi
 
 git fetch --prune
-
-case ${1:-} in
-    '') delete_flag=-d ;;
-    -f|--force) delete_flag=-D ;;
-    *) printf 'Usage: %s [-f|--force]\n' "$(basename "$0")" >&2; exit 2 ;;
-esac
 
 current_branch=$(git symbolic-ref --quiet --short HEAD || true)
 refs=$(git for-each-ref --format='%(refname:short)%09%(upstream:track)' refs/heads) || {

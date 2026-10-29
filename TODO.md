@@ -28,8 +28,8 @@ Neovim ToDo:
 ============
 - [ ] Typst: Support for terminal output instead of HTML / PDF
 - [ ] Check vim-unimpaired, add additional useful keybindings in README or replace by other plugin?
-- [ ] Check oil.nvim
-- [ ] Checkout flash.nvim
+- [x] Check oil.nvim
+- [x] Checkout flash.nvim
 - [ ] Checkout which-labels.nvim
 
 Plugins to consider:

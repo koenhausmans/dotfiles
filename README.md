@@ -50,6 +50,7 @@ The fish template `fish/config.local.fish.template` lists the prompt options.
 - [fish](fish/README.md): prompt behavior and customization
 - [git](git/README.md): Git-specific configuration
 - [nvim](nvim/README.md): Neovim configuration
+- [Screen](screen/README.md): sessions and detachment
 - [tmux](tmux/README.md): keyboard shortcuts
 - [vim](vim/README.md): keyboard shortcuts
 - Themes: [Claude Code](themes/claude-code/README.md), [OpenCode](themes/opencode/README.md), [Windows Terminal](themes/windows-terminal/README.md)

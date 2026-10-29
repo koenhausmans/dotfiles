@@ -24,7 +24,7 @@
 #
 # Global Shortcuts:
 # -----------------
-# Ctrl+a                Detach from screen window
+# Ctrl+a d              Detach from screen session
 # Ctrl+a :sessionname   Changes name of screen session
 #
 # Navigation:

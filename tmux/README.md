@@ -5,6 +5,15 @@ General:
 ========
 Run `tmux source-file ~/.tmux.conf` to reload the configuration; there is no reload shortcut.<br/>
 
+Clipboard:
+==========
+Copies use OSC 52 to reach the system clipboard when the outer terminal supports it.
+The configured `set-clipboard on` also lets applications inside tmux create tmux
+paste buffers and request clipboard changes. Use this only with applications you trust.
+To allow tmux's own copies but block application clipboard requests, put
+`set -s set-clipboard external` in `~/.tmux.conf.local`, then reload.
+The outer terminal's clipboard permissions still apply.
+
 Suspend:
 ========
 `<F12>`: Suspend tmux key bindings; all keys go to the inner application (e.g. a nested/remote tmux). The mode indicator shows ` ---- `. Leaves copy mode and turns off pane sync.<br/>
@@ -47,7 +56,7 @@ Pane borders use double lines (`║`, `═`) to distinguish them from Neovim's h
 Panes:
 ======
 `<C-a>q`: Show pane numbers, type the key to goto that pane<br/>
-`<C-a>o`: Swap panes<br/>
+`<C-a>o`: Select the next pane<br/>
 `<C-a><C-o>`: Rotate panes in current window<br/>
 `<C-a>{`: Move pane to the left<br/>
 `<C-a>}`: Move pane to the right<br/>

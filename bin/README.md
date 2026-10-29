@@ -16,7 +16,7 @@ Shows the current CPU scaling governor and a menu of governors to select. Run `.
 
 ### `show_battery_status`
 
-Run `./bin/show_battery_status` to show the battery state, percentage, and available time estimates. It needs `upower` and a battery that `upower` reports.
+Run `./bin/show_battery_status` to show each battery's device name, state, percentage, and available time estimates. It needs `upower`. If no battery is reported, it prints an informational message and exits successfully. UPower errors still cause a failure.
 
 ### `show_colors`
 
@@ -33,7 +33,7 @@ Run `./bin/sorted_disk_usage [options] [du options or paths]` to list disk use o
 | `-q`, `--quiet` | Hide error output from `du`. |
 | `-h`, `--help` | Show the built-in help. |
 
-For example, `./bin/sorted_disk_usage --size=g ~/Downloads` shows sizes in GiB. Use `--` to stop parsing the script's options and pass the remaining arguments to `du`.
+For example, `./bin/sorted_disk_usage --size=g ~/Downloads` shows sizes in GiB. Use `--` before operands that start with `-`; it also stops `du` option parsing. Pass `--human-readable` before the delimiter for human-readable sizes (`-h` is this script's help). Sorting handles size suffixes. Use `-0` or `--null` for NUL-delimited output, including filenames that contain newlines.
 
 ## Git tools
 
@@ -54,6 +54,8 @@ Run `git recent [-n count]` to list local branches by last commit date, newest f
 ### `git-remove-old-local-branches`
 
 Run `./bin/git-remove-old-local-branches` to fetch with `--prune` and delete local branches whose upstream is marked `[gone]`. The script skips the current branch. Git's normal `-d` check prevents deletion of unmerged branches. Use `-f` or `--force` to delete those branches with `git branch -D` instead. The script does not delete branches on the remote.
+
+Only one optional force flag is accepted. Invalid or extra arguments fail before fetching.
 
 ### `git-start`
 
