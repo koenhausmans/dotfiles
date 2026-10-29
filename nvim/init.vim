@@ -367,12 +367,12 @@ set background=dark
 set cursorline
 
 lua << END
--- Match tmux's inactive/active border colors for each supported theme.
+-- Keep tmux's muted inactive borders, but use warm active colors to distinguish Neovim.
 local split_colors = {
-  ['gruvbox-material'] = { inactive = '#504945', active = '#83a598' },
-  ['kanagawa-wave'] = { inactive = '#363646', active = '#7e9cd8' },
-  ['tokyonight-night'] = { inactive = '#292e42', active = '#7aa2f7' },
-  sonokai = { inactive = '#3b3e48', active = '#76cce0' },
+  ['gruvbox-material'] = { inactive = '#504945', active = '#fabd2f' },
+  ['kanagawa-wave'] = { inactive = '#363646', active = '#c0a36e' },
+  ['tokyonight-night'] = { inactive = '#292e42', active = '#e0af68' },
+  sonokai = { inactive = '#3b3e48', active = '#e7c664' },
 }
 local split_focused = true
 local split_active_win

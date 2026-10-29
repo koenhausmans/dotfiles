@@ -27,6 +27,8 @@ Windows:
 
 Splits:
 =======
+Pane borders use double lines (`║`, `═`) to distinguish them from Neovim's heavy lines.<br/>
+
 `<C-a>v`: Splits window horizontally<br/>
 `<C-a>|`: Splits window horizontally<br/>
 `<C-a>s`: Splits window vertically<br/>
