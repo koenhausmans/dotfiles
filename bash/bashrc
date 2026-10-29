@@ -68,6 +68,11 @@ shopt -s cdspell 2>/dev/null
 shopt -s cdable_vars 2>/dev/null
 shopt -s dirspell 2>/dev/null
 
+# Use normal directory colors for writable/sticky directories, without backgrounds.
+if [[ ${LS_COLORS-} != *'ow=01;34:tw=01;34:st=01;34' ]]; then
+    export LS_COLORS="${LS_COLORS:+${LS_COLORS}:}ow=01;34:tw=01;34:st=01;34"
+fi
+
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 alias ip='ip --color=auto'

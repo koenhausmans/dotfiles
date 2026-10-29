@@ -15,6 +15,11 @@ end
 if status is-interactive
     set -g fish_greeting ''
 
+    # Use normal directory colors for writable/sticky directories, without backgrounds.
+    if not set -q LS_COLORS; or not string match -q '*ow=01;34:tw=01;34:st=01;34' -- "$LS_COLORS"
+        set -gx LS_COLORS (string join --no-empty : -- $LS_COLORS 'ow=01;34:tw=01;34:st=01;34')
+    end
+
     # Fish provides completion, autosuggestions, and syntax highlighting itself.
     # Abbreviations expand visibly in the command line before execution.
     if not set -q fish_prompt_theme
