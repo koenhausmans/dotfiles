@@ -85,6 +85,9 @@ Use `:StripTrailingWhitespaces` to remove trailing whitespace without changing
 indentation. Python and CoffeeScript files also lose trailing whitespace on write.
 Spelling is enabled for Markdown, Git commit messages, and todo files.
 
+Use `:Indent {n}` (e.g. `:Indent 2`) to set the current buffer's indentation
+to `n` spaces. Tab characters still display 8 wide.
+
 Use `:SudoWrite` (or `:w!!`) to save the whole current file with root permissions.
 It requires a named file buffer and marks it saved only after a successful write.
 It overwrites the file directly, without a backup or atomic replacement.

@@ -179,6 +179,7 @@ LSP navigation and action bindings require an attached server. The formatting bi
 | `:UnicodeSearch` | Open an fzf picker over the Unicode table and insert a character. |
 | `:Digraphs` | Search all Vim digraphs with fzf. |
 | `:StripTrailingWhitespaces` | Remove trailing whitespace. |
+| `:Indent {n}` | Set the current buffer's indentation to `n` spaces, e.g. `:Indent 2`. |
 | `:SudoWrite` / `:w!!` | Save the whole file with root permissions. Needs a named file buffer, marks it saved only after a successful write, and overwrites directly without a backup or atomic replacement. |
 | `:Markview` / `:Markview enable` / `:Markview disable` | Toggle or set inline rendering of headings, tables, code blocks, and checkboxes. Raw syntax returns when the cursor enters an element. On by default for Markdown and Typst. |
 | `:TSContextToggle` | Show or hide the Treesitter scope header with the enclosing function or block. |

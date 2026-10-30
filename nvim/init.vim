@@ -495,6 +495,8 @@ set shiftwidth=4
 set softtabstop=4
 set tabstop=4
 
+command! -nargs=1 Indent setlocal shiftwidth=<args> softtabstop=<args> tabstop=<args>
+
 """ END INDENT BEHAVIOR }}}
 """ SEARCH BEHAVIOR {{{
 
