@@ -1,189 +1,93 @@
-`install.sh` links the full `vimrc`. `./install.sh server` (or
+# Vim configuration
+
+## Setup
+
+`./install.sh` links the full `vimrc`. `./install.sh server` (or
 `DOTFILES_PROFILE=server vim/install.sh`) links `vimrc.minimal` instead and
 updates the apprentice colorscheme. The existing colorscheme stays active if
 the download fails.
 
-On first start, the full configuration attempts to download vim-plug. Then run
+On first start, the full configuration attempts to download vim-plug. Run
 `:PlugInstall`, wait for it to finish, and restart Vim. If vim-plug cannot be
 downloaded or plugins are missing, Vim reports the failed path or plugin names
 and keeps the minimal bindings active; retry the displayed recovery steps.
 
-Vim Script - Keyboard shortcuts:
-================================
+## Shared shortcuts
 
-`<leader>` key has been defined as `,`
+The leader key is `,`. These bindings work in both configurations and use normal
+mode unless marked otherwise.
 
-File open/close:
-----------------
-`<leader>w`: Saves a file<br/>
-`<leader>wq`: Saves a file and closes it<br/>
-`<leader>q`: Close the file<br/>
-`<leader>Q`: Close the file without warning<br/>
+| Keys | Action |
+| --- | --- |
+| `,w` | Save the file. |
+| `,q` | Close the window. |
+| `,c` | Delete the buffer; full Vim with plugins preserves the window layout. |
+| `,b` | Select a buffer. |
+| `,f` | Find a file. |
+| `,t` | Search tags. |
+| `,e` | Start `:e **/*` to open a file under the current directory. |
+| `,m` | Run `:make`. |
+| `,z` | Switch to the alternate buffer. |
+| `,/` | Start `:grep`, or `:Rg` with full Vim, fzf, and ripgrep. |
+| `,,` | Repeat the last character-search motion backward. |
+| `,y{motion}` / `,y` (visual) | Copy to the system clipboard; `,yy` copies a line. |
+| `,p` | Paste from the system clipboard. |
+| `j` / `k` | Move by display line without a count, or file line with a count. |
+| `0` / `$` | Move to the first nonblank / last character of the display line. |
+| `<` / `>` / `=` (visual) | Change indentation or reindent, then keep the selection. |
+| `Ctrl-h/j/k/l` | Move between splits; full Vim also integrates with tmux. |
+| `K` / `K` (visual) | Search the word / selection using `:grep` and open quickfix. |
+
+Clipboard bindings are defined only when Vim has `+clipboard` support. They use
+the `+` register without changing the default clipboard setting; a working
+clipboard connection is still required. Movement remaps also apply in visual
+and operator-pending modes.
+
+## Full configuration
+
+These shortcuts require the installed plugins. With fzf available, `,f`, `,b`,
+and `,t` open pickers; otherwise they use Vim's file, buffer, and tag commands.
+File pickers prefer `fd`, then Ubuntu's `fdfind`, then `rg --files`, then fzf's
+default file search.
+
+| Keys | Action |
+| --- | --- |
+| `,gf` | Find a Git-tracked file (requires fzf). |
+| `,sw` | Search for the word under the cursor (requires fzf and ripgrep). |
+| `Ctrl-t` / `Ctrl-x` / `Ctrl-v` (fzf picker) | Open in a tab / split / vertical split. |
+| `,gs` | Open Fugitive status. |
+| `,gd` | Open a diff split for the current file. |
+| `,gc` | Close other diff windows in the tab and leave diff mode. |
+| `,gh` | Show Git history for the current file. |
+| `,gb` | Show Git blame. |
+| `,gl` | Show the Git log. |
+| `Ctrl-\` | Return to the previous split or tmux pane. |
+| `gcc` / `gc{motion}` / `gc` (visual) | Toggle comments. |
+| `gcu` | Uncomment the current and adjacent commented lines. |
+| `ys{motion}{char}` / `yss{char}` / `S{char}` (visual) | Add surrounding characters or tags. |
+| `ds{char}` / `cs{old}{new}` | Delete / change surrounding characters or tags. |
+| `Ctrl-g s` / `Ctrl-g S` (insert) | Insert surrounding characters inline / on new lines. |
+| `[b` / `]b` | Previous / next buffer (vim-unimpaired). |
+| `[q` / `]q`, `[l` / `]l` | Previous / next quickfix or location-list item. |
+| `[e` / `]e` | Move the current line up / down. |
+| `[Space` / `]Space` | Add a blank line above / below. |
+| `yoh` / `yol` / `yos` | Toggle search highlighting / visible whitespace / spelling. |
+| `.` | Repeat supported comment and surround operations. |
+
+Surround keeps its default mappings, including the `ySs` alias, except insert-mode
+`Ctrl-s`. The custom `*` surround adds `/* … */` comments. Auto-pairs inserts
+matching brackets and quotes; insert-mode `Alt-e` / `Alt-n` / `Alt-p` wraps the next
+expression / skips a closing character / toggles pairing.
+
+## Commands
+
+Use `:StripTrailingWhitespaces` to remove trailing whitespace without changing
+indentation. Python and CoffeeScript files also lose trailing whitespace on write.
+Spelling is enabled for Markdown, Git commit messages, and todo files.
 
 Use `:SudoWrite` (or `:w!!`) to save the whole current file with root permissions.
 It requires a named file buffer and marks it saved only after a successful write.
 It overwrites the file directly, without a backup or atomic replacement.
 
-Buffer shortcuts:
------------------
-`<leader>b`: Shows buffer list and allows for quick navigation to another buffer<br/>
-`<leader>c`: Delete the current buffer without screwing up window layout<br/>
-`<C-6>`: Go to previous buffer
-
-Editing shortcuts:
-------------------
-`guu`: Entire line to lower case<br/>
-`gUU`: Entire line to UPPER case<br/>
-`U`: Undo all changes on line<br/>
-`C`: Change to end of line<br/>
-`[<space>`: Add blank lines above the cursor (Provided by tpope/vim-unimpaired)<br/>
-`]<space>`: Add blank lines below the cursor (Provided by tpope/vim-unimpaired)<br/>
-
-Movement shortcuts:
--------------------
-`(`: Move sentence backward<br/>
-`)`: Move sentence forward<br/>
-`{`: Move paragraph backward<br/>
-`}`: Move paragraph forward<br/>
-`]]`: Move section forward or until the next '{' in the first column<br/>
-`][`: Move section forward or until the next '}' in the first column<br/>
-`[[`: Move section backward or until the next '{' in the first column<br/>
-`[]`: Move section backward or until the next '}' in the first column<br/>
-`gi`: Goto last insert position<br/>
-`gv`: Reselect last selection<br/>
-`;`: Repeat last `f{char}` command<br/>
-`,`: Repeat last `f{char}` command (reverse)<br/>
-`o`: In visual mode, change cursor to opposite end<br/>
-`'.`: Jump to last modification line<br/>
-`\`.`: Jump to last modification position<br/>
-`'<`: Jump to the first char of the visual selection<br/>
-`'>`: Jump to the last char of the visual selection<br/>
-`g-`: Go to older text state<br/>
-`''`: Moves to previous edit line<br/>
-`\`\``: Moves to previous edit position<br/>
-`<C-t>`: Jump back up in the tag stack<br/>
-`<C-I>`: Jump back down in the jumplist<br/>
-`<C-O>`: Jump back up in the jumplist<br/>
-`<g;>`: Jump back up in the changelist<br/>
-`<g,>`: Jump back up in the changelist<br/>
-`zt`: Redraw current line at top
-`zz`: Redraw current line at center
-`zb`: Redraw current line at bottom
-`H`: Move cursor to the top
-`M`: Move cursor to the center
-`L`: Move cursor to the bottom
-
-Window shortcuts:
------------------
-`<C-W>r`: Rotate window downwards/rightwards<br/>
-`<C-W>R`: Rotate window upwards/leftwards<br/>
-`<C-W>J`: Move window to the top<br/>
-`<C-W>K`: Move window to the bottom<br/>
-`<C-W>H`: Move window to the left<br/>
-`<C-W>L`: Move window to the right<br/>
-`<C-W>_`: Maximize height of window<br/>
-`<C-W>|`: Maximize width of window<br/>
-`<C-W>=`: All windows equal widths/heights<br/>
-`<C-W>o`: Make the current window the only window<br/>
-`<C-W>x`: Swap neighbouring windows<br/>
-
-Register shortcuts:
--------------------
-`<C-R><C-W>`: Copy current word in command mode<br/>
-`<C-R>x`: Copy register x in command mode<br/>
-
-List shortcuts (Provided by tpope/vim-unimpaired):
---------------------------------------------------
-`]b`: Go to next buffer<br/>
-`[b`: Go to previous buffer<br/>
-`]B`: Go to the first buffer<br/>
-`[B`: Go to the last buffer<br/>
-`]t`: Go to next tag<br/>
-`[t`: Go to previous tag<br/>
-`]l`: Go to next location list result<br/>
-`[l`: Go to previous location list result<br/>
-`]<C-L>`: Go to next location list result in another file<br/>
-`[<C-L>`: Go to previous location list in another file<br/>
-`]q`: Go to next quickfix result<br/>
-`[q`: Go to previous quickfix result<br/>
-`]<C-Q>`: Go to next quickfix result in another file<br/>
-`[<C-Q>`: Go to previous quickfix result in another file<br/>
-
-Option toggling (Provided by tpope/vim-unimpaired):
----------------------------------------------------
-`[on`: Enable line numbers</br>
-`]on`: Disable line numbers</br>
-
-Fold shortcuts:
----------------
-`zf`: To create a fold<br/>
-`zd`: To delete a fold<br/>
-`zo`: To open one fold under the cursor<br/>
-`zO`: To open all folds under the cursor<br/>
-`zc`: To close one fold under the cursor<br/>
-`zC`: To close all folds under the cursor<br/>
-`za`: Toggle one fold under the cursor<br/>
-`zA`: Toggle all folds under the cursor<br/>
-
-Insert Completion:
-------------------
-`<C-X><C-O>`: Omni-completion, guess what kind of item is in front and show the match<br/>
-`<C-X><C-N>`: Completion for keywords in the current file<br/>
-`<C-X><C-F>`: Completion for file names<br/>
-`<C-X><C-J>`: Completion for tags<br/>
-`<C-X><C-L>`: Completion for entire line<br/>
-
-Spell checking:
----------------
-`[os`: Enable spell checking<br/>
-`]os`: Disable spell checking<br/>
-`<leader>ss`: Toggle spell checking<br/>
-`]s`: Move to the next misspelled word<br/>
-`[s`: Move to the previous misspelled word<br/>
-`zg`: Add word under cursor as a good word<br/>
-`z=`: Suggest correctly spelled word<br/>
-
-Tag shortcuts:
---------------
-`gf`: Go to file<br/>
-`<C-W>f`: Go to file in new window<br/>
-`<C-]>`: Jump to the tag under the cursor<br/>
-`g]`: Show multiple tag matches<br/>
-`<C-W>}`: Open tag under cursor and open a preview window<br/>
-`<C-W>z`: Close any open "Preview" window<br/>
-
-FZF: Fuzzy finder:
-------------------
-The following shortcuts are allowed in Normal mode:
-
-`<leader>f`: Open the file picker<br/>
-`<leader>F`: Open the file picker in the current file's directory<br/>
-`<leader>gf`: Open the Git-tracked file picker<br/>
-`<leader>b`: Open the buffer picker<br/>
-`<leader>t`: Open the tag picker<br/>
-`<leader>/`: Start a ripgrep search with fzf (requires ripgrep)<br/>
-
-The file picker uses `fd` or `fdfind` when installed, then `rg --files` if available, and otherwise fzf's default file search. `K` searches for the word under the cursor using `:grep` and adds matches to the quickfix list.
-
-In a fzf window, the following shortcuts are supported:
-
-`<C-p>`: Go to the previous result<br/>
-`<C-n>`: Go to the next result<br/>
-
-`<C-t>`: Open result in new tab<br/>
-`<C-x>`: Open result in a horizontal split<br/>
-`<C-v>`: Open result in a vertical split<br/>
-
-Commentary.vim: Comment stuff out:
-----------------------------------
-`gcc`: To comment out a line<br/>
-`gc`: To comment out the target of motion (e.g. `gcap` to comment out a paragraph)<br/>
-
-Surround.vim: Quoting/Parenthesizing made simple:
--------------------------------------------------
-`cs"'`: To change the `"` quotes to `'`<br/>
-`ds"`: To remove the `"` quotes<br/>
-`ysiw]`: To add `[]` quotes around current word<br/>
-`S"`: To add `"` quotes around selection<br/>
-
-Adding `()`-brackets (and `{}`-brackets) can be done by `(` to add a space or by `)` to add without a space<br/>
+In command-line mode, `%%` inserts the current file's directory. With full plugins,
+`:bd` expands to `:Bdelete` to preserve the window layout.

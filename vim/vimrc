@@ -1,5 +1,9 @@
 """ PLUGIN MANAGER (VIM-PLUG) {{{
 
+let mapleader = ','
+" Keep surround's Ctrl-g insert bindings without claiming Ctrl-s.
+let g:surround_no_insert_mappings = 1
+
 let s:plug_path = expand('~/.vim/autoload/plug.vim')
 let s:plug_url = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 let s:plugins_ready = 0
@@ -66,9 +70,6 @@ Plug 'tpope/vim-unimpaired'
 " vim-cool: Disable hlsearch when you are done searching
 Plug 'romainl/vim-cool'
 
-" ReplaceWithRegister: Replace text with the contents of a register
-Plug 'vim-scripts/ReplaceWithRegister'
-
 " vim-argwrap: Wrap and unwrap function arguments, lists and dictionaries
 Plug 'FooSoft/vim-argwrap'
 
@@ -114,28 +115,33 @@ endif
 
 if s:plugins_ready
 if executable('fzf')
-    command! LocalFiles execute 'Files' expand('%:h')
-
-    nnoremap <silent> ,b :Buffers<cr>
-    nnoremap <silent> ,gf :GFiles<cr>
-    nnoremap <silent> ,f :Files<cr>
-    nnoremap <silent> ,F :LocalFiles<cr>
-    nnoremap <silent> ,t :Tags<cr>
+    nnoremap <silent> <leader>b :Buffers<cr>
+    nnoremap <silent> <leader>gf :GFiles<cr>
+    nnoremap <silent> <leader>f :Files<cr>
+    nnoremap <silent> <leader>t :Tags<cr>
 endif
 
 if executable('fzf') && executable('rg')
-    nnoremap <silent> ,/ :execute 'Rg ' . input('Rg/')<cr>
+    nnoremap          <leader>/ :Rg<space>
+    nnoremap <silent> <leader>sw :call fzf#vim#grep('rg --column --line-number --no-heading --color=always --smart-case --word-regexp -- ' . fzf#shellescape(expand('<cword>')), fzf#vim#with_preview(), 0)<cr>
 endif
 
-" vim-argwrap
-nnoremap <silent> ,A :ArgWrap<cr>
+" Fugitive integration
+nnoremap <silent> <leader>gs :Git<cr>
+nnoremap <silent> <leader>gd :Gdiffsplit<cr>
+nnoremap <silent> <leader>gc :call fugitive#DiffClose()<cr>
+nnoremap <silent> <leader>gh :Git log -- %<cr>
+nnoremap <silent> <leader>gb :Git blame<cr>
+nnoremap <silent> <leader>gl :Git log<cr>
 
 " Bbye integration: Close the current buffer
 cabbrev bd Bdelete
-nnoremap ,c :Bdelete<cr>
+nnoremap <leader>c :Bdelete<cr>
 
 " Vim-surround integration: Allow the usage of * as a surround character for multiline C-style comments
 let g:surround_{char2nr("*")} = "/* \r */"
+imap <C-G>s <Plug>Isurround
+imap <C-G>S <Plug>ISurround
 
 " Git-Gutter integration
 let g:gitgutter_map_keys = 0
