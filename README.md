@@ -7,6 +7,9 @@ sudo apt install curl git bash vim neovim zsh fish tmux universal-ctags build-es
 ./install.sh
 ```
 
+Neovim requires **0.11.3+**; the distribution package may be older. See
+[Neovim setup](nvim/README.md#install-a-newer-neovim) for a newer stable release.
+
 On a server, install only bash, vim (minimal), screen and tmux (`bin` comes with bash):
 
 ```sh

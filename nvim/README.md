@@ -13,6 +13,15 @@ Neovim. If vim-plug or plugins are missing, Neovim reports the path or plugin
 names and keeps its built-in settings and mappings available. Retry the
 displayed recovery steps, then restart.
 
+### Install a newer Neovim
+
+See the [official installation guide](https://neovim.io/doc/install/) for stable
+downloads and system-wide installation. On Ubuntu/Ubuntu-based WSL, the
+[Neovim unstable PPA](https://launchpad.net/~neovim-ppa/+archive/ubuntu/unstable)
+offers newer daily builds through apt (third-party, not stable releases).
+On Debian, check [packages for your release](https://packages.debian.org/search?keywords=neovim);
+do not use Ubuntu PPAs. Verify `nvim --version` is at least 0.11.3 after installation.
+
 ## Overview
 
 - Language support: built-in LSP, blink.cmp completion, snippets, signature help, and automatic formatting.
