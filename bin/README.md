@@ -1,7 +1,5 @@
 # Tools in `bin/`
 
-Run these scripts from the repository with `./bin/<name>`, or add this directory to your `PATH`.
-
 ## System tools
 
 ### `fzf-file-preview`
