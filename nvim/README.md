@@ -34,32 +34,22 @@ do not use Ubuntu PPAs. Verify `nvim --version` is at least 0.11.3 after install
 Spelling is enabled for Markdown, Git commit messages, and todo files.
 Python and CoffeeScript files lose trailing whitespace on write.
 
-## Language servers
+## Language servers and formatters
 
-| Language | Server | Installation |
-| --- | --- | --- |
-| Python | basedpyright | `npm install -g basedpyright` or `uv tool install basedpyright`. The server executable is `basedpyright-langserver`. |
-| Rust | rust-analyzer | `rustup component add rust-analyzer rustfmt rust-src` for the active toolchain. |
-| C/C++ | clangd | `sudo apt install clangd`. Provide `compile_commands.json` for project-specific compiler flags and include paths. |
-| Typst | Tinymist | `cargo install --locked tinymist` or install a Linux release binary. |
+| Language | Server | Formatter | Installation |
+| --- | --- | --- | --- |
+| Python | basedpyright | ruff | `npm install -g basedpyright` or `uv tool install basedpyright` (executable: `basedpyright-langserver`). [uv/install.sh](../uv/install.sh) installs ruff, or use `uv tool install ruff`. Ruff handles formatting and import sorting. |
+| Rust | rust-analyzer | rustfmt | `rustup component add rust-analyzer rustfmt rust-src` for the active toolchain. |
+| C/C++ | clangd | clang-format | `sudo apt install clangd clang-format`. Provide `compile_commands.json` for compiler flags and include paths. A `.clang-format` file in the project root sets the style. |
+| Typst | Tinymist | typstyle | `cargo install --locked tinymist typstyle`, or install release binaries. Formatting falls back to Tinymist's formatter without typstyle. |
+| Lua | | stylua | Install a binary from the [StyLua releases](https://github.com/JohnnyMorganz/StyLua/releases). |
 
 Open a matching file and use `:LspInfo` to check that its server attached. `:checkhealth vim.lsp` can help diagnose problems.
 
-## Formatters
-
-conform.nvim selects the configured formatter list for both `,lf` and
+conform.nvim selects the configured formatter for both `,lf` and
 format-on-save. It uses LSP formatting only when no configured formatter is
 available, so `,lf` also works without an attached LSP.
-
-| Language | Formatter | Installation |
-| --- | --- | --- |
-| C/C++ | clang-format | `sudo apt install clang-format`. Use a `.clang-format` file in the project root to configure style. |
-| Rust | rustfmt | `rustup component add rustfmt` if missing. The language-server setup above also installs it. |
-| Python | ruff | [uv/install.sh](../uv/install.sh) installs it, or use `uv tool install ruff`. Handles both formatting and import sorting. |
-| Lua | stylua | Install a binary from the [StyLua releases](https://github.com/JohnnyMorganz/StyLua/releases). |
-| Typst | typstyle | Build with `cargo install typstyle` or install a release binary. Falls back to Tinymist's built-in formatter if not found. |
-
-Use `,lf` to trigger formatting manually. Format-on-save can be bypassed with `:noautocmd w`.
+Format-on-save can be bypassed with `:noautocmd w`.
 
 ## Keybindings
 
@@ -177,29 +167,23 @@ LSP navigation and action bindings require an attached server. The formatting bi
 | `,ld` | Show diagnostics at the cursor. |
 | `[d` / `]d` | Go to the previous / next diagnostic. |
 | `,lq` | Put diagnostics in the location list. |
-| `,lf` | Format the buffer. See [Formatters](#formatters) for installation and format-on-save behavior. |
+| `,lf` | Format the buffer. See [Language servers and formatters](#language-servers-and-formatters) for installation and format-on-save behavior. |
 | `Ctrl-p` / `Ctrl-n` (insert) | Select the previous / next completion item. |
 | `Enter` / `Tab` (insert) | Confirm a completion item. |
 | `Ctrl-e` (insert) | Dismiss the completion menu. |
 
 ## Commands
 
-Use `:UnicodeSearch` to open an fzf picker over the full Unicode table and insert a character.
-Use `:Digraphs` to search all Vim digraphs with fzf.
+| Command | Action |
+| --- | --- |
+| `:UnicodeSearch` | Open an fzf picker over the Unicode table and insert a character. |
+| `:Digraphs` | Search all Vim digraphs with fzf. |
+| `:StripTrailingWhitespaces` | Remove trailing whitespace. |
+| `:SudoWrite` / `:w!!` | Save the whole file with root permissions. Needs a named file buffer, marks it saved only after a successful write, and overwrites directly without a backup or atomic replacement. |
+| `:Markview` / `:Markview enable` / `:Markview disable` | Toggle or set inline rendering of headings, tables, code blocks, and checkboxes. Raw syntax returns when the cursor enters an element. On by default for Markdown and Typst. |
+| `:TSContextToggle` | Show or hide the Treesitter scope header with the enclosing function or block. |
 
-Use `:StripTrailingWhitespaces` to remove trailing whitespace.
 In command-line mode, `:bd` expands to `:Bdelete` and `%%` inserts the current file's directory.
-
-Use `:SudoWrite` (or `:w!!`) to save the whole current file with root permissions.
-It requires a named file buffer and marks it saved only after a successful write.
-It overwrites the file directly, without a backup or atomic replacement.
-
-Use `:Markview` to toggle inline rendering. `:Markview enable` and `:Markview disable` control it explicitly.
-Rendering is on by default for Markdown and Typst buffers.
-Markview renders headings, tables, code blocks, and checkboxes. It restores raw syntax when the cursor enters an element.
-
-Use `:TSContextToggle` to hide or show the Treesitter scope header.
-The header shows the enclosing function or block when it scrolls past the top of the window.
 
 ## Themes and appearance
 
