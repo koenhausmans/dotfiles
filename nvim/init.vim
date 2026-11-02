@@ -747,8 +747,21 @@ if s:plugins_ready
 endif
 
 if s:plugins_ready && s:has_fzf && executable('rg')
+    function! s:Ripgrep(query, whole_word, fullscreen) abort
+        let l:command = 'rg --column --line-number --no-heading --color=always --smart-case'
+        if a:whole_word
+            let l:command .= ' --word-regexp'
+        endif
+        let l:command .= ' -- ' . fzf#shellescape(a:query)
+        " ripgrep returns 1 for no matches; keep genuine errors nonzero.
+        let l:command .= '; status=$?; if [ "$status" -eq 1 ]; then exit 0; fi; exit "$status"'
+        call fzf#vim#grep(l:command,
+            \ fzf#vim#with_preview({'options': ['--with-shell=sh -c']}), a:fullscreen)
+    endfunction
+
+    command! -bang -nargs=* Rg call <SID>Ripgrep(<q-args>, 0, <bang>0)
     nnoremap          <leader>/ :Rg<space>
-    nnoremap <silent> <leader>sw :call fzf#vim#grep('rg --column --line-number --no-heading --color=always --smart-case --word-regexp -- ' . fzf#shellescape(expand('<cword>')), fzf#vim#with_preview(), 0)<cr>
+    nnoremap <silent> <leader>sw :call <SID>Ripgrep(expand('<cword>'), 1, 0)<cr>
 else
     nnoremap          <leader>/ :grep<space>
 endif

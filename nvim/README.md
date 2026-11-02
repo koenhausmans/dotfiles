@@ -124,6 +124,11 @@ Press `,` and pause to see the which-key popup with labeled completions for all 
 With fzf, `,f`, `,b`, and `,t` open pickers. Without fzf, they use Neovim's file, buffer, and tag commands.
 On Ubuntu, install `fd-find` to provide `fdfind`. File pickers prefer `fd`, then `fdfind`, then `rg --files`, then fzf's default file search.
 
+`:Rg {pattern}` (`,/`) and `,sw` leave an empty picker when there are no matches,
+without a command-failed warning. Invalid patterns and other ripgrep errors still
+report failure. `:Rg!` opens the picker fullscreen; previews are available in both
+layouts.
+
 #### Directory buffers (oil.nvim)
 
 | Keys | Action |
