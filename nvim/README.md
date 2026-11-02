@@ -38,6 +38,33 @@ offers newer daily builds through apt (third-party, not stable releases).
 On Debian, check [packages for your release](https://packages.debian.org/search?keywords=neovim);
 do not use Ubuntu PPAs. Verify `nvim --version` is at least 0.11.3 after installation.
 
+### Treesitter setup and upgrades
+
+Treesitter and textobjects use `master` on Neovim 0.11.3–0.11.x and `main` on
+0.12+. Their checkouts and parsers are separate: 0.12 checkouts have a `-0.12`
+suffix, and parsers live in `~/.local/share/nvim/treesitter-0.12`.
+
+Parser installation needs a C compiler, curl, and tar. Neovim 0.12+ also needs
+**tree-sitter CLI 0.26.1+**; Ubuntu 26.04's apt package is too old. With Rust/Cargo
+installed, install or update to the latest CLI:
+
+```sh
+cargo install --locked tree-sitter-cli
+tree-sitter --version
+```
+
+Ensure `~/.cargo/bin` is on Neovim's Linux `PATH`. Alternatively, use a binary from
+the [tree-sitter releases](https://github.com/tree-sitter/tree-sitter/releases),
+not the npm package. `install-latest-release.sh` warns if the CLI is missing or
+too old but does not install it. For parser generation on Neovim 0.11, use CLI
+0.25.x instead.
+
+Run `:PlugInstall` once per Neovim version, then restart. On 0.12, wait for the
+automatic parser installation to finish; after plugin updates, run `:TSUpdate`
+and restart again. Use `:checkhealth nvim-treesitter` to diagnose failures.
+Avoid `:PlugClean` in a shared plugin directory: it can remove the other version's
+checkouts. Buffers without parsers keep their normal syntax and indentation.
+
 ## Overview
 
 - Language support: built-in LSP, blink.cmp completion, snippets, signature help, and automatic formatting.

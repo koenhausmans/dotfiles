@@ -1,5 +1,10 @@
 """ PLUGIN MANAGER (VIM-PLUG) {{{
 
+if !has('nvim-0.11.3')
+    echoerr '[dotfiles] This configuration requires Neovim 0.11.3 or newer.'
+    finish
+endif
+
 let mapleader = ','
 nnoremap <leader>, ,
 let s:has_fzf = executable('fzf')
@@ -45,8 +50,13 @@ Plug 'rebelot/kanagawa.nvim'
 Plug 'folke/tokyonight.nvim'
 
 " Treesitter: accurate syntax highlighting and structural text objects
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate', 'branch': 'master'}
-Plug 'nvim-treesitter/nvim-treesitter-textobjects', {'branch': 'master'}
+if has('nvim-0.12')
+    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate', 'branch': 'main', 'dir': g:plug_home . '/nvim-treesitter-0.12'}
+    Plug 'nvim-treesitter/nvim-treesitter-textobjects', {'branch': 'main', 'dir': g:plug_home . '/nvim-treesitter-textobjects-0.12'}
+else
+    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate', 'branch': 'master'}
+    Plug 'nvim-treesitter/nvim-treesitter-textobjects', {'branch': 'master'}
+endif
 Plug 'nvim-treesitter/nvim-treesitter-context'
 Plug 'lukas-reineke/indent-blankline.nvim'
 
@@ -192,7 +202,90 @@ require('which-key').add({
 })
 END
 
+if has('nvim-0.12')
 lua << END
+local treesitter = require('nvim-treesitter')
+if type(treesitter.install) ~= 'function' then
+  vim.notify('[dotfiles] Run :PlugUpdate nvim-treesitter nvim-treesitter-textobjects, then restart Neovim.', vim.log.levels.WARN)
+  return
+end
+
+-- Keep rewritten parsers and queries out of the 0.11 runtime path.
+treesitter.setup({ install_dir = vim.fn.stdpath('data') .. '/treesitter-0.12' })
+if vim.fn.executable('tree-sitter') == 1 then
+  treesitter.install({
+    'bash', 'c', 'cpp', 'lua', 'markdown', 'markdown_inline', 'python', 'rust', 'toml', 'typst', 'vim', 'vimdoc',
+  })
+else
+  vim.notify('[dotfiles] Install tree-sitter CLI 0.26.1+ to install or update parsers; see nvim/README.md.', vim.log.levels.WARN)
+end
+
+require('nvim-treesitter-textobjects').setup({
+  select = { lookahead = true },
+  move = { set_jumps = true },
+})
+
+vim.api.nvim_create_autocmd('FileType', {
+  group = vim.api.nvim_create_augroup('DotfilesTreesitter', { clear = true }),
+  callback = function(args)
+    local lang = vim.treesitter.language.get_lang(vim.bo[args.buf].filetype)
+    if not lang or not vim.treesitter.language.add(lang) then
+      return
+    end
+
+    vim.treesitter.start(args.buf, lang)
+    local undo = {}
+    if vim.b[args.buf].undo_ftplugin and vim.b[args.buf].undo_ftplugin ~= '' then
+      undo[#undo + 1] = vim.b[args.buf].undo_ftplugin
+    end
+    undo[#undo + 1] = 'call v:lua.vim.treesitter.stop()'
+    if vim.treesitter.query.get(lang, 'indents') then
+      vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+      undo[#undo + 1] = 'setlocal indentexpr<'
+    end
+
+    if not vim.treesitter.query.get(lang, 'textobjects') then
+      vim.b[args.buf].undo_ftplugin = table.concat(undo, '|')
+      return
+    end
+
+    local function map(modes, key, callback, description)
+      vim.keymap.set(modes, key, callback, { buffer = args.buf, desc = description })
+      for _, mode in ipairs(modes) do
+        undo[#undo + 1] = 'silent! ' .. mode .. 'unmap <buffer> ' .. key
+      end
+    end
+
+    -- Buffer-local maps take precedence over built-in ftplugin function motions.
+    for key, capture in pairs({
+      af = '@function.outer', ['if'] = '@function.inner',
+      ac = '@class.outer', ic = '@class.inner',
+      aa = '@parameter.outer', ia = '@parameter.inner',
+    }) do
+      map({ 'x', 'o' }, key, function()
+        require('nvim-treesitter-textobjects.select').select_textobject(capture, 'textobjects')
+      end, 'Select ' .. capture)
+    end
+
+    for key, method in pairs({
+      [']m'] = 'goto_next_start', [']M'] = 'goto_next_end',
+      ['[m'] = 'goto_previous_start', ['[M'] = 'goto_previous_end',
+    }) do
+      map({ 'n', 'x', 'o' }, key, function()
+        require('nvim-treesitter-textobjects.move')[method]('@function.outer', 'textobjects')
+      end, method:gsub('_', ' ') .. ' function')
+    end
+    vim.b[args.buf].undo_ftplugin = table.concat(undo, '|')
+  end,
+})
+END
+else
+lua << END
+if not pcall(require, 'nvim-treesitter.configs') then
+  vim.notify('[dotfiles] Run :PlugUpdate nvim-treesitter nvim-treesitter-textobjects, then restart Neovim.', vim.log.levels.WARN)
+  return
+end
+
 require('nvim-treesitter.configs').setup({
   ensure_installed = {
     'bash', 'c', 'cpp', 'lua', 'markdown', 'markdown_inline', 'python', 'rust', 'toml', 'typst', 'vim', 'vimdoc',
@@ -223,6 +316,7 @@ require('nvim-treesitter.configs').setup({
   },
 })
 END
+endif
 
 lua << END
 require('gitsigns').setup({
