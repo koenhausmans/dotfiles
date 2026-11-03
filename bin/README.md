@@ -67,6 +67,10 @@ Run `git sync` to fetch `origin` and fast-forward the local target branch. On a 
 
 Run `git trail` to show a one-line log with the upstream and fork point of the current branch. The first line shows the branch, its upstream, the ahead and behind counts, and the commit where the branch forked from the target. In the log, `↑` marks commits that are not pushed and `◆` marks the fork point. Each line is cut to the terminal width: long ref lists and subjects end in `…`. Without arguments on a feature branch, the log stops 3 commits below the fork point. Use `-c count` to change that number, `-b branch` to compare with another base, and `-g` to show the graph. Other arguments go to `git log`, for example `git trail -20` or `git trail --all`.
 
+Email addresses use up to 22 characters at terminal widths of 160 columns or less.
+Above 160 columns, the limit grows by one character for every four extra columns.
+Longer addresses end in `…` without leaving an extra gap at the right edge.
+
 ### `git-undo`
 
 Run `git undo` to remove the last commit with `git reset --soft HEAD~1`. The changes stay staged. The script refuses merge commits and root commits. It warns if the commit is already on the upstream branch. It prints the commit hash so you can restore it.

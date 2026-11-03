@@ -103,7 +103,7 @@ Format='%x1f%H%x1f%h%x1f%D%x1f%s%x1f%ad%x1f%ae'
     printf '\n'
 } | awk -F '\037' -v columns="$Columns" -v fork="$Fork" -v unpushed="$Unpushed" '
     function visible(s) { gsub(/\033\[[0-9;]*m/, "", s); return length(s) }
-    function cut(s, w) { return length(s) <= w ? s : (w < 3 ? substr(s, 1, w > 0 ? w : 0) : substr(s, 1, w - 2) "…") }
+    function cut(s, w) { return length(s) <= w ? s : (w < 3 ? substr(s, 1, w > 0 ? w : 0) : substr(s, 1, w - 1) "…") }
     function paint(refs,    n, i, r, out, color) {
         n = split(refs, list, ", ")
         out = ""
@@ -118,6 +118,7 @@ Format='%x1f%H%x1f%h%x1f%D%x1f%s%x1f%ad%x1f%ae'
         return "\033[33m(" out "\033[33m)\033[0m "
     }
     BEGIN {
+        emailWidth = 22 + (columns > 160 ? int((columns - 160) / 4) : 0)
         n = split(unpushed, list, " ")
         for (i = 1; i <= n; i++) up[list[i]] = 1
         reset = "\033[0m"
@@ -132,8 +133,8 @@ Format='%x1f%H%x1f%h%x1f%D%x1f%s%x1f%ad%x1f%ae'
     {
         prefix = $1
         mark = ($2 == fork) ? "\033[35m◆" reset : ($2 in up) ? "\033[32m↑" reset : " "
-        email = cut($7, 22)
-        tail = sprintf("  %s %-24s", $6, "<" email ">")
+        email = cut($7, emailWidth)
+        tail = sprintf("  %s %-*s", $6, emailWidth + 2, "<" email ">")
         room = columns - visible(prefix) - 2 - length($3) - 1 - length(tail)
         refs = $4
         if (refs != "" && length(refs) + 3 > room / 2) refs = cut(refs, int(room / 2) - 3)
