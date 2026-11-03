@@ -69,6 +69,44 @@ Settings UI under **Defaults** (or a single profile) → **Appearance**:
 | Padding | `padding` | `2` |
 | Scrollbar visibility | `scrollbarState` | `Hidden` |
 
+## Ctrl+Enter for OpenCode inside tmux
+
+To insert newlines in OpenCode without conflicting with tmux's `Ctrl+j` pane
+navigation, make Windows Terminal send a distinct `Ctrl+Enter` sequence.
+`Return` and `Enter` name the same key.
+
+Open **Settings → Open JSON file** and merge these entries into the existing
+`"actions"` and `"keybindings"` arrays. Keep all other entries:
+
+```json
+{
+    "actions": [
+        {
+            "command": {
+                "action": "sendInput",
+                "input": "\u001b[13;5u"
+            },
+            "id": "User.CtrlEnter"
+        }
+    ],
+    "keybindings": [
+        {
+            "keys": "ctrl+enter",
+            "id": "User.CtrlEnter"
+        }
+    ]
+}
+```
+
+Save, then test in OpenCode: `Ctrl+Enter` inserts a newline; `Enter` submits.
+`Ctrl+j` still navigates tmux panes. Do not map `Ctrl+Enter` to `Ctrl+j`
+(`\u000a`): tmux intercepts that input for pane navigation too.
+
+Verified with tmux 3.6, `extended-keys on` (already set in this repo), and
+`extended-keys-format xterm`. No switch to `csi-u` or OpenCode V2 keybinding
+override is needed. The Windows Terminal mapping applies to all profiles and
+applications; other applications decide how to handle the sequence.
+
 ## Available themes
 
 | File | Scheme name |
