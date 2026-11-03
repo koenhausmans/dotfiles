@@ -69,10 +69,10 @@ Settings UI under **Defaults** (or a single profile) → **Appearance**:
 | Padding | `padding` | `2` |
 | Scrollbar visibility | `scrollbarState` | `Hidden` |
 
-## Ctrl+Enter for OpenCode inside tmux
+## Shift+Enter for OpenCode inside tmux
 
 To insert newlines in OpenCode without conflicting with tmux's `Ctrl+j` pane
-navigation, make Windows Terminal send a distinct `Ctrl+Enter` sequence.
+navigation, make Windows Terminal send a distinct `Shift+Enter` sequence.
 `Return` and `Enter` name the same key.
 
 Open **Settings → Open JSON file** and merge these entries into the existing
@@ -84,27 +84,31 @@ Open **Settings → Open JSON file** and merge these entries into the existing
         {
             "command": {
                 "action": "sendInput",
-                "input": "\u001b[13;5u"
+                "input": "\u001b[13;2u"
             },
-            "id": "User.CtrlEnter"
+            "id": "User.ShiftEnter"
         }
     ],
     "keybindings": [
         {
-            "keys": "ctrl+enter",
-            "id": "User.CtrlEnter"
+            "keys": "shift+enter",
+            "id": "User.ShiftEnter"
         }
     ]
 }
 ```
 
-Save, then test in OpenCode: `Ctrl+Enter` inserts a newline; `Enter` submits.
-`Ctrl+j` still navigates tmux panes. Do not map `Ctrl+Enter` to `Ctrl+j`
+When replacing the previous Ctrl+Enter mapping, replace its action and binding
+rather than adding duplicates.
+
+Save, then test in OpenCode: `Shift+Enter` inserts a newline; `Enter` submits.
+`Ctrl+j` still navigates tmux panes. Do not map `Shift+Enter` to `Ctrl+j`
 (`\u000a`): tmux intercepts that input for pane navigation too.
 
-Verified with tmux 3.6, `extended-keys on` (already set in this repo), and
-`extended-keys-format xterm`. No switch to `csi-u` or OpenCode V2 keybinding
-override is needed. The Windows Terminal mapping applies to all profiles and
+The previous Ctrl+Enter mapping was verified with tmux 3.6, `extended-keys on`
+(already set in this repo), and `extended-keys-format xterm`. Test the Shift+Enter
+mapping in your terminal. No switch to `csi-u` or OpenCode V2 keybinding override
+is needed. The Windows Terminal mapping applies to all profiles and
 applications; other applications decide how to handle the sequence.
 
 ## Available themes
