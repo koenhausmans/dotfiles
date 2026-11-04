@@ -1,6 +1,11 @@
 Dotfiles:
 =========
+
+- [ ] Remove reference to Ctrl+Enter in Windows Terminal README, but also add in AGENTS.md to not include comments/documentation about previous implementations. Only the current implementation should be documented.
+- [ ] How about the K on a current word. How to integrate this into this new workflow?
+- [ ] Remove the mentioning about PlugClean in the README.md, it is not relevant as only a single neovim
  
+
 Neovim ToDo:
 ============
 - [ ] Typst: Support for terminal output instead of HTML / PDF
