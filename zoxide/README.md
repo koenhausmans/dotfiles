@@ -1,8 +1,10 @@
 # Zoxide
 
-The Bash and Zsh installers automatically install zoxide **0.10.0** into
-`~/.local/bin`. Both shells share this binary and the navigation database.
-Standalone install: `bash zoxide/install.sh` from the repository root.
+Select the `zoxide` component in the top-level installer to install zoxide
+**0.10.0** into `~/.local/bin`. It is offered in both full and server profiles.
+Bash and Zsh share this binary and the navigation database, but their standalone
+installers do not install zoxide. Standalone install: `bash zoxide/install.sh`
+from the repository root.
 
 The installer supports Linux x86_64 and aarch64, requires `curl`, `tar`, and
 `sha256sum`, and verifies the archive against a pinned upstream SHA-256 digest.

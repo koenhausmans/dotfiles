@@ -47,12 +47,11 @@ class InstallerTests(unittest.TestCase):
             env={**os.environ, "HOME": str(self.root), "INSTALL_LOG": str(self.log),
                  "PATH": f"{commands}:{os.environ['PATH']}", **env})
 
-    def run_zoxide_installer(self, component="zoxide", **env):
-        for name in {"zoxide", component}:
-            if not (self.root / name).exists():
-                shutil.copytree(REPO / name, self.root / name)
+    def run_zoxide_installer(self, **env):
+        if not (self.root / "zoxide").exists():
+            shutil.copytree(REPO / "zoxide", self.root / "zoxide")
         return subprocess.run(
-            ["bash", str(self.root / component / "install.sh")],
+            ["bash", str(self.root / "zoxide" / "install.sh")],
             capture_output=True, text=True, check=False,
             env={**os.environ, "HOME": str(self.root), "INSTALL_LOG": str(self.log),
                  "_ZO_DATA_DIR": str(self.root / "data"), "_Z_DATA": str(self.root / ".z"),
@@ -76,7 +75,7 @@ class InstallerTests(unittest.TestCase):
         self.assertIn("Usage:", result.stderr)
 
     def test_server_profile_runs_only_server_components(self):
-        for name in ("bash", "vim", "screen", "tmux", "zsh"):
+        for name in ("bash", "vim", "screen", "tmux", "zoxide", "zsh"):
             (self.root / name).mkdir()
             installer = self.root / name / "install.sh"
             installer.write_text(f'#!/usr/bin/env bash\necho "{name}:$DOTFILES_PROFILE" >> "$INSTALL_LOG"\n')
@@ -84,7 +83,41 @@ class InstallerTests(unittest.TestCase):
 
         self.assertEqual(self.run_with_tty(["server"], "Y"), 0)
         self.assertEqual(sorted(self.log.read_text().split()),
-                         sorted(f"{n}:server" for n in ("bash", "vim", "screen", "tmux")))
+                         sorted(f"{n}:server" for n in ("bash", "vim", "screen", "tmux", "zoxide")))
+
+    def test_full_profile_runs_zoxide_as_a_separate_component(self):
+        for name in ("bash", "zsh", "zoxide", "unlisted"):
+            (self.root / name).mkdir()
+            installer = self.root / name / "install.sh"
+            installer.write_text(f'#!/usr/bin/env bash\necho "{name}:$DOTFILES_PROFILE" >> "$INSTALL_LOG"\n')
+            installer.chmod(0o755)
+
+        for reply, expected in (("Y", ["bash:full", "zsh:full", "zoxide:full"]),
+                                ("yyn", ["bash:full", "zsh:full"])):
+            with self.subTest(reply=reply):
+                self.log.unlink(missing_ok=True)
+                self.assertEqual(self.run_with_tty([], reply), 0)
+                self.assertEqual(self.log.read_text().splitlines(), expected)
+
+    def test_shell_installers_do_not_install_zoxide(self):
+        commands = self.root / "commands"
+        commands.mkdir()
+        git = commands / "git"
+        git.write_text('#!/usr/bin/env bash\nexit 0\n')
+        git.chmod(0o755)
+        for component, config in (("bash", "bashrc"), ("zsh", "zshrc")):
+            with self.subTest(component=component):
+                shutil.copytree(REPO / component, self.root / component)
+                result = subprocess.run(
+                    ["bash", str(self.root / component / "install.sh")],
+                    capture_output=True, text=True, check=False,
+                    env={**os.environ, "HOME": str(self.root),
+                         "PATH": f"{commands}:{os.environ['PATH']}"})
+
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual((self.root / f".{config}").resolve(),
+                                 self.root / component / config)
+                self.assertFalse((self.root / ".local" / "bin" / "zoxide").exists())
 
     def test_vim_links_full_config_by_default(self):
         result = self.run_vim_installer()
@@ -168,17 +201,15 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertTrue((self.root / "data" / ".dotfiles-z-imported").exists())
 
-    def test_bash_installer_installs_zoxide_with_custom_history_and_data_paths(self):
+    def test_zoxide_installer_uses_custom_history_and_data_paths(self):
         self.prepare_zoxide()
         history = self.root / "old history"
         history.write_text("/example|1|1234567890\n")
         data = self.root / "new data"
 
-        result = self.run_zoxide_installer(component="bash", _Z_DATA=str(history),
-                                           _ZO_DATA_DIR=str(data))
+        result = self.run_zoxide_installer(_Z_DATA=str(history), _ZO_DATA_DIR=str(data))
 
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual((self.root / ".bashrc").resolve(), self.root / "bash" / "bashrc")
         self.assertEqual(self.log.read_text().strip(), f"import --merge z|{history}|{data}")
         self.assertTrue((data / ".dotfiles-z-imported").is_file())
 

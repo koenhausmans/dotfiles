@@ -10,5 +10,3 @@ link_files \
     "$BASEDIR/bash_profile" "$HOME/.bash_profile" \
     "$BASEDIR/bashrc" "$HOME/.bashrc" \
     "$BASEDIR/inputrc" "$HOME/.inputrc"
-
-bash "$BASEDIR/../zoxide/install.sh"

@@ -10,7 +10,7 @@ sudo apt install curl git bash vim neovim zsh fish tmux universal-ctags build-es
 Neovim requires **0.11.3+**; the distribution package may be older. See
 [Neovim setup](nvim/README.md#install-a-newer-neovim) for a newer stable release.
 
-On a server, install only bash, vim (minimal), screen and tmux (`bin` comes with bash):
+On a server, install only bash, vim (minimal), screen, tmux and zoxide (`bin` comes with bash):
 
 ```sh
 sudo apt install curl git bash vim tmux screen
@@ -26,7 +26,7 @@ Choose `D` to view an existing → incoming diff, then choose an action.
 | Component | Installs |
 |---|---|
 | bash, zsh, fish, git, tmux, screen | links the configuration |
-| bash, zsh | also install zoxide with a one-time `z.sh` history import |
+| zoxide | zoxide in `~/.local/bin` with a one-time `z.sh` history import |
 | vim | full configuration; minimal (`vimrc.minimal`) with `server` |
 | nvim | Neovim configuration |
 | fzf | latest `.deb` release (checksum verified, needs `sudo`) |

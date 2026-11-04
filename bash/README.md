@@ -1,8 +1,8 @@
 # Bash configuration
 
-`install.sh` links the Bash configuration and automatically installs
-[zoxide](../zoxide/README.md), including a one-time import of existing `z.sh`
-history. This also applies to the server profile.
+`install.sh` links the Bash configuration. Directory navigation uses
+[zoxide](../zoxide/README.md) when available; install it through the separate
+`zoxide` component offered by the top-level installer in both profiles.
 
 The interactive prompt shows the current directory, last command status, and
 Git branch/state. Its `PROMPT_COMMAND` hook is prepended while existing hooks
