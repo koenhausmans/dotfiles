@@ -11,4 +11,4 @@ link_files \
     "$BASEDIR/bashrc" "$HOME/.bashrc" \
     "$BASEDIR/inputrc" "$HOME/.inputrc"
 
-git_clone_or_pull "$HOME/.local/share/z" "https://github.com/rupa/z"
+bash "$BASEDIR/../zoxide/install.sh"

@@ -154,8 +154,7 @@ _dotfiles_register_prompt_command() {
     local declaration
     local -a existing_hooks
     declaration=$(declare -p PROMPT_COMMAND 2>/dev/null) || declaration=''
-    # z.sh appends to PROMPT_COMMAND as a string, so preserve array hooks as
-    # separate commands in a scalar before sourcing it.
+    # Preserve array hooks as separate commands when prepending our prompt.
     if [[ $declaration == 'declare -a'* ]]; then
         existing_hooks=("${PROMPT_COMMAND[@]}")
         unset PROMPT_COMMAND
@@ -202,19 +201,17 @@ if [[ $- == *i* ]] && command -v fzf > /dev/null; then
 fi
 
 ### ---------------------------------------------------------------------------
-### Z Plugin
-### ---------------------------------------------------------------------------
-load_z() {
-    local Z_HOME="$HOME/.local/share/z/"
-    [[ -f "$Z_HOME/z.sh" ]] && . "$Z_HOME/z.sh"
-}
-load_z
-
-### ---------------------------------------------------------------------------
 ### Load machine-specific config files
 ### ---------------------------------------------------------------------------
 
 # Customize to your needs...
 if [[ -f $HOME/.bashrc.local ]]; then
     source "$HOME/.bashrc.local"
+fi
+
+### ---------------------------------------------------------------------------
+### Zoxide
+### ---------------------------------------------------------------------------
+if command -v zoxide > /dev/null; then
+    eval "$(zoxide init bash)"
 fi

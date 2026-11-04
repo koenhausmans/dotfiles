@@ -26,6 +26,7 @@ Choose `D` to view an existing → incoming diff, then choose an action.
 | Component | Installs |
 |---|---|
 | bash, zsh, fish, git, tmux, screen | links the configuration |
+| bash, zsh | also install zoxide with a one-time `z.sh` history import |
 | vim | full configuration; minimal (`vimrc.minimal`) with `server` |
 | nvim | Neovim configuration |
 | fzf | latest `.deb` release (checksum verified, needs `sudo`) |
@@ -53,6 +54,7 @@ OpenCode settings stay local in `~/.config/opencode/opencode.json(c)` (or under
 
 - [bat](bat/README.md): display defaults and file previews
 - [Bash](bash/README.md) and [Zsh](zsh/README.md): shell setup and managed dependencies
+- [zoxide](zoxide/README.md): directory navigation and history migration
 - [bin](bin/README.md): git helpers (`git trail`, `git start`, `git land`, ...) and other scripts
 - [fish](fish/README.md): prompt behavior and customization
 - [git](git/README.md): Git-specific configuration
