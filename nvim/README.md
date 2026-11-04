@@ -62,8 +62,7 @@ too old but does not install it. For parser generation on Neovim 0.11, use CLI
 Run `:PlugInstall` once per Neovim version, then restart. On 0.12, wait for the
 automatic parser installation to finish; after plugin updates, run `:TSUpdate`
 and restart again. Use `:checkhealth nvim-treesitter` to diagnose failures.
-Avoid `:PlugClean` in a shared plugin directory: it can remove the other version's
-checkouts. Buffers without parsers keep their normal syntax and indentation.
+Buffers without parsers keep their normal syntax and indentation.
 
 ## Overview
 

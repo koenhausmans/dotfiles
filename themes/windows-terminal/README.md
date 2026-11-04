@@ -98,18 +98,12 @@ Open **Settings → Open JSON file** and merge these entries into the existing
 }
 ```
 
-When replacing the previous Ctrl+Enter mapping, replace its action and binding
-rather than adding duplicates.
-
 Save, then test in OpenCode: `Shift+Enter` inserts a newline; `Enter` submits.
 `Ctrl+j` still navigates tmux panes. Do not map `Shift+Enter` to `Ctrl+j`
 (`\u000a`): tmux intercepts that input for pane navigation too.
 
-The previous Ctrl+Enter mapping was verified with tmux 3.6, `extended-keys on`
-(already set in this repo), and `extended-keys-format xterm`. Test the Shift+Enter
-mapping in your terminal. No switch to `csi-u` or OpenCode V2 keybinding override
-is needed. The Windows Terminal mapping applies to all profiles and
-applications; other applications decide how to handle the sequence.
+The Windows Terminal mapping applies to all profiles and applications; other
+applications decide how to handle the sequence.
 
 ## Available themes
 

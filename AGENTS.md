@@ -2,6 +2,9 @@
 
 Keep READMEs short, compact, and focused on the reader's task.
 
+Document only the current implementation in comments and documentation.
+Omit descriptions of previous implementations and migration history.
+
 | Location | Content |
 | --- | --- |
 | Root `README.md` | Quick install, brief component overview, shared local-config locations, and links to details. |
