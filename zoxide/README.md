@@ -30,6 +30,16 @@ Installation imports nonempty `~/.z` history once, merging into any existing
 zoxide database. The old history and `~/.local/share/z` checkout are left
 untouched but are no longer loaded or updated by these dotfiles.
 
+To import `z.sh` history manually with zoxide 0.10.0 or newer:
+
+```sh
+zoxide import z
+```
+
+If the zoxide database already contains entries, use `zoxide import --merge z`
+instead. Skip manual import if the installer already imported your history;
+repeated merges add the same ranks again.
+
 The database defaults to `${XDG_DATA_HOME:-~/.local/share}/zoxide`.
 `.dotfiles-z-imported` in that directory records a successful import; reruns
 do not import the same history again. Failed imports stop setup and can be retried.
