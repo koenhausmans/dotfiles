@@ -12,14 +12,6 @@ let g:tmux_navigator_disable_when_zoomed = 1
 let s:plugins_ready = 0
 let s:missing_plugins = []
 
-if executable('fd')
-    let $FZF_DEFAULT_COMMAND = 'fd --type f'
-elseif executable('fdfind')
-    let $FZF_DEFAULT_COMMAND = 'fdfind --type f'
-elseif executable('rg')
-    let $FZF_DEFAULT_COMMAND = 'rg --files'
-endif
-
 let s:nvim_config_dir = stdpath('config')
 let s:plug_path = s:nvim_config_dir . '/autoload/plug.vim'
 let s:plug_url = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
@@ -63,7 +55,6 @@ Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'kylechui/nvim-surround'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-unimpaired'
-Plug 'numToStr/Comment.nvim'
 Plug 'folke/flash.nvim'
 
 Plug 'romainl/vim-cool'
@@ -72,11 +63,10 @@ Plug 'tpope/vim-fugitive'
 Plug 'sindrets/diffview.nvim'
 Plug 'lewis6991/gitsigns.nvim'
 
-Plug 'jiangmiao/auto-pairs'
+Plug 'nvim-mini/mini.pairs'
 
 if s:has_fzf
-    Plug 'junegunn/fzf'
-    Plug 'junegunn/fzf.vim'
+    Plug 'ibhagwan/fzf-lua'
 endif
 
 Plug 'moll/vim-bbye', {'on': 'Bdelete'}
@@ -89,15 +79,15 @@ Plug 'neovim/nvim-lspconfig'
 " Autocompletion framework
 Plug 'saghen/blink.cmp', { 'tag': '*' }
 
-" Function signature as you type
-Plug 'ray-x/lsp_signature.nvim'
+" Linters outside LSP, and lists for diagnostics, quickfix, and location entries
+Plug 'mfussenegger/nvim-lint'
+Plug 'folke/trouble.nvim'
 
 " Statusline and file-type icons
 Plug 'nvim-lualine/lualine.nvim'
 Plug 'nvim-tree/nvim-web-devicons'
 Plug 'folke/todo-comments.nvim'
 Plug 'stevearc/oil.nvim'
-Plug 'chrisbra/unicode.vim'
 Plug 'stevearc/conform.nvim'
 Plug 'OXY2DEV/markview.nvim'
 Plug 'RRethy/vim-illuminate'
@@ -127,7 +117,8 @@ lua require('diffview').setup({ use_icons = true })
 lua require('treesitter-context').setup()
 lua require('ibl').setup()
 lua require('nvim-surround').setup()
-lua require('Comment').setup()
+lua require('mini.pairs').setup()
+lua require('trouble').setup()
 lua require('flash').setup()
 lua vim.keymap.set({'n', 'x', 'o'}, 's', function() require('flash').jump() end, { desc = 'Flash jump' })
 lua vim.keymap.set({'n', 'o'}, 'S', function() require('flash').treesitter() end, { desc = 'Flash Treesitter select' })
@@ -154,6 +145,15 @@ require('which-key').add({
   { '<leader>lq', desc = 'Diagnostics loclist' },
   { '<leader>lf', desc = 'Format buffer' },
 
+  { '<leader>u',  group = 'Toggle' },
+  { '<leader>uf', desc = 'Format on save' },
+
+  { '<leader>x',  group = 'Trouble lists' },
+  { '<leader>xx', desc = 'Diagnostics' },
+  { '<leader>xX', desc = 'Buffer diagnostics' },
+  { '<leader>xq', desc = 'Quickfix list' },
+  { '<leader>xl', desc = 'Location list' },
+
   { '<leader>b',  desc = 'Buffers' },
   { '<leader>f',  desc = 'Find file' },
   { '<leader>t',  desc = 'Tags' },
@@ -163,7 +163,7 @@ require('which-key').add({
   { '<leader>z',  desc = 'Alternate buffer' },
   { '<leader>w',  desc = 'Write' },
   { '<leader>c',  desc = 'Close buffer' },
-  { '<leader>/',  desc = 'Search (Rg/grep)' },
+  { '<leader>/',  desc = 'Search (live grep/grep)' },
   { '<leader>sw', desc = 'Search word under cursor' },
   { '<leader>y',  desc = 'Yank to clipboard',  mode = { 'n', 'x' } },
   { '<leader>p',  desc = 'Paste from clipboard' },
@@ -174,7 +174,6 @@ require('which-key').add({
   { 'gi',  desc = 'Implementation' },
   { 'gr',  desc = 'References' },
   { 'gcc', desc = 'Toggle comment (line)' },
-  { 'gbc', desc = 'Toggle comment (block)' },
 
   { ']',   group = 'Next' },
   { ']d',  desc = 'Diagnostic' },
@@ -359,7 +358,7 @@ require('lualine').setup({
     },
     lualine_c = { { 'filename', path = 1 } },
     lualine_x = {
-      { 'diagnostics', sources = { 'nvim_lsp' } },
+      { 'diagnostics', sources = { 'nvim_diagnostic' } },
       'filetype',
     },
     lualine_y = { 'progress' },
@@ -392,7 +391,30 @@ require("oil").setup({
 vim.keymap.set("n", "-", "<cmd>Oil<cr>", { desc = "Open parent directory" })
 END
 
-let g:AutoPairsMultilineClose = 0
+lua << END
+vim.keymap.set('n', '<leader>xx', '<cmd>Trouble diagnostics toggle<cr>', { desc = 'Diagnostics' })
+vim.keymap.set('n', '<leader>xX', '<cmd>Trouble diagnostics toggle filter.buf=0<cr>', { desc = 'Buffer diagnostics' })
+vim.keymap.set('n', '<leader>xq', '<cmd>Trouble qflist toggle<cr>', { desc = 'Quickfix list' })
+vim.keymap.set('n', '<leader>xl', '<cmd>Trouble loclist toggle<cr>', { desc = 'Location list' })
+END
+
+lua << END
+local lint = require('lint')
+lint.linters_by_ft = {
+  python = { 'ruff' },
+  sh     = { 'shellcheck' },
+  bash   = { 'shellcheck' },
+}
+-- Missing linter binaries are skipped silently.
+vim.api.nvim_create_autocmd({ 'BufReadPost', 'BufWritePost', 'InsertLeave' }, {
+  group = vim.api.nvim_create_augroup('DotfilesLint', { clear = true }),
+  callback = function() lint.try_lint(nil, { ignore_errors = true }) end,
+})
+END
+
+if s:has_fzf
+lua require('fzf-lua').setup()
+endif
 
 cabbrev bd Bdelete
 
@@ -717,10 +739,10 @@ cabbr <expr> %% expand('%:p:h')
 """ LEADER KEY BEHAVIOR {{{
 
 if s:plugins_ready && s:has_fzf
-    nnoremap <silent> <leader>b :Buffers<cr>
-    nnoremap <silent> <leader>f :Files<cr>
-    nnoremap <silent> <leader>t :Tags<cr>
-    nnoremap <silent> <leader>gf :GFiles<cr>
+    nnoremap <silent> <leader>b <cmd>FzfLua buffers<cr>
+    nnoremap <silent> <leader>f <cmd>FzfLua files<cr>
+    nnoremap <silent> <leader>t <cmd>FzfLua tags<cr>
+    nnoremap <silent> <leader>gf <cmd>FzfLua git_files<cr>
 else
     nnoremap          <leader>b :b <C-d>
     nnoremap          <leader>f :find *
@@ -747,21 +769,8 @@ if s:plugins_ready
 endif
 
 if s:plugins_ready && s:has_fzf && executable('rg')
-    function! s:Ripgrep(query, whole_word, fullscreen) abort
-        let l:command = 'rg --column --line-number --no-heading --color=always --smart-case'
-        if a:whole_word
-            let l:command .= ' --word-regexp'
-        endif
-        let l:command .= ' -- ' . fzf#shellescape(a:query)
-        " ripgrep returns 1 for no matches; keep genuine errors nonzero.
-        let l:command .= '; status=$?; if [ "$status" -eq 1 ]; then exit 0; fi; exit "$status"'
-        call fzf#vim#grep(l:command,
-            \ fzf#vim#with_preview({'options': ['--with-shell=sh -c']}), a:fullscreen)
-    endfunction
-
-    command! -bang -nargs=* Rg call <SID>Ripgrep(<q-args>, 0, <bang>0)
-    nnoremap          <leader>/ :Rg<space>
-    nnoremap <silent> <leader>sw :call <SID>Ripgrep(expand('<cword>'), 1, 0)<cr>
+    nnoremap <silent> <leader>/ <cmd>FzfLua live_grep<cr>
+    nnoremap <silent> <leader>sw <cmd>FzfLua grep_cword<cr>
 else
     nnoremap          <leader>/ :grep<space>
 endif
@@ -834,8 +843,17 @@ require("conform").setup({
     typst      = { "typstyle" },
   },
   default_format_opts = { lsp_format = 'fallback' },
-  format_on_save = { timeout_ms = 500, lsp_format = 'fallback' },
+  format_on_save = function()
+    if vim.g.disable_autoformat then
+      return
+    end
+    return { timeout_ms = 500, lsp_format = 'fallback' }
+  end,
 })
+vim.keymap.set('n', '<leader>uf', function()
+  vim.g.disable_autoformat = not vim.g.disable_autoformat
+  vim.notify('Format on save ' .. (vim.g.disable_autoformat and 'disabled' or 'enabled'))
+end, { desc = 'Format on save' })
 vim.keymap.set('n', '<leader>lf', function()
   require('conform').format({ async = true, lsp_format = 'fallback' })
 end, { silent = true, desc = 'Format buffer' })
@@ -851,19 +869,14 @@ require('blink.cmp').setup({
     preset = 'none',
     ['<C-p>']  = { 'select_prev', 'fallback' },
     ['<C-n>']  = { 'select_next', 'fallback' },
-    -- Blink's fallback cannot replay auto-pairs' script-local <CR> mapping.
-      ['<CR>']   = { 'accept', function()
-        if vim.fn.exists('*AutoPairsReturn') == 1 then
-          return vim.keycode('<CR><C-R>=AutoPairsReturn()<CR>')
-        end
-        return vim.keycode('<CR>')
-      end },
+    ['<CR>']   = { 'accept', 'fallback' },
     ['<Tab>']  = { 'accept', 'fallback' },
     ['<C-e>']  = { 'hide' },
   },
   completion = {
     ghost_text = { enabled = true },
   },
+  signature = { enabled = true },
   sources = {
     default = { 'lsp', 'path', 'snippets' },
   },
@@ -898,10 +911,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
     vim.keymap.set('n', '<leader>la', vim.lsp.buf.code_action, opts)
     vim.keymap.set('n', '<leader>ld', vim.diagnostic.open_float, opts)
     vim.keymap.set('n', '<leader>lq', vim.diagnostic.setloclist, opts)
-    require('lsp_signature').on_attach({
-      doc_lines = 0,
-      handler_opts = { border = 'none' },
-    }, event.buf)
   end,
 })
 

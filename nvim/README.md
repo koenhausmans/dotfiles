@@ -67,8 +67,8 @@ checkouts. Buffers without parsers keep their normal syntax and indentation.
 
 ## Overview
 
-- Language support: built-in LSP, blink.cmp completion, snippets, signature help, and automatic formatting.
-- Files and navigation: oil.nvim, fzf, ripgrep, Flash jumps, and Unicode search.
+- Language support: built-in LSP, blink.cmp completion, snippets, signature help, nvim-lint linting, Trouble lists, and automatic formatting.
+- Files and navigation: oil.nvim, fzf-lua, ripgrep, and Flash jumps.
 - Git: status, history, blame, diffs, and change markers through Fugitive, Diffview, and Gitsigns.
 - Appearance: Lualine statusline, TODO highlights, reference highlights, indent guides, and a sticky Treesitter scope header.
 - Editing: four-space indentation, persistent undo, smart-case search, marker folds, and splits that open below or to the right.
@@ -79,20 +79,25 @@ Python and CoffeeScript files lose trailing whitespace on write.
 
 ## Language servers and formatters
 
-| Language | Server | Formatter | Installation |
-| --- | --- | --- | --- |
-| Python | basedpyright | ruff | `npm install -g basedpyright` or `uv tool install basedpyright` (executable: `basedpyright-langserver`). [uv/install.sh](../uv/install.sh) installs ruff, or use `uv tool install ruff`. Ruff handles formatting and import sorting. |
-| Rust | rust-analyzer | rustfmt | `rustup component add rust-analyzer rustfmt rust-src` for the active toolchain. |
-| C/C++ | clangd | clang-format | `sudo apt install clangd clang-format`. Provide `compile_commands.json` for compiler flags and include paths. A `.clang-format` file in the project root sets the style. |
-| Typst | Tinymist | typstyle | `cargo install --locked tinymist typstyle`, or install release binaries. Formatting falls back to Tinymist's formatter without typstyle. |
-| Lua | | stylua | Install a binary from the [StyLua releases](https://github.com/JohnnyMorganz/StyLua/releases). |
+| Language | Server | Formatter | Linter | Installation |
+| --- | --- | --- | --- | --- |
+| Python | basedpyright | ruff | ruff | `npm install -g basedpyright` or `uv tool install basedpyright` (executable: `basedpyright-langserver`). [uv/install.sh](../uv/install.sh) installs ruff, or use `uv tool install ruff`. Ruff handles formatting, import sorting, and linting. |
+| Rust | rust-analyzer | rustfmt | | `rustup component add rust-analyzer rustfmt rust-src` for the active toolchain. |
+| C/C++ | clangd | clang-format | | `sudo apt install clangd clang-format`. Provide `compile_commands.json` for compiler flags and include paths. A `.clang-format` file in the project root sets the style. |
+| Typst | Tinymist | typstyle | | `cargo install --locked tinymist typstyle`, or install release binaries. Formatting falls back to Tinymist's formatter without typstyle. |
+| Lua | | stylua | | Install a binary from the [StyLua releases](https://github.com/JohnnyMorganz/StyLua/releases). |
+| Shell (sh/bash) | | | shellcheck | `sudo apt install shellcheck`. |
 
 Open a matching file and use `:LspInfo` to check that its server attached. `:checkhealth vim.lsp` can help diagnose problems.
 
 conform.nvim selects the configured formatter for both `,lf` and
 format-on-save. It uses LSP formatting only when no configured formatter is
 available, so `,lf` also works without an attached LSP.
-Format-on-save can be bypassed with `:noautocmd w`.
+Toggle format-on-save for the session with `,uf`, or bypass it once with `:noautocmd w`.
+
+nvim-lint runs ruff on Python and shellcheck on sh/bash files when they are
+opened, saved, or after leaving insert mode. Missing linters are skipped
+without a warning.
 
 ## Keybindings
 
@@ -117,17 +122,13 @@ Press `,` and pause to see the which-key popup with labeled completions for all 
 | `[f` / `]f` | Open the previous / next file in the current file's directory (vim-unimpaired). |
 | `,m` | Run `:make`. |
 | `,q` | Close the window. |
-| `,/` | Start an `:Rg` search, or `:grep` when fzf or ripgrep is unavailable. |
+| `,/` | Live grep with ripgrep, or start `:grep` when fzf or ripgrep is unavailable. |
 | `,sw` | Search for the word under the cursor with ripgrep (requires fzf and ripgrep). |
-| `Ctrl-t` / `Ctrl-x` / `Ctrl-v` (fzf picker) | Open the result in a tab / split / vertical split. |
+| `Ctrl-t` / `Ctrl-s` / `Ctrl-v` (fzf picker) | Open the result in a tab / split / vertical split. |
 
-With fzf, `,f`, `,b`, and `,t` open pickers. Without fzf, they use Neovim's file, buffer, and tag commands.
-On Ubuntu, install `fd-find` to provide `fdfind`. File pickers prefer `fd`, then `fdfind`, then `rg --files`, then fzf's default file search.
-
-`:Rg {pattern}` (`,/`) and `,sw` leave an empty picker when there are no matches,
-without a command-failed warning. Invalid patterns and other ripgrep errors still
-report failure. `:Rg!` opens the picker fullscreen; previews are available in both
-layouts.
+With fzf, `,f`, `,b`, and `,t` open fzf-lua pickers with previews. Without fzf, they use Neovim's file, buffer, and tag commands.
+On Ubuntu, install `fd-find` to provide `fdfind`. File pickers prefer `fd`, then `fdfind`, then `rg --files`, then `find`, and include hidden files except `.git`.
+Run `:FzfLua` to list all pickers, such as LSP symbols, diagnostics, and keymaps.
 
 #### Directory buffers (oil.nvim)
 
@@ -161,21 +162,17 @@ Delete a line to delete the file. Open oil with `:e .` or press `-` from any buf
 | `<` / `>` / `=` (visual) | Change indentation or reindent, then keep the selection. |
 | `,y{motion}` / `,y` (visual) | Copy text to the system clipboard. `,yy` copies a line. |
 | `,p` | Paste from the system clipboard. |
-| `gcc` / `gc{motion}` / `gc` (visual) | Toggle comments with Comment.nvim. |
-| `gbc` / `gb{motion}` | Toggle block comments with Comment.nvim. |
+| `gcc` / `gc{motion}` / `gc` (visual) | Toggle comments (built-in, uses `commentstring`). |
 | `ds{char}` / `cs{old}{new}` | Delete or change surrounding characters or tags (nvim-surround). |
 | `ys{motion}{char}` / `yss{char}` / `S` (visual) | Add surrounding characters or tags (nvim-surround). The cursor stays in place after the operation. |
 | `[e` / `]e` | Move the current line up / down (vim-unimpaired). |
 | `[Space` / `]Space` | Add a blank line above / below (vim-unimpaired). |
 | `yoh` / `yol` / `yos` | Toggle search highlighting / visible whitespace / spelling (vim-unimpaired). |
 | `.` | Repeat the last surround or comment operation (vim-repeat). |
-| `Backspace` / `Enter` (insert) | Delete an empty pair / add an indented line inside one (auto-pairs). |
-| `Alt-e` / `Alt-n` / `Alt-p` (insert) | Wrap the next expression / skip a closing character / toggle auto-pairs. |
-| `ga` | Show the Unicode codepoint, name, and digraph for the character under the cursor (unicode.vim). |
-| `Ctrl-x Ctrl-g` (insert) | Complete a digraph from the characters already typed (unicode.vim). |
+| `Backspace` / `Enter` (insert) | Delete an empty pair / add an indented line inside one (mini.pairs). |
 
 The clipboard bindings use the `+` register. They do not change Neovim's default clipboard setting.
-Auto-pairs inserts matching brackets and quotes automatically. Terminal support for Alt keys can vary.
+mini.pairs inserts matching brackets and quotes automatically; typing a closing character skips over an existing one.
 
 ### Navigation
 
@@ -215,6 +212,9 @@ LSP navigation and action bindings require an attached server. The formatting bi
 | `,ld` | Show diagnostics at the cursor. |
 | `[d` / `]d` | Go to the previous / next diagnostic. |
 | `,lq` | Put diagnostics in the location list. |
+| `,xx` / `,xX` | Toggle a Trouble list of all / current-buffer diagnostics. |
+| `,xq` / `,xl` | Toggle the quickfix / location list in Trouble. |
+| `,uf` | Toggle format-on-save. |
 | `,lf` | Format the buffer. See [Language servers and formatters](#language-servers-and-formatters) for installation and format-on-save behavior. |
 | `Ctrl-p` / `Ctrl-n` (insert) | Select the previous / next completion item. |
 | `Enter` / `Tab` (insert) | Confirm a completion item. |
@@ -224,8 +224,6 @@ LSP navigation and action bindings require an attached server. The formatting bi
 
 | Command | Action |
 | --- | --- |
-| `:UnicodeSearch` | Open an fzf picker over the Unicode table and insert a character. |
-| `:Digraphs` | Search all Vim digraphs with fzf. |
 | `:StripTrailingWhitespaces` | Remove trailing whitespace. |
 | `:Indent {n}` | Set the current buffer's indentation to `n` spaces, e.g. `:Indent 2`. |
 | `:SudoWrite` / `:w!!` | Save the whole file with root permissions. Needs a named file buffer, marks it saved only after a successful write, and overwrites directly without a backup or atomic replacement. |
@@ -238,7 +236,7 @@ In command-line mode, `:bd` expands to `:Bdelete` and `%%` inserts the current f
 
 Use `:colorscheme` to change themes.
 Available themes: `kanagawa-wave`, `gruvbox-material`, `tokyonight-night`, and `sonokai` (shusia variant).
-`:Colors` opens a picker when fzf is available. Neovim saves and restores theme changes across sessions.
+`:FzfLua colorschemes` opens a picker when fzf is available. Neovim saves and restores theme changes across sessions.
 
 Split borders use heavy lines. Borders beside the active split use the theme's
 warm gold/yellow accent, distinct from [tmux](../tmux/tmux.conf)'s blue/aqua
