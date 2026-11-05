@@ -60,6 +60,7 @@ for component in "${components[@]}"; do
         [[ $action == n ]] && continue
     fi
 
+    printf '\n\033[1;36m── %s/install.sh ──\033[0m\n\n' "$component"
     info "Installing \e[1m$component/install.sh\e[0m"
     if "$installer"; then
         success "Finished installing \e[1m$component/install.sh\e[0m"

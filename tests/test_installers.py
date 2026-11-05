@@ -27,12 +27,14 @@ class InstallerTests(unittest.TestCase):
             os.execve(str(self.root / "install.sh"), [str(self.root / "install.sh"), *args],
                       {**os.environ, "HOME": str(self.root), "INSTALL_LOG": str(self.log)})
         os.write(fd, reply.encode())
+        output = bytearray()
         try:
-            while os.read(fd, 4096):
-                pass
+            while chunk := os.read(fd, 4096):
+                output.extend(chunk)
         except OSError:
             pass
         os.close(fd)
+        self.tty_output = output.decode().replace("\r\n", "\n")
         return os.waitstatus_to_exitcode(os.waitpid(pid, 0)[1])
 
     def run_vim_installer(self, **env):
@@ -84,6 +86,8 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(self.run_with_tty(["server"], "Y"), 0)
         self.assertEqual(sorted(self.log.read_text().split()),
                          sorted(f"{n}:server" for n in ("bash", "vim", "screen", "tmux", "zoxide")))
+        self.assertEqual(self.tty_output.count("── "), 5)
+        self.assertNotIn("── zsh/install.sh ──", self.tty_output)
 
     def test_full_profile_runs_zoxide_as_a_separate_component(self):
         for name in ("bash", "zsh", "zoxide", "unlisted"):
@@ -98,6 +102,16 @@ class InstallerTests(unittest.TestCase):
                 self.log.unlink(missing_ok=True)
                 self.assertEqual(self.run_with_tty([], reply), 0)
                 self.assertEqual(self.log.read_text().splitlines(), expected)
+                self.assertEqual(self.tty_output.count("── "), len(expected))
+                for entry in expected:
+                    component = entry.split(":")[0]
+                    heading = f"\n\033[1;36m── {component}/install.sh ──\033[0m\n\n"
+                    self.assertIn(heading, self.tty_output)
+                    self.assertLess(self.tty_output.index(heading),
+                                    self.tty_output.index(f"Installing \033[1m{component}/install.sh"))
+                if reply == "yyn":
+                    self.assertNotIn("── zoxide/install.sh ──", self.tty_output)
+                self.assertNotIn("── unlisted/install.sh ──", self.tty_output)
 
     def test_shell_installers_do_not_install_zoxide(self):
         commands = self.root / "commands"
