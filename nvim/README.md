@@ -2,16 +2,15 @@
 
 ## Setup
 
-This configuration requires Neovim 0.11.3 or newer and vim-plug for plugins.
+This configuration requires Neovim **0.12+** and uses `vim.pack`, the plugin
+manager built into Neovim 0.12.
 Run Neovim and its external tools inside WSL.
 Language servers and formatters must be on the Linux `PATH` used to start Neovim.
 The leader key is `,`.
 
-On first start, the configuration attempts to download vim-plug. If the
-download succeeds, run `:PlugInstall`, wait for it to finish, and restart
-Neovim. If vim-plug or plugins are missing, Neovim reports the path or plugin
-names and keeps its built-in settings and mappings available. Retry the
-displayed recovery steps, then restart.
+On first start, plugins are downloaded automatically. Restart Neovim once after
+the initial install to pick up all settings. The lockfile `nvim-pack-lock.json`
+in the config directory pins revisions and should be kept under version control.
 
 ### Install a newer Neovim
 
@@ -36,32 +35,25 @@ platforms and installation methods. On Ubuntu/Ubuntu-based WSL, the
 [Neovim unstable PPA](https://launchpad.net/~neovim-ppa/+archive/ubuntu/unstable)
 offers newer daily builds through apt (third-party, not stable releases).
 On Debian, check [packages for your release](https://packages.debian.org/search?keywords=neovim);
-do not use Ubuntu PPAs. Verify `nvim --version` is at least 0.11.3 after installation.
+do not use Ubuntu PPAs. Verify `nvim --version` is at least 0.12 after installation.
 
 ### Treesitter setup and upgrades
 
-Treesitter and textobjects use `master` on Neovim 0.11.3–0.11.x and `main` on
-0.12+. Their checkouts and parsers are separate: 0.12 checkouts have a `-0.12`
-suffix, and parsers live in `~/.local/share/nvim/treesitter-0.12`.
-
-Parser installation needs a C compiler, curl, and tar. Neovim 0.12+ also needs
-**tree-sitter CLI 0.26.1+**; Ubuntu 26.04's apt package is too old. With Rust/Cargo
-installed, install or update to the latest CLI:
+Parser installation needs a C compiler, curl, and **tree-sitter CLI 0.26.1+**;
+Ubuntu 26.04's apt package is too old. With Rust/Cargo installed:
 
 ```sh
 cargo install --locked tree-sitter-cli
 tree-sitter --version
 ```
 
-Ensure `~/.cargo/bin` is on Neovim's Linux `PATH`. Alternatively, use a binary from
-the [tree-sitter releases](https://github.com/tree-sitter/tree-sitter/releases),
+Ensure `~/.cargo/bin` is on Neovim's Linux `PATH`. Alternatively, use a binary
+from the [tree-sitter releases](https://github.com/tree-sitter/tree-sitter/releases),
 not the npm package. `install-latest-release.sh` warns if the CLI is missing or
-too old but does not install it. For parser generation on Neovim 0.11, use CLI
-0.25.x instead.
+too old but does not install it.
 
-Run `:PlugInstall` once per Neovim version, then restart. On 0.12, wait for the
-automatic parser installation to finish; after plugin updates, run `:TSUpdate`
-and restart again. Use `:checkhealth nvim-treesitter` to diagnose failures.
+Parsers are installed automatically on first start. After plugin updates, run
+`:TSUpdate` and restart. Use `:checkhealth nvim-treesitter` to diagnose failures.
 Buffers without parsers keep their normal syntax and indentation.
 
 ## Overview
@@ -167,7 +159,7 @@ Delete a line to delete the file. Open oil with `:e .` or press `-` from any buf
 | `[e` / `]e` | Move the current line up / down (vim-unimpaired). |
 | `[Space` / `]Space` | Add a blank line above / below (vim-unimpaired). |
 | `yoh` / `yol` / `yos` | Toggle search highlighting / visible whitespace / spelling (vim-unimpaired). |
-| `.` | Repeat the last surround or comment operation (vim-repeat). |
+| `.` | Repeat the last surround operation (vim-repeat). |
 | `Backspace` / `Enter` (insert) | Delete an empty pair / add an indented line inside one (mini.pairs). |
 
 The clipboard bindings use the `+` register. They do not change Neovim's default clipboard setting.
@@ -247,11 +239,14 @@ keep their own separator colors.
 
 ## Plugin updates and rollback
 
-Before updating, save the installed plugin revisions with
-`:PlugSnapshot ~/.config/nvim/plugins-before.vim`. Run `:PlugUpdate`, review
-the changes with `:PlugDiff`, and restart Neovim after the update completes.
-To restore the saved revisions, run
-`:source ~/.config/nvim/plugins-before.vim`, wait for vim-plug to finish, then
-restart. Use the actual config directory if `XDG_CONFIG_HOME` is set. A
-snapshot pins plugin Git revisions; it does not include Treesitter parsers,
-language servers, or formatter binaries.
+Run `:lua vim.pack.update()` to update all plugins. A confirmation buffer shows
+the changes; write it to confirm or quit to discard, then restart Neovim.
+
+To revert after an update, restore the lockfile from version control:
+
+```sh
+git checkout HEAD -- ~/.config/nvim/nvim-pack-lock.json
+```
+
+Then restart Neovim. Neovim re-installs plugins at the pinned revisions on startup.
+The lockfile does not cover Treesitter parsers, language servers, or formatter binaries.
