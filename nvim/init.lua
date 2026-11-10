@@ -216,8 +216,6 @@ do
     -- vim.keymap.set('n', '<leader>q', '<cmd>quit<cr>',    { silent = true })
     vim.keymap.set('n', '<leader>z', '<cmd>b#<cr>',      { silent = true })
     -- vim.keymap.set('n', '<leader>w', '<cmd>write<cr>',   { silent = true })
-    -- vim.keymap.set({'n', 'x'}, '<leader>y', '"+y')
-    -- vim.keymap.set('n', '<leader>p', '"+p')
 
     -- vim.keymap.set('n', '<leader>gs', '<cmd>Git<cr>',                  { silent = true })
     -- vim.keymap.set('n', '<leader>gd', '<cmd>DiffviewOpen<cr>',         { silent = true })
@@ -229,6 +227,9 @@ do
     vim.keymap.set('v', '>', '>gv')
     vim.keymap.set('v', '=', '=gv')
 
+    --
+    -- Cursorline setting follows window focus
+    --
     local highlight_group = vim.api.nvim_create_augroup('HighlightFollowsFocus', { clear = true })
     vim.api.nvim_create_autocmd({ 'WinEnter', 'FocusGained' }, {
         group = highlight_group,
@@ -239,6 +240,9 @@ do
         callback = function() vim.wo.cursorline = false end,
     })
 
+    --
+    -- Relativenumber setting follows window focus
+    --
     local numbers_group = vim.api.nvim_create_augroup('SmartNumbers', { clear = true })
     vim.api.nvim_create_autocmd({ 'WinEnter', 'FocusGained' }, {
         group = numbers_group,
@@ -249,6 +253,9 @@ do
         callback = function() vim.wo.relativenumber = false end,
     })
 
+    --
+    -- Enable automatic spell checking
+    --
     vim.api.nvim_create_autocmd('FileType', {
         group = vim.api.nvim_create_augroup('FileTypeSpell', { clear = true }),
         pattern = { 'markdown', 'gitcommit', 'todo' },
@@ -502,8 +509,6 @@ do
         { '<leader>c',  desc = 'Close buffer' },
         { '<leader>/',  desc = 'Search (live grep/grep)' },
         { '<leader>sw', desc = 'Search word under cursor' },
-        { '<leader>y',  desc = 'Yank to clipboard',  mode = { 'n', 'x' } },
-        { '<leader>p',  desc = 'Paste from clipboard' },
 
         { 'g',   group = 'Go to / surround / comment' },
         { 'gD',  desc = 'Declaration' },
