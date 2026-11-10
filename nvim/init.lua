@@ -205,12 +205,6 @@ do
         callback = function() vim.hl.on_yank() end,
     })
 
-    -- vim.keymap.set('n', 'j', function() return vim.v.count == 0 and 'gj' or 'j' end, { expr = true, silent = true })
-    -- vim.keymap.set('n', 'k', function() return vim.v.count == 0 and 'gk' or 'k' end, { expr = true, silent = true })
-    -- vim.keymap.set('n', '$', 'g$', { silent = true })
-    -- vim.keymap.set('n', '0', 'g^', { silent = true })
-    -- vim.keymap.set('n', "'", '`')
-
     vim.keymap.set('n', '<leader>,', ',')
 
     -- vim.keymap.set('n', '<leader>q', '<cmd>quit<cr>',    { silent = true })
@@ -223,9 +217,18 @@ do
     -- vim.keymap.set('n', '<leader>gb', '<cmd>Git blame<cr>',            { silent = true })
     -- vim.keymap.set('n', '<leader>gl', '<cmd>Git log<cr>',              { silent = true })
 
+    --
+    -- When changing indentation, stay in visual mode if applicable
+    --
     vim.keymap.set('v', '<', '<gv')
     vim.keymap.set('v', '>', '>gv')
     vim.keymap.set('v', '=', '=gv')
+
+    --
+    -- Enable toggle of wrapping and spell through leader shortcuts
+    --
+    vim.keymap.set('n', '<leader>tw', function() vim.wo.wrap = not vim.wo.wrap end, { desc = "Toggle Wrap" })
+    vim.keymap.set('n', '<leader>ts', function() vim.wo.spell = not vim.wo.spell end, { desc = "Toggle Spell" })
 
     --
     -- Cursorline setting follows window focus
@@ -271,11 +274,7 @@ do
             end
         end,
     })
-
-    -- Clear search highlight on pressing <Esc> in normal mode
-    vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>', { desc = 'Clear search highlight' })
 end
-
 
 --- END KEYMAPS & AUTOCMDS }}}
 --- UI & CORE PLUGINS {{{
@@ -318,7 +317,7 @@ do
 
     -- Close buffer, keep window split (equivalent to :Bdelete)
     vim.keymap.set('n', '<leader>c', function() bufremove.delete(0, false) end, { desc = 'Delete buffer (keep layout)' })
-    -- TODO: Consider adding a command abbreviation for :bd to call bufremove.delete(0, false)
+    -- TODO: Consider adding a command abbreviation for :bd to call bufremove.delete(0, false). Maybe add :bd! for a forced bufremove as well
 
     --
     -- Statusline configuration
@@ -460,6 +459,11 @@ do
     --
     vim.pack.add { gh 'OXY2DEV/markview.nvim' }
     require('markview').setup()
+
+    --
+    -- vim-cool: Smarter highlighting support
+    --
+    vim.pack.add { gh 'romainl/vim-cool' }
 
 end
 

@@ -55,18 +55,7 @@ Migrate in steps; keep the config working after each one.
 
 - [ ] NMAC427/guess-indent.nvim : Auto-recognize indentation of file
 - [ ] Propose a change for adding mini.nvim:
-     ```
-     vim.keymap.set('n', '<leader>tw', function() vim.wo.wrap = not vim.wo.wrap end, { desc = "Toggle Wrap" })
-     vim.keymap.set('n', '<leader>ts', function() vim.wo.spell = not vim.wo.spell end, { desc = "Toggle Spell" })
-     ```
-   - Other suggestions?
-   - For now keep oil.nvim instead of mini.files. I want to try this out later.
 - [ ] Update which-keys with latest changes (mini.icons / mini.ai, mini.bracketed)
-- `vim.keymap.set('n', '<leader>tw', function() vim.wo.wrap = not vim.wo.wrap end, { desc = "Toggle Wrap" })`
-- `vim.keymap.set('n', '<leader>ts', function() vim.wo.spell = not vim.wo.spell end, { desc = "Toggle Spell" })`
-- [x] Ripgrep does not seem to be used by fzf-lua
-- [x] Opening opencode.json now collapses everything. Why is that?
-- [ ] relativenumber does not seem to be working anymore
 - [ ] Add markdownlint to instructions, add jsonlint
 - [ ] Is this still necessary at nvim?
     -- vim.keymap.set('n', 'j', function() return vim.v.count == 0 and 'gj' or 'j' end, { expr = true, silent = true })
