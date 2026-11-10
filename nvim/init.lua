@@ -876,7 +876,22 @@ do
             if vim.tbl_contains(lint.linters_by_ft[vim.bo.filetype] or {}, 'eslint') then
                 cwd = vim.fs.dirname(vim.api.nvim_buf_get_name(0))
             end
-            lint.try_lint(nil, { cwd = cwd })
+            lint.try_lint(nil, {
+                cwd = cwd,
+                filter = function(linter)
+                    local command = type(linter.cmd) == 'function'
+                        and linter.cmd() or linter.cmd
+                    if vim.fn.executable(command) == 1 then return true end
+
+                    vim.schedule(function()
+                        vim.notify_once(
+                            'Skipping linter: executable not found: ' .. command,
+                            vim.log.levels.WARN
+                        )
+                    end)
+                    return false
+                end,
+            })
         end,
     })
 end
