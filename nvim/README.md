@@ -81,13 +81,19 @@ bufremove (layout-preserving buffer deletion), and splitjoin (argument layouts).
 | Language | Server | Formatter | Linter | Installation |
 | --- | --- | --- | --- | --- |
 | Python | basedpyright | ruff | ruff | `npm install -g basedpyright` or `uv tool install basedpyright` (executable: `basedpyright-langserver`). [uv/install.sh](../uv/install.sh) installs ruff, or use `uv tool install ruff`. Ruff handles formatting, import sorting, and linting. |
-| Rust | rust-analyzer | rustfmt | | `rustup component add rust-analyzer rustfmt rust-src` for the active toolchain. |
+| Rust | rust-analyzer | rustfmt | Clippy (through rust-analyzer) | `rustup component add rust-analyzer rustfmt rust-src clippy` for the active toolchain. |
 | C/C++ | clangd | clang-format | | `sudo apt install clangd clang-format`. Provide `compile_commands.json` for compiler flags and include paths. A `.clang-format` file in the project root sets the style. |
 | Typst | Tinymist | typstyle | | `cargo install --locked tinymist typstyle`, or install release binaries. Formatting falls back to Tinymist's formatter without typstyle. |
 | Lua | | stylua | | Install a binary from the [StyLua releases](https://github.com/JohnnyMorganz/StyLua/releases). |
 | Shell (sh/bash) | | | shellcheck | `sudo apt install shellcheck`. |
 
 Open a matching file and use `:LspInfo` to check that its server attached. `:checkhealth vim.lsp` can help diagnose problems.
+
+rust-analyzer runs `cargo clippy` on save in Cargo projects and publishes its
+diagnostics through LSP. No separate nvim-lint integration is needed. To add
+Clippy to an existing Rust installation, run `rustup component add clippy`.
+Restart Neovim after changing the configuration. Run `cargo clippy` from the
+project directory to check the tool independently.
 
 conform.nvim selects the configured formatter for both `,lf` and
 format-on-save. It uses LSP formatting only when no configured formatter is

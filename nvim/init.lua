@@ -738,6 +738,15 @@ do
     })
 
     vim.lsp.enable('basedpyright')
+
+    vim.lsp.config('rust_analyzer', {
+        settings = {
+            ['rust-analyzer'] = {
+                checkOnSave = true,
+                check = { command = 'clippy' },
+            },
+        },
+    })
     vim.lsp.enable('rust_analyzer')
     vim.lsp.enable('clangd')
     vim.lsp.enable('tinymist')
