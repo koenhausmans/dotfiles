@@ -1,6 +1,11 @@
 Dotfiles:
 =========
- 
+
+- [ ] Nvim installer: Give a warning when the `nvim` version is too old.
+- [ ] Tmux: Shortcut <prefix>-= to work similar to vim's Ctrl+w-= (equal pane sizes)
+- [ ] How about vim-repeat? How to repeat comment commands? Is it still useful with nvim? Replace by some native commands?
+- [ ] Add a rust installer?
+- [ ] zoxide: Is there an option to FZF into the zoxide query options?
 
 Neovim ToDo:
 ============
@@ -21,6 +26,7 @@ Plugins to consider:
 - [ ] mini.nvim -> Module collection; mini.pairs is already used standalone. Review other
       modules only if they would replace current plugins, e.g. mini.surround
       (nvim-surround) or mini.files (oil.nvim).
+   - For now keep oil.nvim instead of mini.files. I want to try thsi out later.
 
 Kickstart.nvim migration:
 -------------------------
@@ -43,3 +49,32 @@ Migrate in steps; keep the config working after each one.
       - mouse = 'a'  (enable mouse in all modes)
       - clipboard = 'unnamedplus'  (system clipboard by default; conflicts with
         the existing ,y/,p bindings — pick one approach before enabling)
+
+
+### Current tasks
+
+- [x] vim.pack.update() is both at Setup and plugin updates. Leave it at plugin updates.
+- [ ] Quick searching with f<char> and then with labels to move around doesn't seem to be working anymore?
+- [ ] Why dib / dab (delete inner/around bracket) not work?
+- [ ] Why is my named register "a being overwritten when I delete a word? What do I do wrong?
+      Somehow the content of register a = `F{<80><fd>5v/}^MD`
+    - [ ] mark a and register a seem to be correct.?
+- [ ] NMAC427/guess-indent.nvim : Auto-recognize indentation of file
+
+- [ ] Propose a change for adding mini.nvim:
+   - mini.bracketed instead of vim-unimpaired
+   - mini.icons instead of nvim-web-devicons
+     ```
+     vim.keymap.set('n', '<leader>tw', function() vim.wo.wrap = not vim.wo.wrap end, { desc = "Toggle Wrap" })
+     vim.keymap.set('n', '<leader>ts', function() vim.wo.spell = not vim.wo.spell end, { desc = "Toggle Spell" })
+     ```
+   - mini.pairs is already used
+   - Other suggestions?
+   - For now keep oil.nvim instead of mini.files. I want to try this out later.
+- [ ] Update which-keys with latest changes (mini.icons / mini.ai, mini.bracketed)
+- `vim.keymap.set('n', '<leader>tw', function() vim.wo.wrap = not vim.wo.wrap end, { desc = "Toggle Wrap" })`
+- `vim.keymap.set('n', '<leader>ts', function() vim.wo.spell = not vim.wo.spell end, { desc = "Toggle Spell" })`
+- [ ] Ripgrep does not seem to be used by fzf-lua
+- [ ] What to do with blink.cmp?
+- [ ] Opening opencode.json now collapses everything. Why is that?
+- [ ] relativenumber does not seem to be working anymore
