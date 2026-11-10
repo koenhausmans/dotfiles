@@ -72,6 +72,10 @@ both features when the terminal forwards focus events.
 Spelling is enabled for Markdown, Git commit messages, and todo files.
 Python and CoffeeScript files lose trailing whitespace on write.
 
+Enabled mini.nvim modules: pairs (automatic brackets and quotes), icons (with
+web-devicons compatibility), ai (extended text objects), bracketed (navigation),
+bufremove (layout-preserving buffer deletion), and splitjoin (argument layouts).
+
 ## Language servers and formatters
 
 | Language | Server | Formatter | Linter | Installation |
@@ -111,10 +115,10 @@ Press `,` and pause to see the which-key popup with labeled completions for all 
 | `,t` | Search tags. |
 | `,e` | Start `:e **/*` to open a file under the current directory. |
 | `,w` | Save the file. |
-| `,c` | Delete the buffer without closing its window (`:Bdelete`). |
+| `,c` | Delete the buffer without closing its window (mini.bufremove). |
 | `,z` | Switch to the alternate buffer. |
-| `[b` / `]b` | Go to the previous / next buffer (vim-unimpaired). |
-| `[f` / `]f` | Open the previous / next file in the current file's directory (vim-unimpaired). |
+| `[b` / `]b` | Go to the previous / next buffer (mini.bracketed). |
+| `[f` / `]f` | Open the previous / next file in the current file's directory (mini.bracketed). |
 | `,m` | Run `:make`. |
 | `,q` | Close the window. |
 | `,/` | Live grep with ripgrep, or start `:grep` when fzf or ripgrep is unavailable. |
@@ -160,14 +164,17 @@ Delete a line to delete the file. Open oil with `:e .` or press `-` from any buf
 | `gcc` / `gc{motion}` / `gc` (visual) | Toggle comments (built-in, uses `commentstring`). |
 | `ds{char}` / `cs{old}{new}` | Delete or change surrounding characters or tags (nvim-surround). |
 | `ys{motion}{char}` / `yss{char}` / `S` (visual) | Add surrounding characters or tags (nvim-surround). The cursor stays in place after the operation. |
-| `[e` / `]e` | Move the current line up / down (vim-unimpaired). |
-| `[Space` / `]Space` | Add a blank line above / below (vim-unimpaired). |
-| `yoh` / `yol` / `yos` | Toggle search highlighting / visible whitespace / spelling (vim-unimpaired). |
+| `gS` (normal / visual) | Toggle bracketed arguments between single-line and multiline layouts (mini.splitjoin). |
+| `a{object}` / `i{object}` (visual / operator-pending) | Select around / inside a text object, such as `va)` or `ci'` (mini.ai). |
 | `.` | Repeat the last surround operation (vim-repeat). |
 | `Backspace` / `Enter` (insert) | Delete an empty pair / add an indented line inside one (mini.pairs). |
 
 The clipboard bindings use the `+` register. They do not change Neovim's default clipboard setting.
 mini.pairs inserts matching brackets and quotes automatically; typing a closing character skips over an existing one.
+
+mini.splitjoin supports dot-repeat and needs no Treesitter parser. Detection uses
+Lua patterns and can misidentify arguments. In visual mode, select the surrounding
+brackets too (for example, `va)` then `gS`). Format-on-save may reformat the result.
 
 ### Navigation
 
@@ -183,9 +190,9 @@ mini.pairs inserts matching brackets and quotes automatically; typing a closing 
 | `0` / `$` | Move to the first nonblank / last character of the display line. |
 | `'` | Jump to an exact mark position. |
 | `[r` / `]r` | Go to the previous / next reference to the symbol under the cursor (illuminate). |
-| `[q` / `]q` | Go to the previous / next quickfix item (vim-unimpaired). |
-| `[l` / `]l` | Go to the previous / next location-list item (vim-unimpaired). |
-| `[n` / `]n` | Go to the previous / next conflict marker or diff hunk (vim-unimpaired). |
+| `[q` / `]q` | Go to the previous / next quickfix item (mini.bracketed). |
+| `[l` / `]l` | Go to the previous / next location-list item (mini.bracketed). |
+| `[x` / `]x` | Go to the previous / next Git conflict marker (mini.bracketed). |
 | `Ctrl-h/j/k/l` | Move between splits, or between tmux panes with vim-tmux-navigator. |
 | `Ctrl-\` | Return to the previous split or tmux pane (vim-tmux-navigator). |
 

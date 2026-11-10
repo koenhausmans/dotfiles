@@ -288,6 +288,9 @@ do
 
     require('mini.pairs').setup()
 
+    -- Toggle bracketed arguments between single-line and multiline layouts.
+    require('mini.splitjoin').setup()
+
     require('mini.icons').setup()
     MiniIcons.mock_nvim_web_devicons()
 
