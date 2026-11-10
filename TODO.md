@@ -75,6 +75,6 @@ Migrate in steps; keep the config working after each one.
 - `vim.keymap.set('n', '<leader>tw', function() vim.wo.wrap = not vim.wo.wrap end, { desc = "Toggle Wrap" })`
 - `vim.keymap.set('n', '<leader>ts', function() vim.wo.spell = not vim.wo.spell end, { desc = "Toggle Spell" })`
 - [ ] Ripgrep does not seem to be used by fzf-lua
-- [ ] What to do with blink.cmp?
 - [ ] Opening opencode.json now collapses everything. Why is that?
 - [ ] relativenumber does not seem to be working anymore
+- [ ] Add markdownlint to instructions, add jsonlint

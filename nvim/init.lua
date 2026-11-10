@@ -30,7 +30,7 @@ do
     vim.o.signcolumn = 'yes'
 
     -- Decrease update time
-    vim.o.updatetime    = 300
+    vim.o.updatetime = 300
 
     -- Decrease mapped sequence wait time
     vim.o.timeoutlen = 300
@@ -98,6 +98,46 @@ do
     --
     vim.opt.fillchars:append({ vert = '┃', horiz = '━', horizup = '┻', horizdown = '┳',
         vertleft = '┫', vertright = '┣', verthoriz = '╋' })
+
+    -- [ Format options ]
+    -- Recognize numbered lists when joining lines
+    vim.opt.formatoptions:append('n')
+
+    -- ctags from git dir or project root
+    vim.opt.tags:prepend('./.git/tags;')
+
+    -- Complete files and directories without regard to case
+    vim.o.wildignorecase = true
+
+    --
+    -- SudoWrite function
+    --
+    do
+        local function sudo_write()
+            local name = vim.fn.bufname('%')
+            if name == '' or vim.bo.buftype ~= '' then
+                error('SudoWrite requires a named file buffer')
+            end
+            vim.cmd('write !sudo tee -- ' .. vim.fn.shellescape(vim.fn.expand('%:p'), 1) .. ' >/dev/null')
+            if vim.v.shell_error ~= 0 then
+                error('SudoWrite failed; buffer has not been marked saved')
+            end
+            vim.bo.modified = false
+        end
+        vim.api.nvim_create_user_command('SudoWrite', sudo_write, {})
+        vim.cmd("cnoreabbrev <expr> w!! getcmdtype() ==# ':' && getcmdline() ==# 'w!!' ? 'SudoWrite' : 'w!!'")
+    end
+
+    -- Abbreviation for current folder in commandline
+    vim.cmd("cabbr <expr> %% expand('%:p:h')")
+
+    -- Cursor shape per mode.
+    -- Non-blinking: steady block in normal/visual, bar in insert, underline in replace.
+    -- Blinking in insert mode (700 ms delay before first blink, 400 ms on, 250 ms off).
+    vim.o.guicursor = 'n-v-c:block,i-ci-ve:ver40-blinkwait700-blinkon400-blinkoff250,r-cr:hor20,o:hor50'
+    vim.opt.display:append('truncate')
+    vim.o.termguicolors = true
+
 end
 
 --- END OPTIONS }}}
@@ -173,7 +213,6 @@ do
 
     vim.keymap.set('n', '<leader>,', ',')
 
-    vim.keymap.set('n', '<leader>c', '<cmd>Bdelete<cr>', { silent = true })
     -- vim.keymap.set('n', '<leader>q', '<cmd>quit<cr>',    { silent = true })
     vim.keymap.set('n', '<leader>z', '<cmd>b#<cr>',      { silent = true })
     -- vim.keymap.set('n', '<leader>w', '<cmd>write<cr>',   { silent = true })
@@ -228,6 +267,8 @@ do
         end,
     })
 
+    -- Clear search highlight on pressing <Esc> in normal mode
+    vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>', { desc = 'Clear search highlight' })
 end
 
 
@@ -243,8 +284,8 @@ do
     require('mini.pairs').setup()
 
     require('mini.icons').setup()
-    -- MiniIcons.mock_nvim_web_devicons()
-    --
+    MiniIcons.mock_nvim_web_devicons()
+
     -- Better Around/Inside textobjects
     --
     -- Examples:
@@ -262,6 +303,14 @@ do
 
     -- Easier navigation with brackets
     require('mini.bracketed').setup()
+
+    -- Preserves window layout when deleting/wiping buffers (replaces vim-bbye)
+    local bufremove = require('mini.bufremove')
+    bufremove.setup  { silent = true }
+
+    -- Close buffer, keep window split (equivalent to :Bdelete)
+    vim.keymap.set('n', '<leader>c', function() bufremove.delete(0, false) end, { desc = 'Delete buffer (keep layout)' })
+    -- TODO: Consider adding a command abbreviation for :bd to call bufremove.delete(0, false)
 
     --
     -- Statusline configuration
@@ -315,18 +364,46 @@ do
     -- gitsigns: Adds git related signs to the gutter
     --
     vim.pack.add { gh 'lewis6991/gitsigns.nvim' }
-    require('gitsigns').setup({
+    local gitsigns = require 'gitsigns'
+    gitsigns.setup({
         on_attach = function(bufnr)
-            local gitsigns = require('gitsigns')
-            local opts = { buffer = bufnr, silent = true }
-            vim.keymap.set('n', ']h', function()
-                if vim.wo.diff then vim.cmd.normal({ ']c', bang = true })
-                else gitsigns.nav_hunk('next') end
-            end, opts)
-            vim.keymap.set('n', '[h', function()
-                if vim.wo.diff then vim.cmd.normal({ '[c', bang = true })
-                else gitsigns.nav_hunk('prev') end
-            end, opts)
+            -- Navigation
+            vim.keymap.set('n', ']c', function()
+                if vim.wo.diff then
+                    vim.cmd.normal { ']c', bang = true }
+                else
+                    gitsigns.nav_hunk 'next'
+                end
+            end, { desc = 'Jump to next git [c]hange', buf = bufnr })
+
+            vim.keymap.set('n', '[c', function()
+                if vim.wo.diff then
+                    vim.cmd.normal { '[c', bang = true }
+                else
+                    gitsigns.nav_hunk 'prev'
+                end
+            end, { desc = 'Jump to previous git [c]hange', buf = bufnr })
+
+            -- Visual mode actions
+            vim.keymap.set('v', '<leader>hs', function() gitsigns.stage_hunk { vim.fn.line '.', vim.fn.line 'v' } end, { desc = 'git [s]tage hunk', buf = bufnr })
+            vim.keymap.set('v', '<leader>hr', function() gitsigns.reset_hunk { vim.fn.line '.', vim.fn.line 'v' } end, { desc = 'git [r]eset hunk', buf = bufnr })
+            -- Normal mode actions
+            vim.keymap.set('n', '<leader>hs', gitsigns.stage_hunk, { desc = 'git [s]tage hunk', buf = bufnr })
+            vim.keymap.set('n', '<leader>hr', gitsigns.reset_hunk, { desc = 'git [r]eset hunk', buf = bufnr })
+            vim.keymap.set('n', '<leader>hS', gitsigns.stage_buffer, { desc = 'git [S]tage buffer', buf = bufnr })
+            vim.keymap.set('n', '<leader>hR', gitsigns.reset_buffer, { desc = 'git [R]eset buffer', buf = bufnr })
+            vim.keymap.set('n', '<leader>hp', gitsigns.preview_hunk, { desc = 'git [p]review hunk', buf = bufnr })
+            vim.keymap.set('n', '<leader>hi', gitsigns.preview_hunk_inline, { desc = 'git preview hunk [i]nline', buf = bufnr })
+            vim.keymap.set('n', '<leader>hb', function() gitsigns.blame_line { full = true } end, { desc = 'git [b]lame line', buf = bufnr })
+            vim.keymap.set('n', '<leader>hd', gitsigns.diffthis, { desc = 'git [d]iff against index', buf = bufnr })
+            vim.keymap.set('n', '<leader>hD', function() gitsigns.diffthis '~' end, { desc = 'git [D]iff against last commit', buf = bufnr })
+            vim.keymap.set('n', '<leader>hQ', function() gitsigns.setqflist 'all' end, { desc = 'git hunk [Q]uickfix list (all files in repo)', buf = bufnr })
+            vim.keymap.set('n', '<leader>hq', gitsigns.setqflist, { desc = 'git hunk [q]uickfix list (all changes in this file)', buf = bufnr })
+            -- Toggles
+            vim.keymap.set('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = '[T]oggle git show [b]lame line', buf = bufnr })
+            vim.keymap.set('n', '<leader>tw', gitsigns.toggle_word_diff, { desc = '[T]oggle git intra-line [w]ord diff', buf = bufnr })
+            -- Text object
+            vim.keymap.set({ 'o', 'x' }, 'ih', gitsigns.select_hunk, { desc = 'text object [i]nside [h]unk', buf = bufnr })
         end,
     })
 
@@ -347,6 +424,35 @@ do
     --
     vim.pack.add { gh 'lukas-reineke/indent-blankline.nvim' }
     require('ibl').setup()
+
+    --
+    -- File Navigation & Buffer-based Editing (oil.nvim)
+    --
+    vim.pack.add { gh 'stevearc/oil.nvim' }
+    require('oil').setup {
+        default_file_explorer = true,
+        view_options = { show_hidden = true },
+    }
+    vim.keymap.set('n', '-', '<cmd>Oil<cr>', { desc = 'Open parent directory' })
+
+    --
+    -- File Navigation & Buffer-based Editing (oil.nvim)
+    --
+    vim.pack.add { gh 'RRethy/vim-illuminate' }
+    require('illuminate').configure()
+
+    --
+    -- Diffview: 
+    --
+    vim.pack.add { gh 'sindrets/diffview.nvim' }
+    require'diffview'.setup { use_icons = true }
+
+    --
+    -- Markview: 
+    --
+    vim.pack.add { gh 'OXY2DEV/markview.nvim' }
+    require('markview').setup()
+
 end
 
 --- END UI & CORE PLUGINS }}}
@@ -354,6 +460,84 @@ end
 
 do
     vim.pack.add { gh 'folke/which-key.nvim' }
+
+    require('which-key').setup {
+        -- Delay between pressing a key and opening which-key (milliseconds)
+        delay = 0,
+        icons = { mappings = vim.g.have_nerd_font },
+    }
+    require('which-key').add({
+        { '<leader>g',  group = 'Git' },
+        { '<leader>gs', desc = 'Status' },
+        { '<leader>gd', desc = 'Diff open' },
+        { '<leader>gc', desc = 'Diff close' },
+        { '<leader>gh', desc = 'File history' },
+        { '<leader>gb', desc = 'Blame' },
+        { '<leader>gl', desc = 'Log' },
+        { '<leader>gf', desc = 'Find git file' },
+
+        { '<leader>l',  group = 'LSP' },
+        { '<leader>lt', desc = 'Type definition' },
+        { '<leader>lr', desc = 'Rename symbol' },
+        { '<leader>la', desc = 'Code actions' },
+        { '<leader>ld', desc = 'Diagnostics float' },
+        { '<leader>lq', desc = 'Diagnostics loclist' },
+        { '<leader>lf', desc = 'Format buffer' },
+
+        { '<leader>u',  group = 'Toggle' },
+        { '<leader>uf', desc = 'Format on save' },
+
+        { '<leader>x',  group = 'Trouble lists' },
+        { '<leader>xx', desc = 'Diagnostics' },
+        { '<leader>xX', desc = 'Buffer diagnostics' },
+        { '<leader>xq', desc = 'Quickfix list' },
+        { '<leader>xl', desc = 'Location list' },
+
+        { '<leader>b',  desc = 'Buffers' },
+        { '<leader>f',  desc = 'Find file' },
+        { '<leader>t',  desc = 'Tags' },
+        { '<leader>e',  desc = 'Edit file' },
+        { '<leader>m',  desc = 'Make' },
+        -- { '<leader>q',  desc = 'Quit window' },
+        { '<leader>z',  desc = 'Alternate buffer' },
+        -- { '<leader>w',  desc = 'Write' },
+        { '<leader>c',  desc = 'Close buffer' },
+        { '<leader>/',  desc = 'Search (live grep/grep)' },
+        { '<leader>sw', desc = 'Search word under cursor' },
+        { '<leader>y',  desc = 'Yank to clipboard',  mode = { 'n', 'x' } },
+        { '<leader>p',  desc = 'Paste from clipboard' },
+
+        { 'g',   group = 'Go to / surround / comment' },
+        { 'gD',  desc = 'Declaration' },
+        { 'gd',  desc = 'Definition' },
+        { 'gi',  desc = 'Implementation' },
+        { 'gr',  desc = 'References' },
+        { 'gcc', desc = 'Toggle comment (line)' },
+
+        { ']',   group = 'Next' },
+        { ']d',  desc = 'Diagnostic' },
+        { ']h',  desc = 'Hunk' },
+        { ']r',  desc = 'Reference (illuminate)' },
+        { ']b',  desc = 'Buffer' },
+        { ']q',  desc = 'Quickfix' },
+        { ']l',  desc = 'Loclist' },
+        { ']f',  desc = 'File in dir' },
+        { ']m',  desc = 'Next function start' },
+        { ']M',  desc = 'Next function end' },
+        { ']e',  desc = 'Move line down' },
+
+        { '[',   group = 'Prev' },
+        { '[d',  desc = 'Diagnostic' },
+        { '[h',  desc = 'Hunk' },
+        { '[r',  desc = 'Reference (illuminate)' },
+        { '[b',  desc = 'Buffer' },
+        { '[q',  desc = 'Quickfix' },
+        { '[l',  desc = 'Loclist' },
+        { '[f',  desc = 'File in dir' },
+        { '[m',  desc = 'Previous function start' },
+        { '[M',  desc = 'Previous function end' },
+        { '[e',  desc = 'Move line up' },
+    })
 
 end
 
@@ -499,6 +683,14 @@ do
     vim.keymap.set('n', '<leader>/',  '<cmd>FzfLua live_grep<cr>',   { silent = true })
     vim.keymap.set('n', '<leader>sw', '<cmd>FzfLua grep_cword<cr>',  { silent = true })
 
+    --
+    -- flash.nvim: Navigate with search labels
+    --
+    vim.pack.add { gh 'folke/flash.nvim' }
+    require('flash').setup()
+    vim.keymap.set({'n', 'x', 'o'}, 's', function() require('flash').jump() end, { desc = 'Flash jump' })
+    vim.keymap.set({'n', 'o'}, 'S', function() require('flash').treesitter() end, { desc = 'Flash Treesitter select' })
+
     -- TODO: Consider further extensions:
     --  - Search diagnostics
 end
@@ -577,35 +769,95 @@ do
 end
 
 --- END FORMATTING CONFIGURATION }}}
+--- LINT CONFIGURATION {{{
+
+do
+    vim.pack.add { gh 'mfussenegger/nvim-lint' }
+
+    local lint = require('lint')
+
+    lint.linters_by_ft = {
+        bash     = { 'shellcheck' },
+        c        = { "clangtidy" },
+        cpp      = { "clangtidy" },
+        json     = { 'jsonlint' },
+        markdown = { 'markdownlint' },
+        python   = { 'ruff' },
+        sh       = { 'shellcheck' },
+    }
+
+    local lint_augroup = vim.api.nvim_create_augroup('lint', { clear = true })
+    vim.api.nvim_create_autocmd({ 'BufReadPost', 'BufWritePost', 'InsertLeave' }, {
+        group = lint_augroup,
+        callback = function()
+            -- Only run the linter in buffers that you can modify in order to
+            -- avoid superfluous noise, notably within the handy LSP pop-ups that
+            -- describe the hovered symbol using Markdown.
+            if vim.bo.modifiable then lint.try_lint() end
+        end,
+    })
+end
+
+--- END LINT CONFIGURATION }}}
 --- AUTOCOMPLETE & SNIPPETS {{{
 
 do
     vim.opt.completeopt = { 'menuone', 'noinsert', 'noselect' }
     vim.opt.shortmess:append('c')
 
+    --
     -- [[ Snipper Engine ]]
+    --
     vim.pack.add { { src = gh 'L3MON4D3/LuaSnip', version = vim.version.range '2.*' } }
     require('luasnip').setup {}
 
+    -- `friendly-snippets` contains a variety of premade snippets.
     vim.pack.add { gh 'rafamadriz/friendly-snippets' }
     require('luasnip.loaders.from_vscode').lazy_load()
 
-    -- [[ Autocomplete ENgine ]]
+    --
+    -- [[ Autocomplete Engine ]]
+    --
     vim.pack.add { { src = gh 'saghen/blink.cmp', version = vim.version.range('1.*') } }
     require('blink.cmp').setup({
         keymap = {
+            -- 'default' (recommended) for mappings similar to built-in completions
+            --   <c-y> to accept ([y]es) the completion.
+            --    This will auto-import if your LSP supports it.
+            --    This will expand snippets if the LSP sent a snippet.
             preset  = 'default',
-            -- ['<CR>']  = { 'accept', 'fallback' },
-            -- ['<Tab>'] = { 'accept', 'fallback' },
         },
-        completion = { ghost_text = { enabled = true } },
-        sources    = { default = { 'lsp', 'path', 'snippets' } },
-        snippets   = { preset = "luasnip" },
-        signature  = { enabled = true },
-    })
 
-    vim.lsp.config('*', {
-        capabilities = require('blink.cmp').get_lsp_capabilities(),
+        appearance = {
+            -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
+            -- Adjusts spacing to ensure icons are aligned
+            nerd_font_variant = 'normal',
+        },
+
+        completion = {
+            ghost_text = { enabled = true },
+            -- By default, you may press `<c-space>` to show the documentation.
+            -- Optionally, set `auto_show = true` to show the documentation after a delay.
+            documentation = { auto_show = false, auto_show_delay_ms = 500 },
+        },
+
+        sources = {
+            default = { 'lsp', 'path', 'snippets' },
+        },
+
+        snippets = { preset = 'luasnip' },
+
+        -- Blink.cmp includes an optional, recommended rust fuzzy matcher,
+        -- which automatically downloads a prebuilt binary when enabled.
+        --
+        -- By default, we use the Lua implementation instead, but you may enable
+        -- the rust implementation via `'prefer_rust_with_warning'`
+        --
+        -- See `:help blink-cmp-config-fuzzy` for more information
+        fuzzy = { implementation = 'lua' },
+
+        -- Shows a signature help window while you type arguments for a function
+        signature = { enabled = true },
     })
 end
 
@@ -613,7 +865,10 @@ end
 --- TREESITTER {{{
 
 do
-    -- Treesitter: accurate syntax highlighting and structural text objects
+    --
+    -- [[ Configure Treesitter ]]
+    --  Used to highlight, edit, and navigate code
+    --
     vim.pack.add { { src = gh 'nvim-treesitter/nvim-treesitter', version = 'main' } }
         -- gh 'nvim-treesitter/nvim-treesitter-textobjects',
         -- gh 'nvim-treesitter/nvim-treesitter-context',
@@ -635,8 +890,8 @@ do
 
         -- Enable treesitter based folds
         -- For more info on folds see `:help folds`
-        vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
-        vim.wo.foldmethod = 'expr'
+        -- vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+        -- vim.wo.foldmethod = 'expr'
 
         -- Check if treesitter indentation is available for this language, and if so enable it
         -- in case there is no indent query, the indentexpr will fallback to the vim's built in one
@@ -648,7 +903,6 @@ do
 
     local available_parsers = require('nvim-treesitter').get_available()
     vim.api.nvim_create_autocmd('FileType', {
-        group = vim.api.nvim_create_augroup('DotfilesTreesitter', { clear = true }),
         callback = function(args)
             local buf, filetype = args.buf, args.match
 
@@ -669,240 +923,6 @@ do
             end
         end,
     })
-
-    -- require('treesitter-context').setup()
-
-    -- require('nvim-treesitter-textobjects').setup({
-    --     select = { lookahead = true },
-    --     move = { set_jumps = true },
-    -- })
-
-    -- vim.api.nvim_create_autocmd('FileType', {
-    --     callback = function(args)
-    --         if not lang or not vim.treesitter.language.add(lang) then return end
-    --
-    --         vim.treesitter.start(args.buf, lang)
-    --         local undo = {}
-    --         if vim.b[args.buf].undo_ftplugin and vim.b[args.buf].undo_ftplugin ~= '' then
-    --             undo[#undo + 1] = vim.b[args.buf].undo_ftplugin
-    --         end
-    --         undo[#undo + 1] = 'call v:lua.vim.treesitter.stop()'
-    --         if vim.treesitter.query.get(lang, 'indents') then
-    --             vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
-    --             undo[#undo + 1] = 'setlocal indentexpr<'
-    --         end
-    --
-    --         if not vim.treesitter.query.get(lang, 'textobjects') then
-    --             vim.b[args.buf].undo_ftplugin = table.concat(undo, '|')
-    --             return
-    --         end
-    --
-    --         local function map(modes, key, callback, description)
-    --             vim.keymap.set(modes, key, callback, { buffer = args.buf, desc = description })
-    --             for _, mode in ipairs(modes) do
-    --                 undo[#undo + 1] = 'silent! ' .. mode .. 'unmap <buffer> ' .. key
-    --             end
-    --         end
-    --
-    --         for key, capture in pairs({
-    --             af = '@function.outer', ['if'] = '@function.inner',
-    --             ac = '@class.outer', ic = '@class.inner',
-    --             aa = '@parameter.outer', ia = '@parameter.inner',
-    --         }) do
-    --             map({ 'x', 'o' }, key, function()
-    --                 require('nvim-treesitter-textobjects.select').select_textobject(capture, 'textobjects')
-    --             end, 'Select ' .. capture)
-    --         end
-    --
-    --         for key, method in pairs({
-    --             [']m'] = 'goto_next_start', [']M'] = 'goto_next_end',
-    --             ['[m'] = 'goto_previous_start', ['[M'] = 'goto_previous_end',
-    --         }) do
-    --             map({ 'n', 'x', 'o' }, key, function()
-    --                 require('nvim-treesitter-textobjects.move')[method]('@function.outer', 'textobjects')
-    --             end, method:gsub('_', ' ') .. ' function')
-    --         end
-    --         vim.b[args.buf].undo_ftplugin = table.concat(undo, '|')
-    --     end,
-    -- })
-
 end
 
 --- END TREESITTER }}}
-
-do
-    vim.pack.add({
-        gh 'folke/flash.nvim',
-        gh 'romainl/vim-cool',
-        gh 'tpope/vim-fugitive',
-        gh 'sindrets/diffview.nvim',
-        gh 'moll/vim-bbye',
-        gh 'mfussenegger/nvim-lint',
-        gh 'folke/trouble.nvim',
-        -- Statusline and icons
-        gh 'stevearc/oil.nvim',
-        gh 'OXY2DEV/markview.nvim',
-        gh 'RRethy/vim-illuminate',
-    })
-end
-
---- PLUGIN INTEGRATION {{{
-
-require('diffview').setup({ use_icons = true })
-require('trouble').setup()
-require('flash').setup()
-vim.keymap.set({'n', 'x', 'o'}, 's', function() require('flash').jump() end, { desc = 'Flash jump' })
-vim.keymap.set({'n', 'o'}, 'S', function() require('flash').treesitter() end, { desc = 'Flash Treesitter select' })
-require('markview').setup()
-require('illuminate').configure()
-
-require('which-key').setup()
-require('which-key').add({
-    { '<leader>g',  group = 'Git' },
-    { '<leader>gs', desc = 'Status' },
-    { '<leader>gd', desc = 'Diff open' },
-    { '<leader>gc', desc = 'Diff close' },
-    { '<leader>gh', desc = 'File history' },
-    { '<leader>gb', desc = 'Blame' },
-    { '<leader>gl', desc = 'Log' },
-    { '<leader>gf', desc = 'Find git file' },
-
-    { '<leader>l',  group = 'LSP' },
-    { '<leader>lt', desc = 'Type definition' },
-    { '<leader>lr', desc = 'Rename symbol' },
-    { '<leader>la', desc = 'Code actions' },
-    { '<leader>ld', desc = 'Diagnostics float' },
-    { '<leader>lq', desc = 'Diagnostics loclist' },
-    { '<leader>lf', desc = 'Format buffer' },
-
-    { '<leader>u',  group = 'Toggle' },
-    { '<leader>uf', desc = 'Format on save' },
-
-    { '<leader>x',  group = 'Trouble lists' },
-    { '<leader>xx', desc = 'Diagnostics' },
-    { '<leader>xX', desc = 'Buffer diagnostics' },
-    { '<leader>xq', desc = 'Quickfix list' },
-    { '<leader>xl', desc = 'Location list' },
-
-    { '<leader>b',  desc = 'Buffers' },
-    { '<leader>f',  desc = 'Find file' },
-    { '<leader>t',  desc = 'Tags' },
-    { '<leader>e',  desc = 'Edit file' },
-    { '<leader>m',  desc = 'Make' },
-    -- { '<leader>q',  desc = 'Quit window' },
-    { '<leader>z',  desc = 'Alternate buffer' },
-    -- { '<leader>w',  desc = 'Write' },
-    { '<leader>c',  desc = 'Close buffer' },
-    { '<leader>/',  desc = 'Search (live grep/grep)' },
-    { '<leader>sw', desc = 'Search word under cursor' },
-    { '<leader>y',  desc = 'Yank to clipboard',  mode = { 'n', 'x' } },
-    { '<leader>p',  desc = 'Paste from clipboard' },
-
-    { 'g',   group = 'Go to / surround / comment' },
-    { 'gD',  desc = 'Declaration' },
-    { 'gd',  desc = 'Definition' },
-    { 'gi',  desc = 'Implementation' },
-    { 'gr',  desc = 'References' },
-    { 'gcc', desc = 'Toggle comment (line)' },
-
-    { ']',   group = 'Next' },
-    { ']d',  desc = 'Diagnostic' },
-    { ']h',  desc = 'Hunk' },
-    { ']r',  desc = 'Reference (illuminate)' },
-    { ']b',  desc = 'Buffer' },
-    { ']q',  desc = 'Quickfix' },
-    { ']l',  desc = 'Loclist' },
-    { ']f',  desc = 'File in dir' },
-    { ']m',  desc = 'Next function start' },
-    { ']M',  desc = 'Next function end' },
-    { ']e',  desc = 'Move line down' },
-
-    { '[',   group = 'Prev' },
-    { '[d',  desc = 'Diagnostic' },
-    { '[h',  desc = 'Hunk' },
-    { '[r',  desc = 'Reference (illuminate)' },
-    { '[b',  desc = 'Buffer' },
-    { '[q',  desc = 'Quickfix' },
-    { '[l',  desc = 'Loclist' },
-    { '[f',  desc = 'File in dir' },
-    { '[m',  desc = 'Previous function start' },
-    { '[M',  desc = 'Previous function end' },
-    { '[e',  desc = 'Move line up' },
-})
-
-do
-end
-
-require('oil').setup({
-    default_file_explorer = true,
-    view_options = { show_hidden = true },
-})
-vim.keymap.set('n', '-', '<cmd>Oil<cr>', { desc = 'Open parent directory' })
-
-vim.keymap.set('n', '<leader>xx', '<cmd>Trouble diagnostics toggle<cr>', { desc = 'Diagnostics' })
-vim.keymap.set('n', '<leader>xX', '<cmd>Trouble diagnostics toggle filter.buf=0<cr>', { desc = 'Buffer diagnostics' })
-vim.keymap.set('n', '<leader>xq', '<cmd>Trouble qflist toggle<cr>', { desc = 'Quickfix list' })
-vim.keymap.set('n', '<leader>xl', '<cmd>Trouble loclist toggle<cr>', { desc = 'Location list' })
-
-do
-    local lint = require('lint')
-    lint.linters_by_ft = {
-        python = { 'ruff' },
-        sh     = { 'shellcheck' },
-        bash   = { 'shellcheck' },
-    }
-    vim.api.nvim_create_autocmd({ 'BufReadPost', 'BufWritePost', 'InsertLeave' }, {
-        group = vim.api.nvim_create_augroup('DotfilesLint', { clear = true }),
-        callback = function() lint.try_lint(nil, { ignore_errors = true }) end,
-    })
-end
-
-vim.cmd('cabbrev bd Bdelete')
-
---- END PLUGIN INTEGRATION }}}
---- MISC EDITOR BEHAVIOR {{{
-
--- Cursor shape per mode.
--- Non-blinking: steady block in normal/visual, bar in insert, underline in replace.
--- Blinking in insert mode (700 ms delay before first blink, 400 ms on, 250 ms off).
-vim.o.guicursor = 'n-v-c:block,i-ci-ve:ver40-blinkwait700-blinkon400-blinkoff250,r-cr:hor20,o:hor50'
-vim.o.hidden    = true
-vim.opt.display:append('truncate')
-vim.o.termguicolors = true
--- Recognize numbered lists and delete comment char when joining lines
-vim.opt.formatoptions:append('nj')
-
--- Search in subfolders; include system headers
-vim.opt.path:append('**')
-vim.opt.path:append('/usr/include')
-
--- ctags from git dir or project root
-vim.opt.tags:prepend('./.git/tags;')
-vim.opt.tags:prepend('./.tags;')
-
---- END MISC EDITOR BEHAVIOR }}}
---- COMMAND LINE BEHAVIOR {{{
-
-vim.o.wildmode = 'longest:list,full'
-vim.o.wildignorecase = true
-
-do
-    local function sudo_write()
-        local name = vim.fn.bufname('%')
-        if name == '' or vim.bo.buftype ~= '' then
-            error('SudoWrite requires a named file buffer')
-        end
-        vim.cmd('write !sudo tee -- ' .. vim.fn.shellescape(vim.fn.expand('%:p'), 1) .. ' >/dev/null')
-        if vim.v.shell_error ~= 0 then
-            error('SudoWrite failed; buffer has not been marked saved')
-        end
-        vim.bo.modified = false
-    end
-    vim.api.nvim_create_user_command('SudoWrite', sudo_write, {})
-    vim.cmd("cnoreabbrev <expr> w!! getcmdtype() ==# ':' && getcmdline() ==# 'w!!' ? 'SudoWrite' : 'w!!'")
-end
-
-vim.cmd("cabbr <expr> %% expand('%:p:h')")
-
---- END COMMAND LINE BEHAVIOR }}}
-
