@@ -748,8 +748,43 @@ do
         },
     })
     vim.lsp.enable('rust_analyzer')
+    vim.lsp.config('clangd', {
+        cmd = { 'clangd', '--clang-tidy=false' },
+    })
     vim.lsp.enable('clangd')
     vim.lsp.enable('tinymist')
+
+    vim.lsp.config('lua_ls', {
+        on_init = function(client)
+            local root = client.config.root_dir
+            if root and (vim.uv.fs_stat(root .. '/.luarc.json') or vim.uv.fs_stat(root .. '/.luarc.jsonc')) then
+                return
+            end
+            client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua or {}, {
+                runtime = { version = 'LuaJIT' },
+                diagnostics = { globals = { 'vim' } },
+                workspace = {
+                    checkThirdParty = false,
+                    library = { vim.env.VIMRUNTIME },
+                },
+            })
+        end,
+    })
+    vim.lsp.enable('lua_ls')
+    vim.lsp.enable('ts_ls')
+
+    vim.lsp.config('jsonls', {
+        settings = {
+            json = {
+                validate = { enable = true },
+                schemas = {
+                    { fileMatch = { 'package.json' }, url = 'https://json.schemastore.org/package.json' },
+                    { fileMatch = { 'tsconfig*.json', 'jsconfig.json' }, url = 'https://json.schemastore.org/tsconfig.json' },
+                },
+            },
+        },
+    })
+    vim.lsp.enable('jsonls')
 
 end
 
@@ -781,6 +816,14 @@ do
             python = { 'ruff_format', 'ruff_organize_imports' },
             lua    = { 'stylua' },
             typst  = { 'typstyle' },
+            sh     = { 'shfmt' },
+            bash   = { 'shfmt' },
+            javascript      = { 'prettier' },
+            javascriptreact = { 'prettier' },
+            typescript      = { 'prettier' },
+            typescriptreact = { 'prettier' },
+            json   = { 'prettier' },
+            jsonc  = { 'prettier' },
         },
     }
 
@@ -795,11 +838,27 @@ do
 
     local lint = require('lint')
 
+    -- Resolve ESLint from the buffer's ancestors, including monorepo dependencies.
+    lint.linters.eslint.cmd = function()
+        local dir = vim.fs.dirname(vim.api.nvim_buf_get_name(0)) or vim.fn.getcwd()
+        while dir do
+            local command = dir .. '/node_modules/.bin/eslint'
+            if vim.fn.executable(command) == 1 then return command end
+            local parent = vim.fs.dirname(dir)
+            if parent == dir then break end
+            dir = parent
+        end
+        return 'eslint'
+    end
+
     lint.linters_by_ft = {
         bash     = { 'shellcheck' },
         c        = { "clangtidy" },
         cpp      = { "clangtidy" },
-        json     = { 'jsonlint' },
+        javascript      = { 'eslint' },
+        javascriptreact = { 'eslint' },
+        typescript      = { 'eslint' },
+        typescriptreact = { 'eslint' },
         markdown = { 'markdownlint' },
         python   = { 'ruff' },
         sh       = { 'shellcheck' },
@@ -812,7 +871,12 @@ do
             -- Only run the linter in buffers that you can modify in order to
             -- avoid superfluous noise, notably within the handy LSP pop-ups that
             -- describe the hovered symbol using Markdown.
-            if vim.bo.modifiable then lint.try_lint() end
+            if not vim.bo.modifiable then return end
+            local cwd
+            if vim.tbl_contains(lint.linters_by_ft[vim.bo.filetype] or {}, 'eslint') then
+                cwd = vim.fs.dirname(vim.api.nvim_buf_get_name(0))
+            end
+            lint.try_lint(nil, { cwd = cwd })
         end,
     })
 end
@@ -892,7 +956,7 @@ do
         -- gh 'nvim-treesitter/nvim-treesitter-textobjects',
         -- gh 'nvim-treesitter/nvim-treesitter-context',
 
-    local parsers = { 'bash', 'c', 'cpp', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'python', 'query', 'rust', 'toml', 'typst', 'vim', 'vimdoc', }
+    local parsers = { 'bash', 'c', 'cpp', 'diff', 'html', 'javascript', 'json', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'python', 'query', 'rust', 'toml', 'tsx', 'typescript', 'typst', 'vim', 'vimdoc', }
     require('nvim-treesitter').install(parsers)
 
     ---@param buf integer

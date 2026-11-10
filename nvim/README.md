@@ -82,10 +82,13 @@ bufremove (layout-preserving buffer deletion), and splitjoin (argument layouts).
 | --- | --- | --- | --- | --- |
 | Python | basedpyright | ruff | ruff | `npm install -g basedpyright` or `uv tool install basedpyright` (executable: `basedpyright-langserver`). [uv/install.sh](../uv/install.sh) installs ruff, or use `uv tool install ruff`. Ruff handles formatting, import sorting, and linting. |
 | Rust | rust-analyzer | rustfmt | Clippy (through rust-analyzer) | `rustup component add rust-analyzer rustfmt rust-src clippy` for the active toolchain. |
-| C/C++ | clangd | clang-format | | `sudo apt install clangd clang-format`. Provide `compile_commands.json` for compiler flags and include paths. A `.clang-format` file in the project root sets the style. |
-| Typst | Tinymist | typstyle | | `cargo install --locked tinymist typstyle`, or install release binaries. Formatting falls back to Tinymist's formatter without typstyle. |
-| Lua | | stylua | | Install a binary from the [StyLua releases](https://github.com/JohnnyMorganz/StyLua/releases). |
-| Shell (sh/bash) | | | shellcheck | `sudo apt install shellcheck`. |
+| C/C++ | clangd | clang-format | clang-tidy | `sudo apt install clangd clang-format clang-tidy`. |
+| Typst | Tinymist | typstyle | Tinymist compiler diagnostics | `cargo install --locked tinymist typstyle`, or install release binaries. Formatting falls back to Tinymist's formatter without typstyle. |
+| Lua | Lua Language Server | StyLua | LuaLS diagnostics | Install `lua-language-server` from the [LuaLS releases](https://github.com/LuaLS/lua-language-server/releases) and `stylua` from the [StyLua releases](https://github.com/JohnnyMorganz/StyLua/releases); put their executables on `PATH`. |
+| Shell (sh/bash) | | shfmt | ShellCheck | `sudo apt install shellcheck shfmt`. |
+| JavaScript / JSX / TypeScript / TSX | typescript-language-server | Prettier | ESLint | `npm install -g typescript-language-server 'typescript@<7'`; install project tools with `npm install --save-dev eslint prettier`. |
+| JSON / JSONC | JSON Language Server | Prettier | Server syntax/schema diagnostics | `npm install -g vscode-langservers-extracted`; use project-local Prettier or `npm install -g prettier` for standalone files. |
+| Markdown | | | Markdownlint | `npm install -g markdownlint-cli` (not `markdownlint-cli2`). |
 
 Open a matching file and use `:LspInfo` to check that its server attached. `:checkhealth vim.lsp` can help diagnose problems.
 
@@ -95,14 +98,47 @@ Clippy to an existing Rust installation, run `rustup component add clippy`.
 Restart Neovim after changing the configuration. Run `cargo clippy` from the
 project directory to check the tool independently.
 
-conform.nvim selects the configured formatter for both `,lf` and
-format-on-save. It uses LSP formatting only when no configured formatter is
-available, so `,lf` also works without an attached LSP.
-Toggle format-on-save for the session with `,uf`, or bypass it once with `:noautocmd w`.
+conform.nvim selects the configured formatter for `,lf`, independently of LSP.
+Only Lua and Python format automatically on save; other languages use `,lf`.
+LSP formatting is the fallback when the external formatter is unavailable.
+Bypass format-on-save once with `:noautocmd w`. Use `:ConformInfo` to inspect
+formatter availability.
 
-nvim-lint runs ruff on Python and shellcheck on sh/bash files when they are
-opened, saved, or after leaving insert mode. Missing linters are skipped
-without a warning.
+nvim-lint runs Ruff, ShellCheck, clang-tidy, Markdownlint, and ESLint for their
+configured filetypes when buffers are opened, saved, or after leaving insert
+mode. Install the corresponding executables; failures can appear in `:messages`.
+LSP diagnostics run independently; Rust, Typst, Lua, and JSON need no separate
+nvim-lint integration.
+
+### Project configuration
+
+- **C/C++:** provide `compile_commands.json` for compiler flags and include paths.
+  Configure checks in `.clang-tidy` and formatting in `.clang-format`. clang-tidy
+  runs through nvim-lint; clangd starts with `--clang-tidy=false` to avoid
+  duplicate checks. Checks on large projects can be costly.
+- **Lua:** without a root `.luarc.json` or `.luarc.jsonc`, LuaLS uses LuaJIT,
+  recognizes the `vim` global, and loads Neovim API types. A project LuaLS config
+  takes precedence over these Neovim defaults.
+- **JavaScript/TypeScript:** use `jsconfig.json` or `tsconfig.json` to define the
+  project. Enable `checkJs` there if you want JavaScript type-checking. ESLint
+  requires a project `eslint.config.*`; run `npm init @eslint/config@latest` in
+  the project to create one and select TypeScript/React support when needed.
+  Prettier uses the project's configuration, such as `.prettierrc`.
+  ESLint and Prettier search the buffer's ancestors for `node_modules/.bin`
+  executables before falling back to `PATH`. Neither integration downloads tools.
+  ESLint runs only through nvim-lint, not an additional ESLint LSP client.
+- **JSON/JSONC:** jsonls supplies completion, syntax checks, and schema validation.
+  Package manifests and JS/TS configuration files use SchemaStore schemas, which
+  require network access. Other files can declare a `$schema` URL. Prettier
+  formats both filetypes; jsonls supplies fallback formatting. For JSON with
+  comments in a `.json` file, select `:set filetype=jsonc`.
+  Strict JSON validation with jsonlint is optional: install with
+  `npm install -g jsonlint` and run `jsonlint file.json` manually. It is not run
+  automatically and does not support JSONC.
+- **Markdown:** configure rules in `.markdownlint.json` or `.markdownlint.yaml`.
+  The editor uses the `markdownlint` executable from `markdownlint-cli`.
+- **Shell:** ShellCheck reports shell-script issues. shfmt uses `.editorconfig`
+  when present, otherwise the buffer's indentation settings.
 
 ## Keybindings
 
@@ -222,7 +258,6 @@ LSP navigation and action bindings require an attached server. The formatting bi
 | `,lq` | Put diagnostics in the location list. |
 | `,xx` / `,xX` | Toggle a Trouble list of all / current-buffer diagnostics. |
 | `,xq` / `,xl` | Toggle the quickfix / location list in Trouble. |
-| `,uf` | Toggle format-on-save. |
 | `,lf` | Format the buffer. See [Language servers and formatters](#language-servers-and-formatters) for installation and format-on-save behavior. |
 | `Ctrl-p` / `Ctrl-n` (insert) | Select the previous / next completion item. |
 | `Enter` / `Tab` (insert) | Confirm a completion item. |
