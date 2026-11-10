@@ -229,27 +229,25 @@ do
     vim.keymap.set('v', '>', '>gv')
     vim.keymap.set('v', '=', '=gv')
 
-    -- vim.api.nvim_create_autocmd({ 'WinEnter', 'FocusGained' }, {
-    --     group = vim.api.nvim_create_augroup('HighlightFollowsFocus', { clear = true }),
-    --     callback = function() vim.o.cursorline = true end,
-    -- })
-    -- vim.api.nvim_create_autocmd({ 'WinLeave', 'FocusLost' }, {
-    --     group = vim.api.nvim_create_augroup('HighlightFollowsFocus', {}),
-    --     callback = function() vim.o.cursorline = false end,
-    -- })
-    --
-    -- vim.api.nvim_create_autocmd({ 'WinEnter', 'FocusGained' }, {
-    --     group = vim.api.nvim_create_augroup('SmartNumbers', { clear = true }),
-    --     callback = function()
-    --         if vim.o.number then vim.o.relativenumber = true end
-    --     end,
-    -- })
-    -- vim.api.nvim_create_autocmd({ 'WinLeave', 'FocusLost' }, {
-    --     group = vim.api.nvim_create_augroup('SmartNumbers', {}),
-    --     callback = function()
-    --         if vim.o.number then vim.o.relativenumber = false end
-    --     end,
-    -- })
+    local highlight_group = vim.api.nvim_create_augroup('HighlightFollowsFocus', { clear = true })
+    vim.api.nvim_create_autocmd({ 'WinEnter', 'FocusGained' }, {
+        group = highlight_group,
+        callback = function() vim.wo.cursorline = true end,
+    })
+    vim.api.nvim_create_autocmd({ 'WinLeave', 'FocusLost' }, {
+        group = highlight_group,
+        callback = function() vim.wo.cursorline = false end,
+    })
+
+    local numbers_group = vim.api.nvim_create_augroup('SmartNumbers', { clear = true })
+    vim.api.nvim_create_autocmd({ 'WinEnter', 'FocusGained' }, {
+        group = numbers_group,
+        callback = function() vim.wo.relativenumber = vim.wo.number end,
+    })
+    vim.api.nvim_create_autocmd({ 'WinLeave', 'FocusLost' }, {
+        group = numbers_group,
+        callback = function() vim.wo.relativenumber = false end,
+    })
 
     vim.api.nvim_create_autocmd('FileType', {
         group = vim.api.nvim_create_augroup('FileTypeSpell', { clear = true }),

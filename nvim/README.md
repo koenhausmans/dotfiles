@@ -65,6 +65,10 @@ Buffers without parsers keep their normal syntax and indentation.
 - Editing: four-space indentation, persistent undo, smart-case search, marker folds, and splits that open below or to the right.
 - Defaults: line numbers, visible whitespace, a fixed sign column, and a cursor line in the active window.
 
+Cursor-line highlighting and relative line numbers follow window focus. Inactive
+windows keep absolute line numbers. Switching away from Neovim also disables
+both features when the terminal forwards focus events.
+
 Spelling is enabled for Markdown, Git commit messages, and todo files.
 Python and CoffeeScript files lose trailing whitespace on write.
 
