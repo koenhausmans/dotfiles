@@ -13,6 +13,7 @@ stylua = "latest"
 zoxide = "latest"
 
 ruff = "latest"
+uv = "latest"
 lua-language-server = "latest"
 "npm:markdownlint-cli" = "latest"
 "npm:opencode-ai" = "latest"
