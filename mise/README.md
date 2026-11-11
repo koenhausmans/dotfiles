@@ -9,7 +9,7 @@ Configured in [`config.toml`](config.toml), symlinked to `~/.config/mise/config.
 
 | Category | Tools |
 |---|---|
-| Runtimes | Node.js LTS, Rust stable (via rustup) |
+| Runtimes | Node.js LTS, Neovim, Rust stable (via rustup) |
 | CLI | bat, fd, fzf, ripgrep, shellcheck, shfmt, stylua, zoxide |
 | Editor | ruff, lua-language-server |
 | npm | basedpyright, markdownlint-cli, opencode-ai, prettier, typescript, typescript-language-server, vscode-langservers-extracted |

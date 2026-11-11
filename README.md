@@ -3,7 +3,7 @@
 ## Install
 
 ```sh
-sudo apt install curl git bash vim neovim zsh fish tmux universal-ctags build-essential
+sudo apt install curl git bash vim zsh tmux build-essential
 ./install.sh
 ```
 

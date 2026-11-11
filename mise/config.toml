@@ -1,5 +1,6 @@
 [tools]
 node = "lts"
+neovim = "latest"
 rust = "stable"
 
 bat = "latest"

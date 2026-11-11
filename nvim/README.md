@@ -18,28 +18,12 @@ transformations in snippets; ordinary snippets work without it.
 
 ### Install a newer Neovim
 
-On Linux (including WSL), install or update to the latest stable pre-built release:
-
-```sh
-./nvim/install-latest-release.sh
-```
-
-Run this from the dotfiles root. Requires Bash, curl, tar, and sudo; supports
-x86-64 and ARM64. The script downloads and checks that the binary runs before
-replacing `/opt/nvim-linux-x86_64` (or `/opt/nvim-linux-arm64`). It creates
-`/usr/local/bin/nvim`, which takes precedence over `/usr/bin/nvim` on a standard
-PATH, without removing the apt package. An unrelated file or symlink at
-`/usr/local/bin/nvim` is not overwritten. The script does not change shell
-configuration or run automatically with the dotfiles installer. Restart your
-shell if it still selects the old binary; check with `command -v nvim` and
-`nvim --version`.
+Neovim is managed by [mise](../mise/README.md). Run `mise install` to install
+or upgrade to the latest stable release. Restart your shell if it still selects
+an old binary; check with `command -v nvim` and `nvim --version`.
 
 See the [official installation guide](https://neovim.io/doc/install/) for other
-platforms and installation methods. On Ubuntu/Ubuntu-based WSL, the
-[Neovim unstable PPA](https://launchpad.net/~neovim-ppa/+archive/ubuntu/unstable)
-offers newer daily builds through apt (third-party, not stable releases).
-On Debian, check [packages for your release](https://packages.debian.org/search?keywords=neovim);
-do not use Ubuntu PPAs. Verify `nvim --version` is at least 0.12 after installation.
+platforms and installation methods.
 
 ### Treesitter setup and upgrades
 
