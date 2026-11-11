@@ -54,13 +54,15 @@ Migrate in steps; keep the config working after each one.
 ### Current tasks
 
 - [ ] NMAC427/guess-indent.nvim : Auto-recognize indentation of file
-- [ ] Propose a change for adding mini.nvim:
-- [ ] Update which-keys with latest changes (mini.icons / mini.ai, mini.bracketed)
-- [ ] Add markdownlint to instructions, add jsonlint
-- [ ] Is this still necessary at nvim?
-    -- vim.keymap.set('n', 'j', function() return vim.v.count == 0 and 'gj' or 'j' end, { expr = true, silent = true })
-    -- vim.keymap.set('n', 'k', function() return vim.v.count == 0 and 'gk' or 'k' end, { expr = true, silent = true })
-    -- vim.keymap.set('n', '$', 'g$', { silent = true })
-    -- vim.keymap.set('n', '0', 'g^', { silent = true })
-    -- vim.keymap.set('n', "'", '`')
-
+- [ ] Include a toggle for auto-formatting of other languages
+    - Which languages are useful for auto formatting?
+- [ ] How to fix FZF for files, if I search for README.md it does not autoselect the hit with exactrly this filename. Instead it shows subfolders that contain a README.md first.
+- [ ] FZF-Lua:
+    - Search tags <leader>st
+    - Search
+- [ ] Consider:
+    - `vim.keymap.set('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = '[T]oggle git show [b]lame line', buf = bufnr })`
+    - `vim.keymap.set('n', '<leader>tw', gitsigns.toggle_word_diff, { desc = '[T]oggle git intra-line [w]ord diff', buf = bufnr })`
+- [ ] Reconsider the current LspAttach keymaps. I would rather use the keymaps of kickstart.nvim, but they use telescope. Is there a similar thing for Fzf-Lua?
+- [ ] Useful to add `require('vim._core.ui2').enable({})`?
+- [ ] Investigate https://github.com/hifanx/dotfiles/blob/main/.config/nvim/init.lua

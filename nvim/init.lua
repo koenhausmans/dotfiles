@@ -285,11 +285,13 @@ do
     --
     vim.pack.add { gh 'nvim-mini/mini.nvim' }
 
+    -- Support for pairs
     require('mini.pairs').setup()
 
     -- Toggle bracketed arguments between single-line and multiline layouts.
     require('mini.splitjoin').setup()
 
+    -- Support for icons
     require('mini.icons').setup()
     MiniIcons.mock_nvim_web_devicons()
 
@@ -407,8 +409,8 @@ do
             vim.keymap.set('n', '<leader>hQ', function() gitsigns.setqflist 'all' end, { desc = 'Git [H]unks to [Q]uickfix (repository)', buf = bufnr })
             vim.keymap.set('n', '<leader>hq', gitsigns.setqflist, { desc = 'Git [H]unks to [Q]uickfix (current file)', buf = bufnr })
             -- Toggles
-            vim.keymap.set('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = '[T]oggle git show [b]lame line', buf = bufnr })
-            vim.keymap.set('n', '<leader>tw', gitsigns.toggle_word_diff, { desc = '[T]oggle git intra-line [w]ord diff', buf = bufnr })
+            -- vim.keymap.set('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = '[T]oggle git show [b]lame line', buf = bufnr })
+            -- vim.keymap.set('n', '<leader>tw', gitsigns.toggle_word_diff, { desc = '[T]oggle git intra-line [w]ord diff', buf = bufnr })
             -- Text object
             vim.keymap.set({ 'o', 'x' }, 'ih', gitsigns.select_hunk, { desc = '[I]nside Git [H]unk', buf = bufnr })
         end,
@@ -622,6 +624,9 @@ do
     vim.o.grepprg    = 'rg --vimgrep --smart-case $*'
     vim.o.grepformat = '%f:%l:%c:%m'
 
+    --
+    -- Fzf-Lua:
+    --
     vim.pack.add { gh 'ibhagwan/fzf-lua' }
     require('fzf-lua').setup()
 
