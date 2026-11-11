@@ -195,8 +195,6 @@ do
         },
     }
 
-    vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Diagnostics to location list' })
-
     -- Highlight when yanking (copying) text
     vim.api.nvim_create_autocmd('TextYankPost', {
         desc = 'Highlight when yanking (copying) text',
@@ -206,9 +204,9 @@ do
 
     vim.keymap.set('n', '<leader>,', ',', { desc = 'Repeat character motion backward' })
 
-    -- vim.keymap.set('n', '<leader>q', '<cmd>quit<cr>',    { silent = true })
+    vim.keymap.set('n', '<leader>q', '<cmd>quit<cr>', { silent = true, desc = '[Q]uit this buffer' })
     vim.keymap.set('n', '<leader>z', '<cmd>b#<cr>',      { silent = true, desc = 'Switch to alternate buffer' })
-    -- vim.keymap.set('n', '<leader>w', '<cmd>write<cr>',   { silent = true })
+    vim.keymap.set('n', '<leader>w', '<cmd>write<cr>', { silent = true, desc = '[W]rite this buffer' })
 
     -- vim.keymap.set('n', '<leader>gs', '<cmd>Git<cr>',                  { silent = true })
     -- vim.keymap.set('n', '<leader>gd', '<cmd>DiffviewOpen<cr>',         { silent = true })
@@ -452,13 +450,13 @@ do
     require('illuminate').configure()
 
     --
-    -- Diffview: 
+    -- Diffview:
     --
     vim.pack.add { gh 'sindrets/diffview.nvim' }
     require('diffview').setup { use_icons = true }
 
     --
-    -- Markview: 
+    -- Markview:
     --
     vim.pack.add { gh 'OXY2DEV/markview.nvim' }
     require('markview').setup()
@@ -756,7 +754,6 @@ do
         format_on_save = function(bufnr)
             -- Filetypes that will be autoformatted
             local enabled_filetypes = {
-                lua = true,
                 python = true,
             }
             if enabled_filetypes[vim.bo[bufnr].filetype] then

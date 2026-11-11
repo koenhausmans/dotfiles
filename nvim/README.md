@@ -104,7 +104,7 @@ Restart Neovim after changing the configuration. Run `cargo clippy` from the
 project directory to check the tool independently.
 
 conform.nvim selects the configured formatter for `,lf`, independently of LSP.
-Only Lua and Python format automatically on save; other languages use `,lf`.
+Only Python formats automatically on save; Lua and other languages use `,lf`.
 LSP formatting is the fallback when the external formatter is unavailable.
 Bypass format-on-save once with `:noautocmd w`. Use `:ConformInfo` to inspect
 formatter availability.
@@ -174,7 +174,7 @@ Press `gr` and pause to see the LSP Actions group.
 | `,z` | Switch to the alternate buffer. |
 | `[b` / `]b` | Go to the previous / next buffer (mini.bracketed). |
 | `[f` / `]f` | Open the previous / next file in the current file's directory (mini.bracketed). |
-| `,q` | Put diagnostics in the current window's location list. |
+| `,q` / `,w` | Quit / write the current buffer. |
 | `,/` | Live grep with ripgrep. |
 | `,sw` | Search for the word under the cursor with ripgrep (requires fzf and ripgrep). |
 | `Ctrl-t` / `Ctrl-s` / `Ctrl-v` (fzf picker) | Open the result in a tab / split / vertical split. |
