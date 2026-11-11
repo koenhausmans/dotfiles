@@ -117,7 +117,7 @@ do
             if name == '' or vim.bo.buftype ~= '' then
                 error('SudoWrite requires a named file buffer')
             end
-            vim.cmd('write !sudo tee -- ' .. vim.fn.shellescape(vim.fn.expand('%:p'), 1) .. ' >/dev/null')
+            vim.cmd('write !sudo tee -- ' .. vim.fn.shellescape(vim.fn.expand('%:p'), true) .. ' >/dev/null')
             if vim.v.shell_error ~= 0 then
                 error('SudoWrite failed; buffer has not been marked saved')
             end
