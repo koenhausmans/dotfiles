@@ -196,7 +196,7 @@ do
         },
     }
 
-    vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+    vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Diagnostics to location list' })
 
     -- Highlight when yanking (copying) text
     vim.api.nvim_create_autocmd('TextYankPost', {
@@ -205,10 +205,10 @@ do
         callback = function() vim.hl.on_yank() end,
     })
 
-    vim.keymap.set('n', '<leader>,', ',')
+    vim.keymap.set('n', '<leader>,', ',', { desc = 'Repeat character motion backward' })
 
     -- vim.keymap.set('n', '<leader>q', '<cmd>quit<cr>',    { silent = true })
-    vim.keymap.set('n', '<leader>z', '<cmd>b#<cr>',      { silent = true })
+    vim.keymap.set('n', '<leader>z', '<cmd>b#<cr>',      { silent = true, desc = 'Switch to alternate buffer' })
     -- vim.keymap.set('n', '<leader>w', '<cmd>write<cr>',   { silent = true })
 
     -- vim.keymap.set('n', '<leader>gs', '<cmd>Git<cr>',                  { silent = true })
@@ -220,15 +220,15 @@ do
     --
     -- When changing indentation, stay in visual mode if applicable
     --
-    vim.keymap.set('v', '<', '<gv')
-    vim.keymap.set('v', '>', '>gv')
-    vim.keymap.set('v', '=', '=gv')
+    vim.keymap.set('v', '<', '<gv', { desc = 'Indent left and keep selection' })
+    vim.keymap.set('v', '>', '>gv', { desc = 'Indent right and keep selection' })
+    vim.keymap.set('v', '=', '=gv', { desc = 'Reindent and keep selection' })
 
     --
     -- Enable toggle of wrapping and spell through leader shortcuts
     --
-    vim.keymap.set('n', '<leader>tw', function() vim.wo.wrap = not vim.wo.wrap end, { desc = "Toggle Wrap" })
-    vim.keymap.set('n', '<leader>ts', function() vim.wo.spell = not vim.wo.spell end, { desc = "Toggle Spell" })
+    vim.keymap.set('n', '<leader>tw', function() vim.wo.wrap = not vim.wo.wrap end, { desc = '[T]oggle [W]rap' })
+    vim.keymap.set('n', '<leader>ts', function() vim.wo.spell = not vim.wo.spell end, { desc = '[T]oggle [S]pell checking' })
 
     --
     -- Cursorline setting follows window focus
@@ -316,7 +316,7 @@ do
     bufremove.setup  { silent = true }
 
     -- Close buffer, keep window split (equivalent to :Bdelete)
-    vim.keymap.set('n', '<leader>c', function() bufremove.delete(0, false) end, { desc = 'Delete buffer (keep layout)' })
+    vim.keymap.set('n', '<leader>c', function() bufremove.delete(0, false) end, { desc = '[C]lose buffer (keep layout)' })
     -- TODO: Consider adding a command abbreviation for :bd to call bufremove.delete(0, false). Maybe add :bd! for a forced bufremove as well
 
     --
@@ -362,10 +362,10 @@ do
     }
 
     local ss = require('smart-splits')
-    vim.keymap.set('n', '<C-h>', ss.move_cursor_left)
-    vim.keymap.set('n', '<C-j>', ss.move_cursor_down)
-    vim.keymap.set('n', '<C-k>', ss.move_cursor_up)
-    vim.keymap.set('n', '<C-l>', ss.move_cursor_right)
+    vim.keymap.set('n', '<C-h>', ss.move_cursor_left, { desc = 'Move to left split or tmux pane' })
+    vim.keymap.set('n', '<C-j>', ss.move_cursor_down, { desc = 'Move to lower split or tmux pane' })
+    vim.keymap.set('n', '<C-k>', ss.move_cursor_up, { desc = 'Move to upper split or tmux pane' })
+    vim.keymap.set('n', '<C-l>', ss.move_cursor_right, { desc = 'Move to right split or tmux pane' })
 
     --
     -- gitsigns: Adds git related signs to the gutter
@@ -381,7 +381,7 @@ do
                 else
                     gitsigns.nav_hunk 'next'
                 end
-            end, { desc = 'Jump to next git [c]hange', buf = bufnr })
+            end, { desc = 'Next Git [C]hange', buf = bufnr })
 
             vim.keymap.set('n', '[c', function()
                 if vim.wo.diff then
@@ -389,28 +389,28 @@ do
                 else
                     gitsigns.nav_hunk 'prev'
                 end
-            end, { desc = 'Jump to previous git [c]hange', buf = bufnr })
+            end, { desc = 'Previous Git [C]hange', buf = bufnr })
 
             -- Visual mode actions
-            vim.keymap.set('v', '<leader>hs', function() gitsigns.stage_hunk { vim.fn.line '.', vim.fn.line 'v' } end, { desc = 'git [s]tage hunk', buf = bufnr })
-            vim.keymap.set('v', '<leader>hr', function() gitsigns.reset_hunk { vim.fn.line '.', vim.fn.line 'v' } end, { desc = 'git [r]eset hunk', buf = bufnr })
+            vim.keymap.set('v', '<leader>hs', function() gitsigns.stage_hunk { vim.fn.line '.', vim.fn.line 'v' } end, { desc = '[S]tage Git [H]unk selection', buf = bufnr })
+            vim.keymap.set('v', '<leader>hr', function() gitsigns.reset_hunk { vim.fn.line '.', vim.fn.line 'v' } end, { desc = '[R]eset Git [H]unk selection', buf = bufnr })
             -- Normal mode actions
-            vim.keymap.set('n', '<leader>hs', gitsigns.stage_hunk, { desc = 'git [s]tage hunk', buf = bufnr })
-            vim.keymap.set('n', '<leader>hr', gitsigns.reset_hunk, { desc = 'git [r]eset hunk', buf = bufnr })
-            vim.keymap.set('n', '<leader>hS', gitsigns.stage_buffer, { desc = 'git [S]tage buffer', buf = bufnr })
-            vim.keymap.set('n', '<leader>hR', gitsigns.reset_buffer, { desc = 'git [R]eset buffer', buf = bufnr })
-            vim.keymap.set('n', '<leader>hp', gitsigns.preview_hunk, { desc = 'git [p]review hunk', buf = bufnr })
-            vim.keymap.set('n', '<leader>hi', gitsigns.preview_hunk_inline, { desc = 'git preview hunk [i]nline', buf = bufnr })
-            vim.keymap.set('n', '<leader>hb', function() gitsigns.blame_line { full = true } end, { desc = 'git [b]lame line', buf = bufnr })
-            vim.keymap.set('n', '<leader>hd', gitsigns.diffthis, { desc = 'git [d]iff against index', buf = bufnr })
-            vim.keymap.set('n', '<leader>hD', function() gitsigns.diffthis '~' end, { desc = 'git [D]iff against last commit', buf = bufnr })
-            vim.keymap.set('n', '<leader>hQ', function() gitsigns.setqflist 'all' end, { desc = 'git hunk [Q]uickfix list (all files in repo)', buf = bufnr })
-            vim.keymap.set('n', '<leader>hq', gitsigns.setqflist, { desc = 'git hunk [q]uickfix list (all changes in this file)', buf = bufnr })
+            vim.keymap.set('n', '<leader>hs', gitsigns.stage_hunk, { desc = '[S]tage Git [H]unk', buf = bufnr })
+            vim.keymap.set('n', '<leader>hr', gitsigns.reset_hunk, { desc = '[R]eset Git [H]unk', buf = bufnr })
+            vim.keymap.set('n', '<leader>hS', gitsigns.stage_buffer, { desc = '[S]tage Git buffer', buf = bufnr })
+            vim.keymap.set('n', '<leader>hR', gitsigns.reset_buffer, { desc = '[R]eset Git buffer', buf = bufnr })
+            vim.keymap.set('n', '<leader>hp', gitsigns.preview_hunk, { desc = '[P]review Git [H]unk', buf = bufnr })
+            vim.keymap.set('n', '<leader>hi', gitsigns.preview_hunk_inline, { desc = 'Preview Git [H]unk [I]nline', buf = bufnr })
+            vim.keymap.set('n', '<leader>hb', function() gitsigns.blame_line { full = true } end, { desc = 'Git [B]lame line', buf = bufnr })
+            vim.keymap.set('n', '<leader>hd', gitsigns.diffthis, { desc = 'Git [D]iff against index', buf = bufnr })
+            vim.keymap.set('n', '<leader>hD', function() gitsigns.diffthis '~' end, { desc = 'Git [D]iff against parent commit', buf = bufnr })
+            vim.keymap.set('n', '<leader>hQ', function() gitsigns.setqflist 'all' end, { desc = 'Git [H]unks to [Q]uickfix (repository)', buf = bufnr })
+            vim.keymap.set('n', '<leader>hq', gitsigns.setqflist, { desc = 'Git [H]unks to [Q]uickfix (current file)', buf = bufnr })
             -- Toggles
             vim.keymap.set('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = '[T]oggle git show [b]lame line', buf = bufnr })
             vim.keymap.set('n', '<leader>tw', gitsigns.toggle_word_diff, { desc = '[T]oggle git intra-line [w]ord diff', buf = bufnr })
             -- Text object
-            vim.keymap.set({ 'o', 'x' }, 'ih', gitsigns.select_hunk, { desc = 'text object [i]nside [h]unk', buf = bufnr })
+            vim.keymap.set({ 'o', 'x' }, 'ih', gitsigns.select_hunk, { desc = '[I]nside Git [H]unk', buf = bufnr })
         end,
     })
 
@@ -476,77 +476,17 @@ do
     require('which-key').setup {
         -- Delay between pressing a key and opening which-key (milliseconds)
         delay = 0,
-        icons = { mappings = vim.g.have_nerd_font },
+        icons = { mappings = true },
     }
     require('which-key').add({
-        { '<leader>g',  group = 'Git' },
-        { '<leader>gs', desc = 'Status' },
-        { '<leader>gd', desc = 'Diff open' },
-        { '<leader>gc', desc = 'Diff close' },
-        { '<leader>gh', desc = 'File history' },
-        { '<leader>gb', desc = 'Blame' },
-        { '<leader>gl', desc = 'Log' },
-        { '<leader>gf', desc = 'Find git file' },
-
-        { '<leader>l',  group = 'LSP' },
-        { '<leader>lt', desc = 'Type definition' },
-        { '<leader>lr', desc = 'Rename symbol' },
-        { '<leader>la', desc = 'Code actions' },
-        { '<leader>ld', desc = 'Diagnostics float' },
-        { '<leader>lq', desc = 'Diagnostics loclist' },
-        { '<leader>lf', desc = 'Format buffer' },
-
-        { '<leader>u',  group = 'Toggle' },
-        { '<leader>uf', desc = 'Format on save' },
-
-        { '<leader>x',  group = 'Trouble lists' },
-        { '<leader>xx', desc = 'Diagnostics' },
-        { '<leader>xX', desc = 'Buffer diagnostics' },
-        { '<leader>xq', desc = 'Quickfix list' },
-        { '<leader>xl', desc = 'Location list' },
-
-        { '<leader>b',  desc = 'Buffers' },
-        { '<leader>f',  desc = 'Find file' },
-        { '<leader>t',  desc = 'Tags' },
-        { '<leader>e',  desc = 'Edit file' },
-        { '<leader>m',  desc = 'Make' },
-        -- { '<leader>q',  desc = 'Quit window' },
-        { '<leader>z',  desc = 'Alternate buffer' },
-        -- { '<leader>w',  desc = 'Write' },
-        { '<leader>c',  desc = 'Close buffer' },
-        { '<leader>/',  desc = 'Search (live grep/grep)' },
-        { '<leader>sw', desc = 'Search word under cursor' },
-
-        { 'g',   group = 'Go to / surround / comment' },
-        { 'gD',  desc = 'Declaration' },
-        { 'gd',  desc = 'Definition' },
-        { 'gi',  desc = 'Implementation' },
-        { 'gr',  desc = 'References' },
-        { 'gcc', desc = 'Toggle comment (line)' },
-
-        { ']',   group = 'Next' },
-        { ']d',  desc = 'Diagnostic' },
-        { ']h',  desc = 'Hunk' },
-        { ']r',  desc = 'Reference (illuminate)' },
-        { ']b',  desc = 'Buffer' },
-        { ']q',  desc = 'Quickfix' },
-        { ']l',  desc = 'Loclist' },
-        { ']f',  desc = 'File in dir' },
-        { ']m',  desc = 'Next function start' },
-        { ']M',  desc = 'Next function end' },
-        { ']e',  desc = 'Move line down' },
-
-        { '[',   group = 'Prev' },
-        { '[d',  desc = 'Diagnostic' },
-        { '[h',  desc = 'Hunk' },
-        { '[r',  desc = 'Reference (illuminate)' },
-        { '[b',  desc = 'Buffer' },
-        { '[q',  desc = 'Quickfix' },
-        { '[l',  desc = 'Loclist' },
-        { '[f',  desc = 'File in dir' },
-        { '[m',  desc = 'Previous function start' },
-        { '[M',  desc = 'Previous function end' },
-        { '[e',  desc = 'Move line up' },
+        { '<leader>g', group = '[G]it' },
+        { '<leader>h', group = 'Git [H]unks', mode = { 'n', 'x' } },
+        { '<leader>l', group = '[L]SP' },
+        { '<leader>s', group = '[S]earch' },
+        { '<leader>t', group = '[T]oggle' },
+        { 'g', group = 'Go to / actions', mode = { 'n', 'x', 'o' } },
+        { '[', group = 'Previous', mode = { 'n', 'x', 'o' } },
+        { ']', group = 'Next', mode = { 'n', 'x', 'o' } },
     })
 
 end
@@ -685,13 +625,13 @@ do
     vim.pack.add { gh 'ibhagwan/fzf-lua' }
     require('fzf-lua').setup()
 
-    vim.keymap.set('n', '<leader>b',  '<cmd>FzfLua buffers<cr>',   { silent = true })
-    vim.keymap.set('n', '<leader>f',  '<cmd>FzfLua files<cr>',     { silent = true })
-    vim.keymap.set('n', '<leader>t',  '<cmd>FzfLua tags<cr>',      { silent = true })
-    vim.keymap.set('n', '<leader>gf', '<cmd>FzfLua git_files<cr>', { silent = true })
+    vim.keymap.set('n', '<leader>b',  '<cmd>FzfLua buffers<cr>',   { silent = true, desc = 'Find [B]uffers' })
+    vim.keymap.set('n', '<leader>f',  '<cmd>FzfLua files<cr>',     { silent = true, desc = '[F]ind file' })
+    vim.keymap.set('n', '<leader>st', '<cmd>FzfLua tags<cr>',      { silent = true, desc = '[S]earch [T]ags' })
+    vim.keymap.set('n', '<leader>gf', '<cmd>FzfLua git_files<cr>', { silent = true, desc = 'Find [G]it [F]iles' })
 
-    vim.keymap.set('n', '<leader>/',  '<cmd>FzfLua live_grep<cr>',   { silent = true })
-    vim.keymap.set('n', '<leader>sw', '<cmd>FzfLua grep_cword<cr>',  { silent = true })
+    vim.keymap.set('n', '<leader>/',  '<cmd>FzfLua live_grep<cr>',   { silent = true, desc = 'Live grep' })
+    vim.keymap.set('n', '<leader>sw', '<cmd>FzfLua grep_cword<cr>',  { silent = true, desc = '[S]earch [W]ord under cursor' })
 
     --
     -- flash.nvim: Navigate with search labels
@@ -721,19 +661,18 @@ do
         group = vim.api.nvim_create_augroup('UserLspMappings', { clear = true }),
         callback = function(event)
             vim.bo[event.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
-            local opts = { buffer = event.buf, silent = true }
-            vim.keymap.set('n', 'gD', vim.lsp.buf.declaration,    opts)
-            vim.keymap.set('n', 'gd', vim.lsp.buf.definition,     opts)
-            vim.keymap.set('n', 'K',  vim.lsp.buf.hover,          opts)
-            vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
-            vim.keymap.set('n', 'gr', vim.lsp.buf.references,     opts)
-            vim.keymap.set('n', '[d', function() vim.diagnostic.jump({ count = -1 }) end, opts)
-            vim.keymap.set('n', ']d', function() vim.diagnostic.jump({ count = 1  }) end, opts)
-            vim.keymap.set('n', '<leader>lt', vim.lsp.buf.type_definition, opts)
-            vim.keymap.set('n', '<leader>lr', vim.lsp.buf.rename,          opts)
-            vim.keymap.set('n', '<leader>la', vim.lsp.buf.code_action,     opts)
-            vim.keymap.set('n', '<leader>ld', vim.diagnostic.open_float,   opts)
-            vim.keymap.set('n', '<leader>lq', vim.diagnostic.setloclist,   opts)
+            vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, { buffer = event.buf, silent = true, desc = 'Go to [D]eclaration' })
+            vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { buffer = event.buf, silent = true, desc = 'Go to [D]efinition' })
+            vim.keymap.set('n', 'K', vim.lsp.buf.hover, { buffer = event.buf, silent = true, desc = 'Hover information' })
+            vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, { buffer = event.buf, silent = true, desc = 'Go to [I]mplementation' })
+            vim.keymap.set('n', 'gr', vim.lsp.buf.references, { buffer = event.buf, silent = true, desc = 'Find [R]eferences' })
+            vim.keymap.set('n', '[d', function() vim.diagnostic.jump({ count = -1 }) end, { buffer = event.buf, silent = true, desc = 'Previous [D]iagnostic' })
+            vim.keymap.set('n', ']d', function() vim.diagnostic.jump({ count = 1 }) end, { buffer = event.buf, silent = true, desc = 'Next [D]iagnostic' })
+            vim.keymap.set('n', '<leader>lt', vim.lsp.buf.type_definition, { buffer = event.buf, silent = true, desc = '[L]SP: [T]ype definition' })
+            vim.keymap.set('n', '<leader>lr', vim.lsp.buf.rename, { buffer = event.buf, silent = true, desc = '[L]SP: [R]ename symbol' })
+            vim.keymap.set('n', '<leader>la', vim.lsp.buf.code_action, { buffer = event.buf, silent = true, desc = '[L]SP: Code [A]ctions' })
+            vim.keymap.set('n', '<leader>ld', vim.diagnostic.open_float, { buffer = event.buf, silent = true, desc = '[L]SP: [D]iagnostics at cursor' })
+            vim.keymap.set('n', '<leader>lq', vim.diagnostic.setloclist, { buffer = event.buf, silent = true, desc = '[L]SP: Diagnostics to location list' })
         end,
     })
 
@@ -827,7 +766,7 @@ do
         },
     }
 
-    vim.keymap.set({ 'n', 'v' }, '<leader>lf', function() require('conform').format { async = true } end, { desc = "Format buffer" })
+    vim.keymap.set({ 'n', 'v' }, '<leader>lf', function() require('conform').format { async = true } end, { desc = '[F]ormat buffer' })
 end
 
 --- END FORMATTING CONFIGURATION }}}

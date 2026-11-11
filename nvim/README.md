@@ -149,6 +149,12 @@ These bindings use normal mode unless marked otherwise. Plugin bindings require 
 
 Press `,` and pause to see the which-key popup with labeled completions for all leader bindings.
 
+Action labels come from each mapping's `desc`; which-key registers only groups.
+Custom mappings use bracketed mnemonics where natural. mini.ai, mini.bracketed,
+and mini.splitjoin retain their own labels. mini.icons supplies which-key icons;
+a Nerd Font is required. Set `icons.mappings = false` in which-key setup to hide them.
+Leader groups: `,g` Git, `,h` Git hunks, `,l` LSP, `,s` Search, and `,t` Toggle.
+
 ### Files, buffers, and search
 
 | Keys | Action |
@@ -157,20 +163,17 @@ Press `,` and pause to see the which-key popup with labeled completions for all 
 | `,f` | Find a file. |
 | `,gf` | Find a Git-tracked file (fzf only). |
 | `,b` | Select a buffer. |
-| `,t` | Search tags. |
-| `,e` | Start `:e **/*` to open a file under the current directory. |
-| `,w` | Save the file. |
+| `,st` | Search tags. |
 | `,c` | Delete the buffer without closing its window (mini.bufremove). |
 | `,z` | Switch to the alternate buffer. |
 | `[b` / `]b` | Go to the previous / next buffer (mini.bracketed). |
 | `[f` / `]f` | Open the previous / next file in the current file's directory (mini.bracketed). |
-| `,m` | Run `:make`. |
-| `,q` | Close the window. |
-| `,/` | Live grep with ripgrep, or start `:grep` when fzf or ripgrep is unavailable. |
+| `,q` | Put diagnostics in the current window's location list. |
+| `,/` | Live grep with ripgrep. |
 | `,sw` | Search for the word under the cursor with ripgrep (requires fzf and ripgrep). |
 | `Ctrl-t` / `Ctrl-s` / `Ctrl-v` (fzf picker) | Open the result in a tab / split / vertical split. |
 
-With fzf, `,f`, `,b`, and `,t` open fzf-lua pickers with previews. Without fzf, they use Neovim's file, buffer, and tag commands.
+`,f`, `,b`, and `,st` open fzf-lua pickers with previews; fzf is required.
 On Ubuntu, install `fd-find` to provide `fdfind`. File pickers prefer `fd`, then `fdfind`, then `rg --files`, then `find`, and include hidden files except `.git`.
 Run `:FzfLua` to list all pickers, such as LSP symbols, diagnostics, and keymaps.
 
@@ -191,19 +194,23 @@ Delete a line to delete the file. Open oil with `:e .` or press `-` from any buf
 
 | Keys | Action |
 | --- | --- |
-| `,gs` | Open Fugitive status. |
-| `,gd` | Open the Diffview changes pane. |
-| `,gc` | Close the Diffview pane. |
-| `,gh` | Show history for the current file. |
-| `,gb` | Show Git blame for the current file. |
-| `,gl` | Show the Git log. |
-| `[h` / `]h` | Go to the previous / next changed hunk in a tracked file. |
+| `[c` / `]c` | Go to the previous / next Git change; use native diff navigation in diff mode. |
+| `,hs` / `,hr` (normal / visual) | Stage / reset the current hunk or selected lines. |
+| `,hS` / `,hR` | Stage / reset all changes in the current buffer. |
+| `,hp` / `,hi` | Preview a hunk in a popup / inline. |
+| `,hb` | Show blame for the current line. |
+| `,hd` / `,hD` | Diff against the index / parent commit. |
+| `,hq` / `,hQ` | Put changed hunks from the current file / repository into quickfix. |
+| `ih` (visual / operator-pending) | Select a Git hunk. |
+
+Gitsigns adds these bindings only to attached buffers.
 
 ### Editing
 
 | Keys | Action |
 | --- | --- |
 | `<` / `>` / `=` (visual) | Change indentation or reindent, then keep the selection. |
+| `,tw` / `,ts` | Toggle wrapping / spell checking in the current window. |
 | `,y{motion}` / `,y` (visual) | Copy text to the system clipboard. `,yy` copies a line. |
 | `,p` | Paste from the system clipboard. |
 | `gcc` / `gc{motion}` / `gc` (visual) | Toggle comments (built-in, uses `commentstring`). |
@@ -238,11 +245,9 @@ brackets too (for example, `va)` then `gS`). Format-on-save may reformat the res
 | `[q` / `]q` | Go to the previous / next quickfix item (mini.bracketed). |
 | `[l` / `]l` | Go to the previous / next location-list item (mini.bracketed). |
 | `[x` / `]x` | Go to the previous / next Git conflict marker (mini.bracketed). |
-| `Ctrl-h/j/k/l` | Move between splits, or between tmux panes with vim-tmux-navigator. |
-| `Ctrl-\` | Return to the previous split or tmux pane (vim-tmux-navigator). |
+| `Ctrl-h/j/k/l` | Move between splits and tmux panes with smart-splits. |
 
-Without vim-tmux-navigator, `Ctrl-h/j/k/l` still moves between splits.
-In an embedded fzf picker, those keys go to fzf instead of switching panes.
+Outside tmux, `Ctrl-h/j/k/l` moves between Neovim splits.
 
 ### LSP and completion
 
@@ -259,8 +264,6 @@ LSP navigation and action bindings require an attached server. The formatting bi
 | `,ld` | Show diagnostics at the cursor. |
 | `[d` / `]d` | Go to the previous / next diagnostic. |
 | `,lq` | Put diagnostics in the location list. |
-| `,xx` / `,xX` | Toggle a Trouble list of all / current-buffer diagnostics. |
-| `,xq` / `,xl` | Toggle the quickfix / location list in Trouble. |
 | `,lf` | Format the buffer. See [Language servers and formatters](#language-servers-and-formatters) for installation and format-on-save behavior. |
 | `Ctrl-p` / `Ctrl-n` (insert) | Select the previous / next completion item. |
 | `Enter` / `Tab` (insert) | Confirm a completion item. |
