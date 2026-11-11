@@ -488,6 +488,7 @@ do
         { '<leader>s', group = '[S]earch' },
         { '<leader>t', group = '[T]oggle' },
         { 'g', group = 'Go to / actions', mode = { 'n', 'x', 'o' } },
+        { 'gr', group = 'LSP Actions', mode = { 'n', 'x' } },
         { '[', group = 'Previous', mode = { 'n', 'x', 'o' } },
         { ']', group = 'Next', mode = { 'n', 'x', 'o' } },
     })
@@ -672,17 +673,20 @@ do
     vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('UserLspMappings', { clear = true }),
         callback = function(event)
+            local fzf = require('fzf-lua')
             vim.bo[event.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
-            vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, { buffer = event.buf, silent = true, desc = 'Go to [D]eclaration' })
-            vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { buffer = event.buf, silent = true, desc = 'Go to [D]efinition' })
+            vim.keymap.set('n', 'grr', function() fzf.lsp_references({ jump1 = false }) end, { buffer = event.buf, silent = true, desc = '[G]oto [R]eferences' })
+            vim.keymap.set('n', 'gri', fzf.lsp_implementations, { buffer = event.buf, silent = true, desc = '[G]oto [I]mplementation' })
+            vim.keymap.set('n', 'grd', fzf.lsp_definitions, { buffer = event.buf, silent = true, desc = '[G]oto [D]efinition' })
+            vim.keymap.set('n', 'grt', fzf.lsp_typedefs, { buffer = event.buf, silent = true, desc = '[G]oto [T]ype Definition' })
+            vim.keymap.set('n', 'gO', function() fzf.lsp_document_symbols({ jump1 = false }) end, { buffer = event.buf, silent = true, desc = 'Open Document Symbols' })
+            vim.keymap.set('n', 'gW', function() fzf.lsp_live_workspace_symbols({ jump1 = false }) end, { buffer = event.buf, silent = true, desc = 'Open Workspace Symbols' })
+            vim.keymap.set('n', 'grn', vim.lsp.buf.rename, { buffer = event.buf, silent = true, desc = '[R]e[n]ame symbol' })
+            vim.keymap.set({ 'n', 'x' }, 'gra', function() fzf.lsp_code_actions({ jump1 = false, silent = true }) end, { buffer = event.buf, silent = true, desc = 'Code [A]ctions' })
+            vim.keymap.set('n', 'grD', vim.lsp.buf.declaration, { buffer = event.buf, silent = true, desc = '[G]oto [D]eclaration' })
             vim.keymap.set('n', 'K', vim.lsp.buf.hover, { buffer = event.buf, silent = true, desc = 'Hover information' })
-            vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, { buffer = event.buf, silent = true, desc = 'Go to [I]mplementation' })
-            vim.keymap.set('n', 'gr', vim.lsp.buf.references, { buffer = event.buf, silent = true, desc = 'Find [R]eferences' })
             vim.keymap.set('n', '[d', function() vim.diagnostic.jump({ count = -1 }) end, { buffer = event.buf, silent = true, desc = 'Previous [D]iagnostic' })
             vim.keymap.set('n', ']d', function() vim.diagnostic.jump({ count = 1 }) end, { buffer = event.buf, silent = true, desc = 'Next [D]iagnostic' })
-            vim.keymap.set('n', '<leader>lt', vim.lsp.buf.type_definition, { buffer = event.buf, silent = true, desc = '[L]SP: [T]ype definition' })
-            vim.keymap.set('n', '<leader>lr', vim.lsp.buf.rename, { buffer = event.buf, silent = true, desc = '[L]SP: [R]ename symbol' })
-            vim.keymap.set('n', '<leader>la', vim.lsp.buf.code_action, { buffer = event.buf, silent = true, desc = '[L]SP: Code [A]ctions' })
             vim.keymap.set('n', '<leader>ld', vim.diagnostic.open_float, { buffer = event.buf, silent = true, desc = '[L]SP: [D]iagnostics at cursor' })
             vim.keymap.set('n', '<leader>lq', vim.diagnostic.setloclist, { buffer = event.buf, silent = true, desc = '[L]SP: Diagnostics to location list' })
         end,

@@ -154,6 +154,7 @@ Custom mappings use bracketed mnemonics where natural. mini.ai, mini.bracketed,
 and mini.splitjoin retain their own labels. mini.icons supplies which-key icons;
 a Nerd Font is required. Set `icons.mappings = false` in which-key setup to hide them.
 Leader groups: `,g` Git, `,h` Git hunks, `,l` LSP, `,s` Search, and `,t` Toggle.
+Press `gr` and pause to see the LSP Actions group.
 
 ### Files, buffers, and search
 
@@ -255,12 +256,14 @@ LSP navigation and action bindings require an attached server. The formatting bi
 
 | Keys | Action |
 | --- | --- |
-| `gD` / `gd` | Go to the declaration / definition. |
-| `gi` / `gr` | Find implementations / references. |
+| `grd` / `grD` | Go to the definition / declaration. |
+| `gri` / `grr` | Find implementations / references with fzf-lua. |
+| `grt` | Go to the type definition. |
+| `gO` | Search symbols in the current document. |
+| `gW` | Search workspace symbols with live server queries. |
 | `K` | Show hover information. |
-| `,lt` | Go to the type definition. |
-| `,lr` | Rename a symbol. |
-| `,la` | Show code actions. |
+| `grn` | Rename a symbol. |
+| `gra` (normal / visual) | Select a code action with fzf-lua and preview its changes. |
 | `,ld` | Show diagnostics at the cursor. |
 | `[d` / `]d` | Go to the previous / next diagnostic. |
 | `,lq` | Put diagnostics in the location list. |
@@ -268,6 +271,14 @@ LSP navigation and action bindings require an attached server. The formatting bi
 | `Ctrl-p` / `Ctrl-n` (insert) | Select the previous / next completion item. |
 | `Enter` / `Tab` (insert) | Confirm a completion item. |
 | `Ctrl-e` (insert) | Dismiss the completion menu. |
+
+Definitions, implementations, and type definitions jump directly when the server
+returns one result; multiple results open an fzf-lua picker. References and symbol
+searches always open a picker when results exist. Code actions require selection,
+even for one action; visual mode uses the selected range. `gW` queries the language
+server as you type, so results depend on the server's workspace-symbol support.
+Use `Ctrl-t` to return after a navigation jump. Rename, declaration, and hover use
+Neovim's native LSP interface. These pickers require fzf.
 
 ## Commands
 

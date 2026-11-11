@@ -35,5 +35,4 @@ Plugins to consider:
 - [ ] Consider:
     - `vim.keymap.set('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = '[T]oggle git show [b]lame line', buf = bufnr })`
     - `vim.keymap.set('n', '<leader>tw', gitsigns.toggle_word_diff, { desc = '[T]oggle git intra-line [w]ord diff', buf = bufnr })`
-- [ ] Reconsider the current LspAttach keymaps. I would rather use the keymaps of kickstart.nvim, but they use telescope. Is there a similar thing for Fzf-Lua?
 - [ ] Investigate https://github.com/hifanx/dotfiles/blob/main/.config/nvim/init.lua
