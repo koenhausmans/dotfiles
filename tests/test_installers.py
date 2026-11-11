@@ -60,14 +60,15 @@ class InstallerTests(unittest.TestCase):
                  **env})
 
     def prepare_zoxide(self):
-        binary = self.root / ".local" / "bin" / "zoxide"
-        binary.parent.mkdir(parents=True)
-        binary.write_text(
+        mise_bin = self.root / ".local" / "bin" / "mise"
+        mise_bin.parent.mkdir(parents=True)
+        mise_bin.write_text(
             '#!/usr/bin/env bash\n'
-            'if [[ $1 == --version ]]; then echo "zoxide 0.10.0"; exit; fi\n'
+            'while [[ $1 != -- ]]; do shift; done\n'
+            'shift; shift\n'
             'printf "%s|%s|%s\\n" "$*" "$_Z_DATA" "$_ZO_DATA_DIR" >> "$INSTALL_LOG"\n'
             'exit "${IMPORT_STATUS:-0}"\n')
-        binary.chmod(0o755)
+        mise_bin.chmod(0o755)
 
     def test_unknown_argument_is_rejected(self):
         result = subprocess.run([str(self.root / "install.sh"), "minimal"],
@@ -153,36 +154,18 @@ class InstallerTests(unittest.TestCase):
         result = self.run_zoxide_installer()
 
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("already installed", result.stdout)
         self.assertFalse(self.log.exists())
         self.assertFalse((self.root / "data" / ".dotfiles-z-imported").exists())
 
     def test_zoxide_bad_download_preserves_existing_binary(self):
-        self.prepare_zoxide()
-        binary = self.root / ".local" / "bin" / "zoxide"
-        old_binary = binary.read_text().replace("0.10.0", "0.9.9")
-        binary.write_text(old_binary)
-        commands = self.root / "commands"
-        commands.mkdir()
-        curl = commands / "curl"
-        curl.write_text(
-            '#!/usr/bin/env bash\n'
-            'while (( $# )); do\n'
-            '  if [[ $1 == -o ]]; then printf "invalid archive" > "$2"; exit; fi\n'
-            '  shift\n'
-            'done\nexit 1\n')
-        uname = commands / "uname"
-        uname.write_text('#!/usr/bin/env bash\n'
-                         'case $1 in -s) echo Linux;; -m) echo x86_64;; esac\n')
-        for command in (curl, uname):
-            command.chmod(0o755)
+        (self.root / ".z").write_text("/example|1|1234567890\n")
 
-        result = self.run_zoxide_installer(PATH=f"{commands}:{os.environ['PATH']}")
+        result = self.run_zoxide_installer()
 
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("Checksum mismatch", result.stderr)
-        self.assertEqual(binary.read_text(), old_binary)
+        self.assertIn("Could not import", result.stderr)
         self.assertFalse(self.log.exists())
+        self.assertFalse((self.root / "data" / ".dotfiles-z-imported").exists())
 
     def test_zoxide_imports_history_once_and_preserves_legacy_files(self):
         self.prepare_zoxide()

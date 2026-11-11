@@ -3,7 +3,7 @@
 ## Install
 
 ```sh
-sudo apt install curl git bash vim neovim zsh fish tmux universal-ctags build-essential ripgrep fd-find bat
+sudo apt install curl git bash vim neovim zsh fish tmux universal-ctags build-essential
 ./install.sh
 ```
 
@@ -27,14 +27,11 @@ Choose `D` to view an existing → incoming diff, then choose an action.
 | Component | Installs |
 |---|---|
 | bash, zsh, fish, git, tmux, screen | links the configuration |
-| zoxide | zoxide in `~/.local/bin` with a one-time `z.sh` history import |
+| mise | mise in `~/.local/bin` (checksum verified) plus all tools and Node.js LTS |
+| zoxide | one-time `z.sh` history import |
 | vim | full configuration; minimal (`vimrc.minimal`) with `server` |
 | nvim | Neovim configuration |
-| fzf | latest `.deb` release (checksum verified, needs `sudo`) |
-| tools | links Ubuntu's `fdfind` as `fd` |
-| bat | links Ubuntu's `batcat` as `bat` plus shared display and paging defaults |
-| fnm | fnm in `~/.local/bin` plus the latest Node.js LTS |
-| uv | uv in `~/.local/bin` (checksum verified) plus `ruff` |
+| bat | links shared display and paging defaults |
 | opencode | links global instructions and copies configuration with conflict prompts |
 | themes | Claude Code and OpenCode themes |
 
@@ -55,6 +52,7 @@ OpenCode settings stay local in `~/.config/opencode/opencode.json(c)` (or under
 
 - [bat](bat/README.md): display defaults and file previews
 - [Bash](bash/README.md) and [Zsh](zsh/README.md): shell setup and managed dependencies
+- [mise](mise/README.md): managed tools
 - [zoxide](zoxide/README.md): directory navigation and history migration
 - [bin](bin/README.md): git helpers (`git trail`, `git start`, `git land`, ...) and other scripts
 - [fish](fish/README.md): prompt behavior and customization

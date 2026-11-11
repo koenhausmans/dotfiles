@@ -13,9 +13,8 @@ typeset -U path
 path=("$HOME/bin" "$__dotfiles/bin" "$HOME/.local/bin" $path)
 unset __dotfiles
 
-# whence -p stops at the first match; $commands would hash every PATH directory.
-if whence -p fnm > /dev/null; then
-    eval "$(fnm env --use-on-cd --version-file-strategy=recursive --shell zsh)"
+if whence -p mise > /dev/null; then
+    eval "$(mise activate zsh)"
 fi
 
 export VISUAL="vim"
@@ -312,8 +311,8 @@ else
 fi
 unset zcompdump zcompdump_stat
 
-if whence -p fnm > /dev/null; then
-    eval "$(fnm completions --shell zsh)"
+if whence -p mise > /dev/null; then
+    eval "$(mise completion zsh)"
 fi
 
 WORDCHARS=''

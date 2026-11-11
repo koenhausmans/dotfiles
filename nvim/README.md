@@ -83,22 +83,20 @@ bufremove (layout-preserving buffer deletion), and splitjoin (argument layouts).
 
 | Language | Server | Formatter | Linter | Installation |
 | --- | --- | --- | --- | --- |
-| Python | basedpyright | ruff | ruff | `npm install -g basedpyright` or `uv tool install basedpyright` (executable: `basedpyright-langserver`). [uv/install.sh](../uv/install.sh) installs ruff, or use `uv tool install ruff`. Ruff handles formatting, import sorting, and linting. |
-| Rust | rust-analyzer | rustfmt | Clippy (through rust-analyzer) | `rustup component add rust-analyzer rustfmt rust-src clippy` for the active toolchain. |
+| Python | basedpyright | ruff | ruff | `mise install`. Ruff handles formatting, import sorting, and linting. |
+| Rust | rust-analyzer | rustfmt | Clippy (through rust-analyzer) | `mise install` installs rustup. Add components: `rustup component add rust-analyzer rust-src`. |
 | C/C++ | clangd | clang-format | clang-tidy | `sudo apt install clangd clang-format clang-tidy`. |
 | Typst | Tinymist | typstyle | Tinymist compiler diagnostics | `cargo install --locked tinymist typstyle`, or install release binaries. Formatting falls back to Tinymist's formatter without typstyle. |
-| Lua | Lua Language Server | StyLua | LuaLS diagnostics | With [mise](https://mise.jdx.dev/getting-started.html) installed, run `mise use -g lua-language-server@latest stylua@latest`. |
-| Shell (sh/bash) | | shfmt | ShellCheck | `sudo apt install shellcheck shfmt`. |
-| JavaScript / JSX / TypeScript / TSX | typescript-language-server | Prettier | ESLint | `npm install -g typescript-language-server 'typescript@<7'`; install project tools with `npm install --save-dev eslint prettier`. |
-| JSON / JSONC | JSON Language Server | Prettier | Server syntax/schema diagnostics | `npm install -g vscode-langservers-extracted`; use project-local Prettier or `npm install -g prettier` for standalone files. |
-| Markdown | | | Markdownlint | `npm install -g markdownlint-cli` (not `markdownlint-cli2`). |
+| Lua | Lua Language Server | StyLua | LuaLS diagnostics | `mise install`. |
+| Shell (sh/bash) | | shfmt | ShellCheck | `mise install`. |
+| JavaScript / JSX / TypeScript / TSX | typescript-language-server | Prettier | ESLint | `mise install`. Install project tools with `npm install --save-dev eslint prettier`. |
+| JSON / JSONC | JSON Language Server | Prettier | Server syntax/schema diagnostics | `mise install`. |
+| Markdown | | | Markdownlint | `mise install`. |
 
 Open a matching file and use `:LspInfo` to check that its server attached. `:checkhealth vim.lsp` can help diagnose problems.
 
-For mise tools to be available on `PATH` in Zsh, add
-`eval "$(mise activate zsh)"` to `~/.zshrc.local` and run it in the current shell.
-Check `lua-language-server --version` and `stylua --version`, then launch Neovim
-from that shell. Restart an existing Neovim session to pick up the updated `PATH`.
+Tools are installed and activated by `./install.sh`. Restart your shell and any
+existing Neovim session afterwards to pick up the updated `PATH`.
 
 rust-analyzer runs `cargo clippy` on save in Cargo projects and publishes its
 diagnostics through LSP. No separate nvim-lint integration is needed. To add
@@ -185,7 +183,7 @@ Press `gr` and pause to see the LSP Actions group.
 | `Ctrl-t` / `Ctrl-s` / `Ctrl-v` (fzf picker) | Open the result in a tab / split / vertical split. |
 
 `,f`, `,b`, and `,st` open fzf-lua pickers with previews; fzf is required.
-On Ubuntu, install `fd-find` to provide `fdfind`. File pickers prefer `fd`, then `fdfind`, then `rg --files`, then `find`, and include hidden files except `.git`.
+File pickers prefer `fd`, then `fdfind`, then `rg --files`, then `find`, and include hidden files except `.git`.
 Run `:FzfLua` to list all pickers, such as LSP symbols, diagnostics, and keymaps.
 `:TodoFzfLua` searches project TODO comments. TODO quickfix/location-list commands
 need plenary.nvim, which this configuration does not install.

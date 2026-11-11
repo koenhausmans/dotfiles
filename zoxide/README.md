@@ -1,16 +1,11 @@
 # Zoxide
 
-Select the `zoxide` component in the top-level installer to install zoxide
-**0.10.0** into `~/.local/bin`. It is offered in both full and server profiles.
-Bash and Zsh share this binary and the navigation database, but their standalone
-installers do not install zoxide. Standalone install: `bash zoxide/install.sh`
-from the repository root.
+Select the `zoxide` component in the top-level installer to run a one-time
+`z.sh` history import. Bash and Zsh share the navigation database, but their
+standalone installers do not cover this import. Standalone run:
+`bash zoxide/install.sh` from the repository root.
 
-The installer supports Linux x86_64 and aarch64, requires `curl`, `tar`, and
-`sha256sum`, and verifies the archive against a pinned upstream SHA-256 digest.
-No Rust toolchain or sudo is needed. Reruns skip downloading the installed
-version. To upgrade the managed version, update the version and both digests in
-[`install.sh`](install.sh).
+The zoxide binary is managed by [mise](../mise/README.md).
 
 ## Usage
 
@@ -30,7 +25,7 @@ Installation imports nonempty `~/.z` history once, merging into any existing
 zoxide database. The old history and `~/.local/share/z` checkout are left
 untouched but are no longer loaded or updated by these dotfiles.
 
-To import `z.sh` history manually with zoxide 0.10.0 or newer:
+To import `z.sh` history manually:
 
 ```sh
 zoxide import z
