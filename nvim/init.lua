@@ -50,14 +50,13 @@ do
     vim.o.inccommand = 'split'
 
     -- Show which line your cursor is on
-    vim.o.cursorline  = true
+    vim.o.cursorline = true
 
     -- Minimal number of screen lines to keep above and below the cursor.
     vim.o.scrolloff = 5
     vim.o.sidescrolloff = 2
 
     -- If performing an operation that would fail due to unsaved changes raise a dialog asking if you wish to save the current file(s)
-    -- See `:help 'confirm'`
     vim.o.confirm = true
 
     -- Case-insensitive searching
@@ -65,29 +64,29 @@ do
     vim.o.smartcase = true
 
     -- Highlight search
-    vim.o.hlsearch   = true
+    vim.o.hlsearch = true
 
     --
     -- Indentation behavior
     --
-    vim.o.expandtab   = true
-    vim.o.shiftround  = true
-    vim.o.shiftwidth  = 4
+    vim.o.expandtab = true
+    vim.o.shiftround = true
+    vim.o.shiftwidth = 4
     vim.o.softtabstop = 4
-    vim.o.tabstop     = 4
+    vim.o.tabstop = 4
+
+    vim.api.nvim_create_user_command('Indent', function(args)
+        local n = tonumber(args.args)
+        vim.o.shiftwidth = n
+        vim.o.softtabstop = n
+        vim.o.tabstop = n
+    end, { nargs = 1 })
 
     -- Enable break indent
     vim.o.breakindent = true
 
     -- Enable break character display
     vim.o.showbreak = '↪ '
-
-    vim.api.nvim_create_user_command('Indent', function(args)
-        local n = tonumber(args.args)
-        vim.o.shiftwidth  = n
-        vim.o.softtabstop = n
-        vim.o.tabstop     = n
-    end, { nargs = 1 })
 
     -- FOLD BEHAVIOR
     vim.o.foldmethod = 'marker'
@@ -201,7 +200,7 @@ do
     -- Highlight when yanking (copying) text
     vim.api.nvim_create_autocmd('TextYankPost', {
         desc = 'Highlight when yanking (copying) text',
-        group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
+        group = vim.api.nvim_create_augroup('highlight-yank', { clear = true }),
         callback = function() vim.hl.on_yank() end,
     })
 
@@ -235,10 +234,12 @@ do
     --
     local highlight_group = vim.api.nvim_create_augroup('HighlightFollowsFocus', { clear = true })
     vim.api.nvim_create_autocmd({ 'WinEnter', 'FocusGained' }, {
+        desc = "Cursorline when window is active",
         group = highlight_group,
         callback = function() vim.wo.cursorline = true end,
     })
     vim.api.nvim_create_autocmd({ 'WinLeave', 'FocusLost' }, {
+        desc = "No cursorline when window is inactive",
         group = highlight_group,
         callback = function() vim.wo.cursorline = false end,
     })
@@ -445,7 +446,7 @@ do
     vim.keymap.set('n', '-', '<cmd>Oil<cr>', { desc = 'Open parent directory' })
 
     --
-    -- File Navigation & Buffer-based Editing (oil.nvim)
+    -- Automatic highlight of word under cursor
     --
     vim.pack.add { gh 'RRethy/vim-illuminate' }
     require('illuminate').configure()
@@ -454,7 +455,7 @@ do
     -- Diffview: 
     --
     vim.pack.add { gh 'sindrets/diffview.nvim' }
-    require'diffview'.setup { use_icons = true }
+    require('diffview').setup { use_icons = true }
 
     --
     -- Markview: 
@@ -628,7 +629,13 @@ do
     -- Fzf-Lua:
     --
     vim.pack.add { gh 'ibhagwan/fzf-lua' }
-    require('fzf-lua').setup()
+    require('fzf-lua').setup {
+        files = {
+            fzf_opts = {
+                ['--scheme'] = 'default',
+            },
+        },
+    }
 
     vim.keymap.set('n', '<leader>b',  '<cmd>FzfLua buffers<cr>',   { silent = true, desc = 'Find [B]uffers' })
     vim.keymap.set('n', '<leader>f',  '<cmd>FzfLua files<cr>',     { silent = true, desc = '[F]ind file' })
@@ -736,6 +743,9 @@ end
 --- FORMATTING CONFIGURATION {{{
 
 do
+    --
+    -- Formatter plugin for Neovim
+    --
     vim.pack.add { gh 'stevearc/conform.nvim' }
 
     require('conform').setup {
