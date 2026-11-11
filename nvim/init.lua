@@ -376,21 +376,21 @@ do
     gitsigns.setup({
         on_attach = function(bufnr)
             -- Navigation
-            vim.keymap.set('n', ']c', function()
+            vim.keymap.set('n', ']g', function()
                 if vim.wo.diff then
-                    vim.cmd.normal { ']c', bang = true }
+                    vim.cmd.normal { ']g', bang = true }
                 else
                     gitsigns.nav_hunk 'next'
                 end
-            end, { desc = 'Next Git [C]hange', buf = bufnr })
+            end, { desc = 'Next [G]it Change', buf = bufnr })
 
-            vim.keymap.set('n', '[c', function()
+            vim.keymap.set('n', '[g', function()
                 if vim.wo.diff then
-                    vim.cmd.normal { '[c', bang = true }
+                    vim.cmd.normal { '[g', bang = true }
                 else
                     gitsigns.nav_hunk 'prev'
                 end
-            end, { desc = 'Previous Git [C]hange', buf = bufnr })
+            end, { desc = 'Previous [G]it Change', buf = bufnr })
 
             -- Visual mode actions
             vim.keymap.set('v', '<leader>hs', function() gitsigns.stage_hunk { vim.fn.line '.', vim.fn.line 'v' } end, { desc = '[S]tage Git [H]unk selection', buf = bufnr })
@@ -504,6 +504,9 @@ do
         gh 'folke/tokyonight.nvim'
     }
 
+    -- Enable default colorscheme
+    vim.cmd.colorscheme 'kanagawa-wave'
+
     -- Dark background by default
     vim.o.background  = 'dark'
 
@@ -517,102 +520,13 @@ do
     vim.g.sonokai_style          = 'shusia'
     vim.g.sonokai_enable_italic  = 1
 
-    -- Keep tmux's muted inactive borders, but use warm active colors to distinguish Neovim.
-    local split_colors = {
-        ['gruvbox-material'] = { inactive = '#504945', active = '#fabd2f' },
-        ['kanagawa-wave']    = { inactive = '#363646', active = '#c0a36e' },
-        ['tokyonight-night'] = { inactive = '#292e42', active = '#e0af68' },
-        sonokai              = { inactive = '#3b3e48', active = '#e7c664' },
-    }
-    local split_focused  = true
-    local split_active_win
-    local function split_palette()
-        local theme = vim.g.colors_name
-        -- Kanagawa reports "" for all three variants.
-        if theme == 'kanagawa' and package.loaded.kanagawa then
-            theme = 'kanagawa-' .. (package.loaded.kanagawa._CURRENT_THEME or 'wave')
-        end
-        return split_colors[theme]
-    end
-    local function split_bounds(win)
-        local pos    = vim.api.nvim_win_get_position(win)
-        local height = vim.api.nvim_win_get_height(win)
-        return { top = pos[1], left = pos[2], bottom = pos[1] + height,
-            right = pos[2] + vim.api.nvim_win_get_width(win) }
-    end
-    local function update_split_highlights()
-        local current = vim.api.nvim_get_current_win()
-        if vim.api.nvim_win_get_config(current).relative ~= '' then
-            current = split_active_win
-            if not current or not vim.api.nvim_win_is_valid(current)
-                or vim.api.nvim_win_get_tabpage(current) ~= vim.api.nvim_get_current_tabpage() then
-                return
-            end
-        else
-            split_active_win = current
-        end
-        local colors = split_palette()
-        local active = split_bounds(current)
-        for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-            if vim.api.nvim_win_get_config(win).relative == '' then
-                local bounds = split_bounds(win)
-                -- Neovim draws a separator with the left/upper window's highlight.
-                local touches_active = win == current
-                or (bounds.right == active.left - 1
-                and bounds.top < active.bottom and bounds.bottom > active.top)
-                or (bounds.bottom == active.top - 1
-                and bounds.left < active.right and bounds.right > active.left)
-                local highlights = {}
-                for entry in vim.wo[win].winhighlight:gmatch('[^,]+') do
-                    if not entry:match('^WinSeparator:DotfilesSplit') then
-                        table.insert(highlights, entry)
-                    end
-                end
-                if colors then
-                    for i = #highlights, 1, -1 do
-                        if highlights[i]:match('^WinSeparator:') then table.remove(highlights, i) end
-                    end
-                    table.insert(highlights, 'WinSeparator:'
-                        .. (split_focused and touches_active and 'DotfilesSplitActive' or 'DotfilesSplitInactive'))
-                end
-                local value = table.concat(highlights, ',')
-                if vim.wo[win].winhighlight ~= value then
-                    vim.wo[win].winhighlight = value
-                end
-            end
-        end
-    end
-    local split_group = vim.api.nvim_create_augroup('DotfilesSplitBorders', { clear = true })
-    vim.api.nvim_create_autocmd('ColorScheme', {
-        group = split_group,
-        callback = function()
-            local colors = split_palette()
-            if colors then
-                vim.api.nvim_set_hl(0, 'DotfilesSplitInactive', { fg = colors.inactive, bg = 'NONE' })
-                vim.api.nvim_set_hl(0, 'DotfilesSplitActive',   { fg = colors.active,   bg = 'NONE' })
-            end
-            update_split_highlights()
-        end,
-    })
-    -- SafeState also catches window moves that change positions but not dimensions.
-    vim.api.nvim_create_autocmd({ 'VimEnter', 'WinEnter', 'TabEnter', 'WinResized', 'SafeState' }, {
-        group = split_group,
-        callback = update_split_highlights,
-    })
-    vim.api.nvim_create_autocmd('WinClosed', {
-        group = split_group,
-        callback = function() vim.schedule(update_split_highlights) end,
-    })
-    vim.api.nvim_create_autocmd({ 'FocusGained', 'FocusLost' }, {
-        group = split_group,
-        callback = function(event)
-            split_focused = event.event == 'FocusGained'
-            update_split_highlights()
-        end,
-    })
+    --
+    -- [ Colorful winsep ]
+    -- Enable colorful window separators
+    --
+    vim.pack.add { gh 'nvim-zh/colorful-winsep.nvim' }
+    require('colorful-winsep').setup { animate = { enabled = "false" } }
 
-    -- The saved theme in plugin/last-used-colorscheme.vim overrides this fallback.
-    vim.cmd.colorscheme 'kanagawa-wave'
 end
 
 --- END COLORSCHEME SETTINGS }}}
@@ -636,13 +550,16 @@ do
         },
     }
 
-    vim.keymap.set('n', '<leader>b',  '<cmd>FzfLua buffers<cr>',   { silent = true, desc = 'Find [B]uffers' })
-    vim.keymap.set('n', '<leader>f',  '<cmd>FzfLua files<cr>',     { silent = true, desc = '[F]ind file' })
-    vim.keymap.set('n', '<leader>st', '<cmd>FzfLua tags<cr>',      { silent = true, desc = '[S]earch [T]ags' })
+    vim.keymap.set('n', '<leader>b',  '<cmd>FzfLua buffers<cr>', { silent = true, desc = 'Find [B]uffers' })
+    vim.keymap.set('n', '<leader>f',  '<cmd>FzfLua files<cr>', { silent = true, desc = '[F]ind file' })
     vim.keymap.set('n', '<leader>gf', '<cmd>FzfLua git_files<cr>', { silent = true, desc = 'Find [G]it [F]iles' })
 
-    vim.keymap.set('n', '<leader>/',  '<cmd>FzfLua live_grep<cr>',   { silent = true, desc = 'Live grep' })
-    vim.keymap.set('n', '<leader>sw', '<cmd>FzfLua grep_cword<cr>',  { silent = true, desc = '[S]earch [W]ord under cursor' })
+    vim.keymap.set('n', '<leader>/',  '<cmd>FzfLua live_grep<cr>', { silent = true, desc = 'Live grep' })
+    vim.keymap.set('n', '<leader>sb', '<cmd>FzfLua blines<cr>', { silent = true, desc = '[S]earch [B]uffer' })
+    vim.keymap.set('n', '<leader>so', '<cmd>FzfLua lines<cr>', { silent = true, desc = '[S]earch [O]pen Buffers' })
+    vim.keymap.set('n', '<leader>sd', '<cmd>FzfLua diagnostics_workspace<cr>', { silent = true, desc = '[S]earch [D]iagnostics' })
+    vim.keymap.set('n', '<leader>st', '<cmd>FzfLua tags<cr>', { silent = true, desc = '[S]earch [T]ags' })
+    vim.keymap.set('n', '<leader>sw', '<cmd>FzfLua grep_cword<cr>', { silent = true, desc = '[S]earch [W]ord under cursor' })
 
     --
     -- flash.nvim: Navigate with search labels
@@ -673,20 +590,33 @@ do
         callback = function(event)
             local fzf = require('fzf-lua')
             vim.bo[event.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
+
+            -- Find references for the word under your cursor
             vim.keymap.set('n', 'grr', function() fzf.lsp_references({ jump1 = false }) end, { buffer = event.buf, silent = true, desc = '[G]oto [R]eferences' })
+
+            -- Jump to the implementation of the word under your cursor
             vim.keymap.set('n', 'gri', fzf.lsp_implementations, { buffer = event.buf, silent = true, desc = '[G]oto [I]mplementation' })
+
+            -- Jump to the definition of the word under your cursor
             vim.keymap.set('n', 'grd', fzf.lsp_definitions, { buffer = event.buf, silent = true, desc = '[G]oto [D]efinition' })
+
+            -- Jump to the type of the word under your cursor
             vim.keymap.set('n', 'grt', fzf.lsp_typedefs, { buffer = event.buf, silent = true, desc = '[G]oto [T]ype Definition' })
+
+            -- Fuzzy find all the symbols in your current document
             vim.keymap.set('n', 'gO', function() fzf.lsp_document_symbols({ jump1 = false }) end, { buffer = event.buf, silent = true, desc = 'Open Document Symbols' })
+
+            -- Fuzzy find all the symbols in your current workspace
             vim.keymap.set('n', 'gW', function() fzf.lsp_live_workspace_symbols({ jump1 = false }) end, { buffer = event.buf, silent = true, desc = 'Open Workspace Symbols' })
-            vim.keymap.set('n', 'grn', vim.lsp.buf.rename, { buffer = event.buf, silent = true, desc = '[R]e[n]ame symbol' })
-            vim.keymap.set({ 'n', 'x' }, 'gra', function() fzf.lsp_code_actions({ jump1 = false, silent = true }) end, { buffer = event.buf, silent = true, desc = 'Code [A]ctions' })
-            vim.keymap.set('n', 'grD', vim.lsp.buf.declaration, { buffer = event.buf, silent = true, desc = '[G]oto [D]eclaration' })
-            vim.keymap.set('n', 'K', vim.lsp.buf.hover, { buffer = event.buf, silent = true, desc = 'Hover information' })
-            vim.keymap.set('n', '[d', function() vim.diagnostic.jump({ count = -1 }) end, { buffer = event.buf, silent = true, desc = 'Previous [D]iagnostic' })
-            vim.keymap.set('n', ']d', function() vim.diagnostic.jump({ count = 1 }) end, { buffer = event.buf, silent = true, desc = 'Next [D]iagnostic' })
-            vim.keymap.set('n', '<leader>ld', vim.diagnostic.open_float, { buffer = event.buf, silent = true, desc = '[L]SP: [D]iagnostics at cursor' })
-            vim.keymap.set('n', '<leader>lq', vim.diagnostic.setloclist, { buffer = event.buf, silent = true, desc = '[L]SP: Diagnostics to location list' })
+
+            -- TODO: To be used?
+            -- vim.keymap.set('n', 'grn', vim.lsp.buf.rename, { buffer = event.buf, silent = true, desc = '[R]e[n]ame symbol' })
+            -- vim.keymap.set({ 'n', 'x' }, 'gra', function() fzf.lsp_code_actions({ jump1 = false, silent = true }) end, { buffer = event.buf, silent = true, desc = 'Code [A]ctions' })
+            -- vim.keymap.set('n', 'grD', vim.lsp.buf.declaration, { buffer = event.buf, silent = true, desc = '[G]oto [D]eclaration' })
+            -- vim.keymap.set('n', 'K', vim.lsp.buf.hover, { buffer = event.buf, silent = true, desc = 'Hover information' })
+
+            -- vim.keymap.set('n', '<leader>ld', vim.diagnostic.open_float, { buffer = event.buf, silent = true, desc = '[L]SP: [D]iagnostics at cursor' })
+            -- vim.keymap.set('n', '<leader>lq', vim.diagnostic.setloclist, { buffer = event.buf, silent = true, desc = '[L]SP: Diagnostics to location list' })
         end,
     })
 
