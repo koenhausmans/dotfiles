@@ -5,7 +5,7 @@ do
     -- Enable faster startup by caching compiled Lua modules
     vim.loader.enable()
 
-    -- Set <space> as the leader key
+    -- Set comma as the leader key
     --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
     vim.g.mapleader = ','
     vim.g.maplocalleader = ','
@@ -77,9 +77,12 @@ do
 
     vim.api.nvim_create_user_command('Indent', function(args)
         local n = tonumber(args.args)
-        vim.o.shiftwidth = n
-        vim.o.softtabstop = n
-        vim.o.tabstop = n
+        if not n or n <= 0 or n % 1 ~= 0 then
+            error('Indent requires a positive integer')
+        end
+        vim.bo.shiftwidth = n
+        vim.bo.softtabstop = n
+        vim.bo.tabstop = n
     end, { nargs = 1 })
 
     -- Enable break indent
@@ -149,6 +152,16 @@ end
 local function gh(repo) return 'https://github.com/' .. repo end
 
 do
+    local function run_build(name, cmd, cwd)
+        local result = vim.system(cmd, { cwd = cwd }):wait()
+        if result.code ~= 0 then
+            local output = result.stderr or ''
+            if output == '' then output = result.stdout or '' end
+            if output == '' then output = 'No output from build command.' end
+            vim.notify(('Build failed for %s:\n%s'):format(name, output), vim.log.levels.ERROR)
+        end
+    end
+
     -- This autocommand runs after a plugin is installed or updated and
     --  runs the appropriate build command for that plugin if necessary.
     vim.api.nvim_create_autocmd('PackChanged', {
@@ -157,10 +170,12 @@ do
             local kind = ev.data.kind
             if kind ~= 'install' and kind ~= 'update' then return end
 
-            -- if name == 'telescope-fzf-native.nvim' and vim.fn.executable 'make' == 1 then
-            --     run_build(name, { 'make' }, ev.data.path)
-            --     return
-            -- end
+            if name == 'LuaSnip' then
+                if vim.fn.has 'win32' ~= 1 and vim.fn.executable 'make' == 1 then
+                    run_build(name, { 'make', 'install_jsregexp' }, ev.data.path)
+                end
+                return
+            end
 
             if name == 'nvim-treesitter' then
                 if not ev.data.active then vim.cmd.packadd 'nvim-treesitter' end
@@ -177,7 +192,7 @@ end
 do
     vim.diagnostic.config {
         update_in_insert  = false,
-        severty_sort = true,
+        severity_sort = true,
         float = { border = 'rounded', source = 'if_many' },
         underline = { severity = { min = vim.diagnostic.severity.WARN } },
 
@@ -377,19 +392,11 @@ do
         on_attach = function(bufnr)
             -- Navigation
             vim.keymap.set('n', ']g', function()
-                if vim.wo.diff then
-                    vim.cmd.normal { ']g', bang = true }
-                else
-                    gitsigns.nav_hunk 'next'
-                end
+                gitsigns.nav_hunk 'next'
             end, { desc = 'Next [G]it Change', buf = bufnr })
 
             vim.keymap.set('n', '[g', function()
-                if vim.wo.diff then
-                    vim.cmd.normal { '[g', bang = true }
-                else
-                    gitsigns.nav_hunk 'prev'
-                end
+                gitsigns.nav_hunk 'prev'
             end, { desc = 'Previous [G]it Change', buf = bufnr })
 
             -- Visual mode actions
@@ -424,8 +431,11 @@ do
     --
     -- Surround keybinding support
     --
+    -- Keep visual gS for mini.splitjoin; restore only ordinary visual surround.
+    vim.g.nvim_surround_no_visual_mappings = true
     vim.pack.add { gh 'kylechui/nvim-surround' }
     require('nvim-surround').setup()
+    vim.keymap.set('x', 'S', '<Plug>(nvim-surround-visual)', { desc = 'Add surrounding characters' })
 
     --
     -- Add indentation guides even on blank lines
@@ -525,14 +535,13 @@ do
     -- Enable colorful window separators
     --
     vim.pack.add { gh 'nvim-zh/colorful-winsep.nvim' }
-    require('colorful-winsep').setup { animate = { enabled = "false" } }
+    require('colorful-winsep').setup { animate = { enabled = false } }
 
 end
 
 --- END COLORSCHEME SETTINGS }}}
 --- SEARCH & NAVIGATION PLUGINS {{{
 
--- TODO: Consider using telescope
 do
     -- Enable ripgrep usage within vim
     vim.o.grepprg    = 'rg --vimgrep --smart-case $*'
@@ -560,6 +569,7 @@ do
     vim.keymap.set('n', '<leader>sd', '<cmd>FzfLua diagnostics_workspace<cr>', { silent = true, desc = '[S]earch [D]iagnostics' })
     vim.keymap.set('n', '<leader>st', '<cmd>FzfLua tags<cr>', { silent = true, desc = '[S]earch [T]ags' })
     vim.keymap.set('n', '<leader>sw', '<cmd>FzfLua grep_cword<cr>', { silent = true, desc = '[S]earch [W]ord under cursor' })
+    vim.keymap.set('x', '<leader>sw', '<cmd>FzfLua grep_visual<cr>', { silent = true, desc = '[S]earch selected [W]ords' })
 
     --
     -- flash.nvim: Navigate with search labels

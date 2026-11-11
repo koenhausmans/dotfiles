@@ -10,7 +10,11 @@ The leader key is `,`.
 
 On first start, plugins are downloaded automatically. Restart Neovim once after
 the initial install to pick up all settings. The lockfile `nvim-pack-lock.json`
-in the config directory pins revisions and should be kept under version control.
+in the config directory pins revisions and stays local, outside this repository.
+
+On non-Windows systems with `make` and a C compiler, LuaSnip's optional `jsregexp`
+module is built after LuaSnip installation or updates. It supports regex
+transformations in snippets; ordinary snippets work without it.
 
 ### Install a newer Neovim
 
@@ -58,10 +62,10 @@ Buffers without parsers keep their normal syntax and indentation.
 
 ## Overview
 
-- Language support: built-in LSP, blink.cmp completion, snippets, signature help, nvim-lint linting, Trouble lists, and automatic formatting.
+- Language support: built-in LSP, blink.cmp completion, snippets, signature help, nvim-lint linting, and automatic formatting.
 - Files and navigation: oil.nvim, fzf-lua, ripgrep, and Flash jumps.
-- Git: status, history, blame, diffs, and change markers through Fugitive, Diffview, and Gitsigns.
-- Appearance: Lualine statusline, TODO highlights, reference highlights, indent guides, and a sticky Treesitter scope header.
+- Git: history and diff views through Diffview; change markers, blame, and hunk actions through Gitsigns.
+- Appearance: Lualine statusline, TODO highlights, reference highlights, rendered documents, indent guides, and highlighted split borders.
 - Editing: four-space indentation, persistent undo, smart-case search, marker folds, and splits that open below or to the right.
 - Defaults: line numbers, visible whitespace, a fixed sign column, and a cursor line in the active window.
 
@@ -70,7 +74,6 @@ windows keep absolute line numbers. Switching away from Neovim also disables
 both features when the terminal forwards focus events.
 
 Spelling is enabled for Markdown, Git commit messages, and todo files.
-Python and CoffeeScript files lose trailing whitespace on write.
 
 Enabled mini.nvim modules: pairs (automatic brackets and quotes), icons (with
 web-devicons compatibility), ai (extended text objects), bracketed (navigation),
@@ -174,14 +177,18 @@ Press `gr` and pause to see the LSP Actions group.
 | `,z` | Switch to the alternate buffer. |
 | `[b` / `]b` | Go to the previous / next buffer (mini.bracketed). |
 | `[f` / `]f` | Open the previous / next file in the current file's directory (mini.bracketed). |
-| `,q` / `,w` | Quit / write the current buffer. |
+| `,q` / `,w` | Quit the current window / write the current buffer. |
 | `,/` | Live grep with ripgrep. |
-| `,sw` | Search for the word under the cursor with ripgrep (requires fzf and ripgrep). |
+| `,sb` / `,so` | Search lines in the current buffer / all open buffers. |
+| `,sd` | Search workspace diagnostics. |
+| `,sw` (normal / visual) | Search the word under the cursor / selected text with ripgrep (requires fzf and ripgrep). |
 | `Ctrl-t` / `Ctrl-s` / `Ctrl-v` (fzf picker) | Open the result in a tab / split / vertical split. |
 
 `,f`, `,b`, and `,st` open fzf-lua pickers with previews; fzf is required.
 On Ubuntu, install `fd-find` to provide `fdfind`. File pickers prefer `fd`, then `fdfind`, then `rg --files`, then `find`, and include hidden files except `.git`.
 Run `:FzfLua` to list all pickers, such as LSP symbols, diagnostics, and keymaps.
+`:TodoFzfLua` searches project TODO comments. TODO quickfix/location-list commands
+need plenary.nvim, which this configuration does not install.
 
 #### Directory buffers (oil.nvim)
 
@@ -200,7 +207,7 @@ Delete a line to delete the file. Open oil with `:e .` or press `-` from any buf
 
 | Keys | Action |
 | --- | --- |
-| `[c` / `]c` | Go to the previous / next Git change; use native diff navigation in diff mode. |
+| `[g` / `]g` | Go to the previous / next Git hunk, including in diff windows. |
 | `,hs` / `,hr` (normal / visual) | Stage / reset the current hunk or selected lines. |
 | `,hS` / `,hR` | Stage / reset all changes in the current buffer. |
 | `,hp` / `,hi` | Preview a hunk in a popup / inline. |
@@ -210,6 +217,8 @@ Delete a line to delete the file. Open oil with `:e .` or press `-` from any buf
 | `ih` (visual / operator-pending) | Select a Git hunk. |
 
 Gitsigns adds these bindings only to attached buffers.
+mini.bracketed uses `[c` / `]c` for comment navigation. To execute native diff
+navigation without mappings, use `:normal! [c` or `:normal! ]c` in a diff window.
 
 ### Editing
 
@@ -217,17 +226,17 @@ Gitsigns adds these bindings only to attached buffers.
 | --- | --- |
 | `<` / `>` / `=` (visual) | Change indentation or reindent, then keep the selection. |
 | `,tw` / `,ts` | Toggle wrapping / spell checking in the current window. |
-| `,y{motion}` / `,y` (visual) | Copy text to the system clipboard. `,yy` copies a line. |
-| `,p` | Paste from the system clipboard. |
 | `gcc` / `gc{motion}` / `gc` (visual) | Toggle comments (built-in, uses `commentstring`). |
 | `ds{char}` / `cs{old}{new}` | Delete or change surrounding characters or tags (nvim-surround). |
-| `ys{motion}{char}` / `yss{char}` / `S` (visual) | Add surrounding characters or tags (nvim-surround). The cursor stays in place after the operation. |
+| `ys{motion}{char}` / `yss{char}` / `S` (visual) | Add surrounding characters or tags (nvim-surround). |
 | `gS` (normal / visual) | Toggle bracketed arguments between single-line and multiline layouts (mini.splitjoin). |
 | `a{object}` / `i{object}` (visual / operator-pending) | Select around / inside a text object, such as `va)` or `ci'` (mini.ai). |
-| `.` | Repeat the last surround operation (vim-repeat). |
+| `.` | Repeat the last surround operation (nvim-surround). |
 | `Backspace` / `Enter` (insert) | Delete an empty pair / add an indented line inside one (mini.pairs). |
 
-The clipboard bindings use the `+` register. They do not change Neovim's default clipboard setting.
+The `unnamedplus` clipboard setting makes ordinary yanks, deletes, and puts use
+the system clipboard when a clipboard provider is available. There are no
+custom clipboard leader bindings.
 mini.pairs inserts matching brackets and quotes automatically; typing a closing character skips over an existing one.
 
 mini.splitjoin supports dot-repeat and needs no Treesitter parser. Detection uses
@@ -241,13 +250,8 @@ brackets too (for example, `va)` then `gS`). Format-on-save may reformat the res
 | `s` | Flash jump: type a search string, then the label shown. Works in normal, visual, and operator-pending mode. |
 | `S` | Flash Treesitter selection in normal and operator-pending modes. For visual `S`, see Editing. |
 | `f` / `F` / `t` / `T` | Flash single-character motions. The default configuration does not add jump labels to these motions. |
-| `;` / `,` | Repeat the last Flash motion forward / backward. |
-| `[m` / `]m` | Go to the previous / next Treesitter function start. |
-| `[M` / `]M` | Go to the previous / next Treesitter function end. |
-| `j` / `k` | Move by display line without a count, or by file line with a count. |
-| `0` / `$` | Move to the first nonblank / last character of the display line. |
-| `'` | Jump to an exact mark position. |
-| `[r` / `]r` | Go to the previous / next reference to the symbol under the cursor (illuminate). |
+| `;` / `,,` | Repeat the last character motion forward / backward; comma alone is the leader. |
+| `Alt-p` / `Alt-n` | Go to the previous / next reference to the symbol under the cursor (Illuminate defaults). |
 | `[q` / `]q` | Go to the previous / next quickfix item (mini.bracketed). |
 | `[l` / `]l` | Go to the previous / next location-list item (mini.bracketed). |
 | `[x` / `]x` | Go to the previous / next Git conflict marker (mini.bracketed). |
@@ -261,66 +265,63 @@ LSP navigation and action bindings require an attached server. The formatting bi
 
 | Keys | Action |
 | --- | --- |
-| `grd` / `grD` | Go to the definition / declaration. |
+| `grd` | Go to the definition. |
 | `gri` / `grr` | Find implementations / references with fzf-lua. |
 | `grt` | Go to the type definition. |
 | `gO` | Search symbols in the current document. |
 | `gW` | Search workspace symbols with live server queries. |
 | `K` | Show hover information. |
 | `grn` | Rename a symbol. |
-| `gra` (normal / visual) | Select a code action with fzf-lua and preview its changes. |
-| `,ld` | Show diagnostics at the cursor. |
+| `gra` (normal / visual) | Select a code action with Neovim's native interface. |
+| `Ctrl-w d` | Show diagnostics at the cursor (built-in). |
 | `[d` / `]d` | Go to the previous / next diagnostic. |
-| `,lq` | Put diagnostics in the location list. |
 | `,lf` | Format the buffer. See [Language servers and formatters](#language-servers-and-formatters) for installation and format-on-save behavior. |
 | `Ctrl-p` / `Ctrl-n` (insert) | Select the previous / next completion item. |
-| `Enter` / `Tab` (insert) | Confirm a completion item. |
+| `Ctrl-y` (insert) | Select and accept a completion item. |
+| `Tab` / `Shift-Tab` (insert) | Jump forward / backward through snippet placeholders. |
 | `Ctrl-e` (insert) | Dismiss the completion menu. |
 
 Definitions, implementations, and type definitions jump directly when the server
 returns one result; multiple results open an fzf-lua picker. References and symbol
-searches always open a picker when results exist. Code actions require selection,
-even for one action; visual mode uses the selected range. `gW` queries the language
+searches always open a picker when results exist. Visual code actions use the
+selected range. `gW` queries the language
 server as you type, so results depend on the server's workspace-symbol support.
-Use `Ctrl-t` to return after a navigation jump. Rename, declaration, and hover use
-Neovim's native LSP interface. These pickers require fzf.
+Use `Ctrl-t` to return after a navigation jump. Rename, code actions, and hover use
+Neovim's native LSP interface. The search pickers require fzf. No custom declaration,
+diagnostic location-list, or inlay-hint toggle shortcut is configured.
 
 ## Commands
 
 | Command | Action |
 | --- | --- |
-| `:StripTrailingWhitespaces` | Remove trailing whitespace. |
-| `:Indent {n}` | Set the current buffer's indentation to `n` spaces, e.g. `:Indent 2`. |
+| `:Indent {n}` | Set only the current buffer's indentation to a positive integer number of spaces, e.g. `:Indent 2`. |
 | `:SudoWrite` / `:w!!` | Save the whole file with root permissions. Needs a named file buffer, marks it saved only after a successful write, and overwrites directly without a backup or atomic replacement. |
 | `:Markview` / `:Markview enable` / `:Markview disable` | Toggle or set inline rendering of headings, tables, code blocks, and checkboxes. Raw syntax returns when the cursor enters an element. On by default for Markdown and Typst. |
-| `:TSContextToggle` | Show or hide the Treesitter scope header with the enclosing function or block. |
 
-In command-line mode, `:bd` expands to `:Bdelete` and `%%` inserts the current file's directory.
+In command-line mode, `%%` inserts the current file's directory. `:bd` keeps its
+native behavior; use `,c` for layout-preserving buffer deletion.
 
 ## Themes and appearance
 
 Use `:colorscheme` to change themes.
 Available themes: `kanagawa-wave`, `gruvbox-material`, `tokyonight-night`, and `sonokai` (shusia variant).
-`:FzfLua colorschemes` opens a picker when fzf is available. Neovim saves and restores theme changes across sessions.
+`:FzfLua colorschemes` opens a picker when fzf is available. Each session starts
+with Kanagawa Wave; theme changes are not saved.
 
-Split borders use heavy lines. Borders beside the active split use the theme's
-warm gold/yellow accent, distinct from [tmux](../tmux/tmux.conf)'s blue/aqua
-active borders. Other borders keep the matching theme's muted inactive color.
-Colors update on theme and focus changes.
-Neovim colors separators through the window on their left or above, so a shared
-edge in a nested layout can also receive the active color. Other colorschemes
-keep their own separator colors.
+Split borders use heavy lines. colorful-winsep highlights borders around the
+active split without animation, using its default highlight settings.
 
 ## Plugin updates and rollback
 
 Run `:lua vim.pack.update()` to update all plugins. A confirmation buffer shows
-the changes; write it to confirm or quit to discard, then restart Neovim.
+the changes; write it to confirm or quit to discard, then restart Neovim. Back up
+the local `nvim-pack-lock.json` before updating if you want a rollback point.
 
-To revert after an update, restore the lockfile from version control:
+To roll back, restore that local backup and restart Neovim, then run:
 
-```sh
-git checkout HEAD -- ~/.config/nvim/nvim-pack-lock.json
+```vim
+:lua vim.pack.update(nil, { offline = true, target = 'lockfile' })
 ```
 
-Then restart Neovim. Neovim re-installs plugins at the pinned revisions on startup.
+Review and confirm the changes, then restart again.
 The lockfile does not cover Treesitter parsers, language servers, or formatter binaries.
