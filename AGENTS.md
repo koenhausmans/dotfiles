@@ -8,7 +8,8 @@ Omit descriptions of previous implementations and migration history.
 | Location | Content |
 | --- | --- |
 | Root `README.md` | Quick install, brief component overview, shared local-config locations, and links to details. |
-| `<component>/README.md` | Component setup, behavior, shortcuts, customization, and necessary caveats. For bat, use `bat/README.md`. |
+| `<component>/README.md` | Component setup, behavior, shortcuts, customization, and necessary caveats. |
+| `tool-configs/<tool>/README.md` | Tool-specific configuration, behavior, and customization. |
 | `bin/README.md` | Script catalog: invocation, important options, dependencies, and side effects. |
 | `themes/<tool>/README.md` | Tool-specific theme setup and selection. |
 

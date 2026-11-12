@@ -3,10 +3,10 @@
 Install global instructions and initial configuration (not the OpenCode binary):
 
 ```sh
-./opencode/install.sh
+./tool-configs/install.sh
 ```
 
-The full `./install.sh` also offers this component; the server profile excludes it.
+The full `./install.sh` offers the `tool-configs` component; the server profile excludes it.
 Files go into `${XDG_CONFIG_HOME:-$HOME/.config}/opencode`:
 
 - `AGENTS.md` is symlinked. It requests concise, complete replies in Caveman lite
@@ -29,4 +29,4 @@ JSONC supports comments and trailing commas; JSON uses standard JSON syntax.
 Both formats configure the same settings. Keep one format rather than both.
 
 See [OpenCode configuration](https://opencode.ai/v2/docs/config) for options and
-[OpenCode themes](../themes/opencode/README.md) for theme installation.
+[OpenCode themes](../../themes/opencode/README.md) for theme installation.

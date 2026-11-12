@@ -70,6 +70,15 @@ class InstallerTests(unittest.TestCase):
             'exit "${IMPORT_STATUS:-0}"\n')
         mise_bin.chmod(0o755)
 
+    def run_tool_configs_installer(self, **env):
+        component = self.root / "tool-configs"
+        if not component.exists():
+            shutil.copytree(REPO / "tool-configs", component)
+        return subprocess.run(
+            [str(component / "install.sh")], capture_output=True, text=True, check=False,
+            env={**os.environ, "HOME": str(self.root), "XDG_CONFIG_HOME": "",
+                 "DOTFILES_LINK_CHOICE_FILE": "", **env})
+
     def test_unknown_argument_is_rejected(self):
         result = subprocess.run([str(self.root / "install.sh"), "minimal"],
                                 capture_output=True, text=True, check=False)
@@ -78,7 +87,7 @@ class InstallerTests(unittest.TestCase):
         self.assertIn("Usage:", result.stderr)
 
     def test_server_profile_runs_only_server_components(self):
-        for name in ("bash", "vim", "screen", "tmux", "zoxide", "zsh"):
+        for name in ("bash", "vim", "screen", "tmux", "zoxide", "zsh", "tool-configs"):
             (self.root / name).mkdir()
             installer = self.root / name / "install.sh"
             installer.write_text(f'#!/usr/bin/env bash\necho "{name}:$DOTFILES_PROFILE" >> "$INSTALL_LOG"\n')
@@ -89,16 +98,17 @@ class InstallerTests(unittest.TestCase):
                          sorted(f"{n}:server" for n in ("bash", "vim", "screen", "tmux", "zoxide")))
         self.assertEqual(self.tty_output.count("── "), 5)
         self.assertNotIn("── zsh/install.sh ──", self.tty_output)
+        self.assertNotIn("── tool-configs/install.sh ──", self.tty_output)
 
     def test_full_profile_runs_zoxide_as_a_separate_component(self):
-        for name in ("bash", "zsh", "zoxide", "unlisted"):
+        for name in ("bash", "zsh", "zoxide", "tool-configs", "bat", "opencode", "unlisted"):
             (self.root / name).mkdir()
             installer = self.root / name / "install.sh"
             installer.write_text(f'#!/usr/bin/env bash\necho "{name}:$DOTFILES_PROFILE" >> "$INSTALL_LOG"\n')
             installer.chmod(0o755)
 
-        for reply, expected in (("Y", ["bash:full", "zsh:full", "zoxide:full"]),
-                                ("yyn", ["bash:full", "zsh:full"])):
+        for reply, expected in (("Y", ["bash:full", "zsh:full", "zoxide:full", "tool-configs:full"]),
+                                ("yynn", ["bash:full", "zsh:full"])):
             with self.subTest(reply=reply):
                 self.log.unlink(missing_ok=True)
                 self.assertEqual(self.run_with_tty([], reply), 0)
@@ -110,9 +120,86 @@ class InstallerTests(unittest.TestCase):
                     self.assertIn(heading, self.tty_output)
                     self.assertLess(self.tty_output.index(heading),
                                     self.tty_output.index(f"Installing \033[1m{component}/install.sh"))
-                if reply == "yyn":
+                if reply == "yynn":
                     self.assertNotIn("── zoxide/install.sh ──", self.tty_output)
+                    self.assertNotIn("── tool-configs/install.sh ──", self.tty_output)
+                self.assertNotIn("── bat/install.sh ──", self.tty_output)
+                self.assertNotIn("── opencode/install.sh ──", self.tty_output)
                 self.assertNotIn("── unlisted/install.sh ──", self.tty_output)
+
+    def test_tool_configs_installs_links_and_copies_idempotently(self):
+        for _ in range(2):
+            result = self.run_tool_configs_installer()
+            self.assertEqual(result.returncode, 0, result.stderr)
+
+        component = self.root / "tool-configs"
+        config_home = self.root / ".config"
+        for source, destination in (
+            ("bat/config", config_home / "bat" / "config"),
+            ("markdownlint/markdownlintrc", self.root / ".markdownlintrc"),
+            ("opencode/AGENTS.md", config_home / "opencode" / "AGENTS.md"),
+        ):
+            self.assertTrue(destination.is_symlink())
+            self.assertEqual(destination.resolve(), component / source)
+        for name in ("opencode.jsonc", "cli.json"):
+            destination = config_home / "opencode" / name
+            self.assertFalse(destination.is_symlink())
+            self.assertEqual(destination.read_bytes(), (component / "opencode" / name).read_bytes())
+        self.assertFalse((config_home / "opencode" / "opencode.json").exists())
+
+    def test_tool_configs_uses_xdg_and_existing_opencode_json(self):
+        config_home = self.root / "custom config"
+        opencode = config_home / "opencode"
+        opencode.mkdir(parents=True)
+        shutil.copy2(REPO / "tool-configs" / "opencode" / "opencode.jsonc",
+                     opencode / "opencode.json")
+
+        result = self.run_tool_configs_installer(XDG_CONFIG_HOME=str(config_home))
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual((config_home / "bat" / "config").resolve(),
+                         self.root / "tool-configs" / "bat" / "config")
+        self.assertTrue((self.root / ".markdownlintrc").is_symlink())
+        self.assertTrue((opencode / "AGENTS.md").is_symlink())
+        self.assertTrue((opencode / "cli.json").is_file())
+        self.assertFalse((opencode / "opencode.jsonc").exists())
+        self.assertFalse((self.root / ".config").exists())
+
+    def test_tool_configs_shared_choices_cover_links_and_copies(self):
+        config_home = self.root / ".config"
+        destinations = (
+            config_home / "bat" / "config",
+            self.root / ".markdownlintrc",
+            config_home / "opencode" / "AGENTS.md",
+            config_home / "opencode" / "opencode.jsonc",
+            config_home / "opencode" / "cli.json",
+        )
+        for destination in destinations:
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_text("keep local settings\n")
+        choice = self.root / "choice"
+        choice.write_text("s\n")
+
+        result = self.run_tool_configs_installer(DOTFILES_LINK_CHOICE_FILE=str(choice))
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        for destination in destinations:
+            self.assertEqual(destination.read_text(), "keep local settings\n")
+            self.assertFalse(destination.is_symlink())
+
+        choice.write_text("b\n")
+        result = self.run_tool_configs_installer(DOTFILES_LINK_CHOICE_FILE=str(choice))
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        for destination in destinations:
+            self.assertEqual(Path(str(destination) + ".backup").read_text(), "keep local settings\n")
+        self.assertTrue(destinations[0].is_symlink())
+        self.assertTrue(destinations[1].is_symlink())
+        self.assertTrue(destinations[2].is_symlink())
+        self.assertEqual(destinations[3].read_bytes(),
+                         (self.root / "tool-configs" / "opencode" / "opencode.jsonc").read_bytes())
+        self.assertEqual(destinations[4].read_bytes(),
+                         (self.root / "tool-configs" / "opencode" / "cli.json").read_bytes())
 
     def test_shell_installers_do_not_install_zoxide(self):
         commands = self.root / "commands"

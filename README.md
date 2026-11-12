@@ -31,8 +31,7 @@ Choose `D` to view an existing → incoming diff, then choose an action.
 | zoxide | one-time `z.sh` history import |
 | vim | full configuration; minimal (`vimrc.minimal`) with `server` |
 | nvim | Neovim configuration |
-| bat | links shared display and paging defaults |
-| opencode | links global instructions and copies configuration with conflict prompts |
+| tool-configs | bat defaults, global Markdownlint rules, and OpenCode configuration |
 | themes | Claude Code and OpenCode themes |
 
 Prompts use Powerline glyphs; use a Nerd Font such as Pragmasevka ([setup](themes/windows-terminal/README.md#font-and-appearance)).
@@ -46,11 +45,11 @@ Machine-specific settings go in files that aren't tracked in this repo:
 
 The fish template `fish/config.local.fish.template` lists the prompt options.
 OpenCode settings stay local in `~/.config/opencode/opencode.json(c)` (or under
-`$XDG_CONFIG_HOME`); see [OpenCode setup](opencode/README.md).
+`$XDG_CONFIG_HOME`); see [OpenCode setup](tool-configs/opencode/README.md).
 
 ## More
 
-- [bat](bat/README.md): display defaults and file previews
+- [Tool configuration](tool-configs/README.md): bat, Markdownlint, and OpenCode
 - [Bash](bash/README.md) and [Zsh](zsh/README.md): shell setup and managed dependencies
 - [mise](mise/README.md): managed tools
 - [zoxide](zoxide/README.md): directory navigation and history migration
@@ -58,7 +57,6 @@ OpenCode settings stay local in `~/.config/opencode/opencode.json(c)` (or under
 - [fish](fish/README.md): prompt behavior and customization
 - [git](git/README.md): Git-specific configuration
 - [nvim](nvim/README.md): Neovim configuration
-- [OpenCode](opencode/README.md): global instructions and local configuration
 - [Screen](screen/README.md): sessions and detachment
 - [tmux](tmux/README.md): keyboard shortcuts
 - [vim](vim/README.md): keyboard shortcuts

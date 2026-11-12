@@ -127,8 +127,9 @@ nvim-lint integration.
   Strict JSON validation with jsonlint is optional: install with
   `npm install -g jsonlint` and run `jsonlint file.json` manually. It is not run
   automatically and does not support JSONC.
-- **Markdown:** configure rules in `.markdownlint.json` or `.markdownlint.yaml`.
-  The editor uses the `markdownlint` executable from `markdownlint-cli`.
+- **Markdown:** the editor uses the `markdownlint` executable from `markdownlint-cli`.
+  See [Markdownlint configuration](../tool-configs/markdownlint/README.md) for global
+  defaults and project overrides.
 - **Shell:** ShellCheck reports shell-script issues. shfmt uses `.editorconfig`
   when present, otherwise the buffer's indentation settings.
 

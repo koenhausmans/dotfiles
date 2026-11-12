@@ -1,8 +1,9 @@
 # bat
 
-Select `bat` in `./install.sh` to link `config` to `$XDG_CONFIG_HOME/bat/config`
+Select `tool-configs` in `./install.sh`, or run `./tool-configs/install.sh`,
+to link `config` to `$XDG_CONFIG_HOME/bat/config`
 (or `~/.config/bat/config` when `XDG_CONFIG_HOME` is unset or empty).
-The bat binary is managed by [mise](../mise/README.md).
+The bat binary is managed by [mise](../../mise/README.md).
 
 ## Display and previews
 

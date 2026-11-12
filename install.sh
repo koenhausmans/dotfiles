@@ -35,7 +35,7 @@ info 'Running installer scripts'
 
 install_all=false
 # Only these top-level components are allowed to supply install scripts.
-components=(bash zsh fish git tmux screen vim nvim mise zoxide bat opencode themes)
+components=(bash zsh fish git tmux screen vim nvim mise zoxide tool-configs themes)
 [[ $profile == server ]] && components=(bash vim screen tmux zoxide)
 for component in "${components[@]}"; do
     installer="$BASEDIR/$component/install.sh"

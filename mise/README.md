@@ -16,7 +16,7 @@ Configured in [`config.toml`](config.toml), symlinked to `~/.config/mise/config.
 
 OpenCode requires mise **2026.10.9+**. The `opencode` entry installs v2 through
 `@opencode/cli` and allows its required postinstall script. See
-[OpenCode setup](../opencode/README.md) for configuration.
+[OpenCode setup](../tool-configs/opencode/README.md) for configuration.
 
 For Rust components not included in the stable toolchain, run:
 
