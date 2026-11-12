@@ -10,9 +10,13 @@ Configured in [`config.toml`](config.toml), symlinked to `~/.config/mise/config.
 | Category | Tools |
 |---|---|
 | Runtimes | Node.js LTS, Neovim, Rust stable (via rustup) |
-| CLI | bat, fd, fzf, ripgrep, shellcheck, shfmt, stylua, zoxide |
+| CLI | bat, fd, fzf, ripgrep, shellcheck, shfmt, stylua, zoxide, OpenCode |
 | Editor | ruff, uv, lua-language-server |
-| npm | basedpyright, markdownlint-cli, opencode-ai, prettier, typescript, typescript-language-server, vscode-langservers-extracted |
+| npm | basedpyright, markdownlint-cli, prettier, typescript, typescript-language-server, vscode-langservers-extracted |
+
+OpenCode requires mise **2026.10.9+**. The `opencode` entry installs v2 through
+`@opencode/cli` and allows its required postinstall script. See
+[OpenCode setup](../opencode/README.md) for configuration.
 
 For Rust components not included in the stable toolchain, run:
 
