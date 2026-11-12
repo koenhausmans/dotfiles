@@ -190,13 +190,19 @@ end
 --- KEYMAPS & AUTOCMDS {{{
 
 do
+    local function diagnostic_text_enabled(bufnr)
+        local enabled = vim.b[bufnr].diagnostic_virtual_text
+        if enabled ~= nil then return enabled end
+        return vim.bo[bufnr].filetype ~= 'markdown'
+    end
+
     vim.diagnostic.config {
         update_in_insert  = false,
         severity_sort = true,
         float = { border = 'rounded', source = 'if_many' },
         underline = { severity = { min = vim.diagnostic.severity.WARN } },
 
-        virtual_text = true, -- Text shows up at the end of the line
+        virtual_text = function(_, bufnr) return diagnostic_text_enabled(bufnr) end,
 
         -- Auto open the float, so you can easily read the errors when jumping with `[d` and `]d`
         jump = {
@@ -237,10 +243,15 @@ do
     vim.keymap.set('v', '=', '=gv', { desc = 'Reindent and keep selection' })
 
     --
-    -- Enable toggle of wrapping and spell through leader shortcuts
+    -- Toggle wrapping, spell checking, and diagnostic text through leader shortcuts
     --
     vim.keymap.set('n', '<leader>tw', function() vim.wo.wrap = not vim.wo.wrap end, { desc = '[T]oggle [W]rap' })
     vim.keymap.set('n', '<leader>ts', function() vim.wo.spell = not vim.wo.spell end, { desc = '[T]oggle [S]pell checking' })
+    vim.keymap.set('n', '<leader>td', function()
+        local bufnr = vim.api.nvim_get_current_buf()
+        vim.b[bufnr].diagnostic_virtual_text = not diagnostic_text_enabled(bufnr)
+        vim.diagnostic.show(nil, bufnr)
+    end, { desc = '[T]oggle [D]iagnostic text' })
 
     --
     -- Cursorline setting follows window focus
@@ -415,8 +426,8 @@ do
             vim.keymap.set('n', '<leader>hQ', function() gitsigns.setqflist 'all' end, { desc = 'Git [H]unks to [Q]uickfix (repository)', buf = bufnr })
             vim.keymap.set('n', '<leader>hq', gitsigns.setqflist, { desc = 'Git [H]unks to [Q]uickfix (current file)', buf = bufnr })
             -- Toggles
-            -- vim.keymap.set('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = '[T]oggle git show [b]lame line', buf = bufnr })
-            -- vim.keymap.set('n', '<leader>tw', gitsigns.toggle_word_diff, { desc = '[T]oggle git intra-line [w]ord diff', buf = bufnr })
+            vim.keymap.set('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = '[T]oggle Git line [B]lame', buf = bufnr })
+            vim.keymap.set('n', '<leader>ti', gitsigns.toggle_word_diff, { desc = '[T]oggle Git [I]ntra-line diff', buf = bufnr })
             -- Text object
             vim.keymap.set({ 'o', 'x' }, 'ih', gitsigns.select_hunk, { desc = '[I]nside Git [H]unk', buf = bufnr })
         end,

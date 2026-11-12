@@ -37,8 +37,7 @@ tree-sitter --version
 
 Ensure `~/.cargo/bin` is on Neovim's Linux `PATH`. Alternatively, use a binary
 from the [tree-sitter releases](https://github.com/tree-sitter/tree-sitter/releases),
-not the npm package. `install-latest-release.sh` warns if the CLI is missing or
-too old but does not install it.
+not the npm package. The CLI is not installed by the dotfiles installer.
 
 Parsers are installed automatically on first start. After plugin updates, run
 `:TSUpdate` and restart. Use `:checkhealth nvim-treesitter` to diagnose failures.
@@ -194,11 +193,14 @@ Delete a line to delete the file. Open oil with `:e .` or press `-` from any buf
 | `,hS` / `,hR` | Stage / reset all changes in the current buffer. |
 | `,hp` / `,hi` | Preview a hunk in a popup / inline. |
 | `,hb` | Show blame for the current line. |
+| `,tb` | Toggle current-line Git blame. |
+| `,ti` | Toggle Git intra-line diff highlighting. |
 | `,hd` / `,hD` | Diff against the index / parent commit. |
 | `,hq` / `,hQ` | Put changed hunks from the current file / repository into quickfix. |
 | `ih` (visual / operator-pending) | Select a Git hunk. |
 
-Gitsigns adds these bindings only to attached buffers.
+Gitsigns adds these bindings only to attached buffers. Its blame and intra-line
+diff toggles change settings for the whole session, not only the current buffer.
 mini.bracketed uses `[c` / `]c` for comment navigation. To execute native diff
 navigation without mappings, use `:normal! [c` or `:normal! ]c` in a diff window.
 
@@ -256,6 +258,7 @@ LSP navigation and action bindings require an attached server. The formatting bi
 | `grn` | Rename a symbol. |
 | `gra` (normal / visual) | Select a code action with Neovim's native interface. |
 | `Ctrl-w d` | Show diagnostics at the cursor (built-in). |
+| `,td` | Toggle inline diagnostic text in the current buffer (LSP and linters). Defaults off for Markdown, on for other filetypes. Signs, underlines, navigation, and diagnostic floats remain available. |
 | `[d` / `]d` | Go to the previous / next diagnostic. |
 | `,lf` | Format the buffer. See [Language servers and formatters](#language-servers-and-formatters) for installation and format-on-save behavior. |
 | `Ctrl-p` / `Ctrl-n` (insert) | Select the previous / next completion item. |
