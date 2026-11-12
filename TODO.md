@@ -9,6 +9,7 @@ Dotfiles
 
 Neovim ToDo
 ------------
+
 - [ ] Typst: Support for terminal output instead of HTML / PDF
 - [ ] Check vim-unimpaired, add additional useful keybindings in README or replace by other plugin?
 
@@ -36,9 +37,6 @@ Neovim ToDo
 - [ ] FZF-Lua:
   - Search tags `<leader>st`
   - Search
-- [ ] Consider:
-  - `vim.keymap.set('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = '[T]oggle git show [b]lame line', buf = bufnr })`
-  - `vim.keymap.set('n', '<leader>tw', gitsigns.toggle_word_diff, { desc = '[T]oggle git intra-line [w]ord diff', buf = bufnr })`
 - [ ] Investigate [https://github.com/hifanx/dotfiles/blob/main/.config/nvim/init.lua]
 - [ ] Add keymap for vim.diagnostic.setloclist
 - [ ] Consider adding a shortcut for :TodoFzfLua `<leader>st`?
@@ -49,15 +47,32 @@ Neovim ToDo
   - Explicit true-color support and display truncation.
 - [ ] Consider making lualine simpler.
 - [ ] Run a full check on all the which-key configuration and keymaps. Is everything in which-keys and nvim/README.md?
-- [ ] vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-- [ ] vim.keymap.set('n', '<leader>sc', builtin.commands, { desc = '[S]earch [C]ommands' })
-- [ ] Look at ``<leader>ss`` and <leader>sr of kickstart.nvim. This is picker related and resume picker related.
+- [ ] `vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })`
+- [ ] `vim.keymap.set('n', '<leader>sc', builtin.commands, { desc = '[S]earch [C]ommands' })`
+- [ ] Look at ``<leader>ss`` and `<leader>sr` of kickstart.nvim. This is picker related and resume picker related.
 - [ ] Add `]r/[r` for illuminate navigation?
-
-
-
 - [ ] Consider registering fzf-lua for `vim.ui.select` menus, such as LSP code actions.
 - [ ] Consider `grD` for LSP go-to-declaration.
 - [ ] Consider `,ld` for diagnostics at the cursor; native Ctrl-w d is available.
-- [ ] Consider `,th` to toggle LSP inlay hints.
 - [ ] Evaluate replacing vim-illuminate with Kickstart's LSP document-highlight setup; assess the loss of fallback providers and reference navigation.
+- [ ] On open of a new buffer, LSP linting does not seem to be loaded? If I open TODO.md with :e TODO.md, I see no hints until I execute :w
+```
+     In nvim/init.lua:774, the BufReadPost callback sees an empty filetype, so it selects no linter. After :w, the filetype is markdown and Markdownlint runs.
+
+     Read-only checks:
+
+     - Current configuration: 0 diagnostics on open, 2 after the save event.
+     - With the proposed change applied only in memory: 2 diagnostics on open.
+
+     Proposed fix
+
+     1. Replace BufReadPost with FileType in the lint autocommand. Keep BufWritePost and InsertLeave.
+     2. Update the lint-trigger explanation in nvim/README.md.
+     3. Verify opening buffers and run the existing tests.
+
+     Markdown diagnostics come from nvim-lint, not LSP. Inline text is also intentionally off for Markdown; ,td toggles it.
+
+     No files changed. Switch to an implementation agent to apply the fix.
+```
+
+- [ ] Is there a LSP server for markdown to use instead of nvim-lint?
