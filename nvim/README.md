@@ -279,6 +279,7 @@ LSP navigation and action bindings require an attached server. Formatting with `
 | Keys | Action |
 | --- | --- |
 | `grd` | Go to the definition. |
+| `grD` | Go to the declaration with Neovim's native LSP handler. Requires server support. |
 | `gri` / `grr` | Find implementations / references with fzf-lua. |
 | `grt` | Go to the type definition. |
 | `gO` | Search symbols in the current document. |

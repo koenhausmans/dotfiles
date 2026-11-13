@@ -679,6 +679,9 @@ do
             -- Jump to the definition of the word under your cursor
             vim.keymap.set('n', 'grd', fzf.lsp_definitions, { buffer = event.buf, silent = true, desc = '[G]oto [D]efinition' })
 
+            -- Jump to the declaration of the word under your cursor
+            vim.keymap.set('n', 'grD', vim.lsp.buf.declaration, { buffer = event.buf, silent = true, desc = '[G]oto [D]eclaration' })
+
             -- Jump to the type of the word under your cursor
             vim.keymap.set('n', 'grt', fzf.lsp_typedefs, { buffer = event.buf, silent = true, desc = '[G]oto [T]ype Definition' })
 
@@ -691,7 +694,6 @@ do
             -- TODO: To be used?
             -- vim.keymap.set('n', 'grn', vim.lsp.buf.rename, { buffer = event.buf, silent = true, desc = '[R]e[n]ame symbol' })
             -- vim.keymap.set({ 'n', 'x' }, 'gra', function() fzf.lsp_code_actions({ jump1 = false, silent = true }) end, { buffer = event.buf, silent = true, desc = 'Code [A]ctions' })
-            -- vim.keymap.set('n', 'grD', vim.lsp.buf.declaration, { buffer = event.buf, silent = true, desc = '[G]oto [D]eclaration' })
             -- vim.keymap.set('n', 'K', vim.lsp.buf.hover, { buffer = event.buf, silent = true, desc = 'Hover information' })
 
             -- vim.keymap.set('n', '<leader>ld', vim.diagnostic.open_float, { buffer = event.buf, silent = true, desc = '[L]SP: [D]iagnostics at cursor' })
