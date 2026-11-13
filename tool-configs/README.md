@@ -11,5 +11,5 @@ The server profile excludes this component. Existing files use the shared
 skip, overwrite, backup, and diff prompts.
 
 - [bat](bat/README.md): display defaults and file previews.
-- [Markdownlint](markdownlint/README.md): global lint rules for Markdown.
+- [rumdl](rumdl/README.md): global lint rules for Markdown.
 - [OpenCode](opencode/README.md): global instructions and initial configuration.

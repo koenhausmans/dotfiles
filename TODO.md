@@ -58,4 +58,4 @@ Neovim ToDo
 - [x] Run linting when opening a buffer without requiring a save.
 - [ ] Simplify `nvim/README.md`: keep setup, user-visible behavior, shortcuts, customization, and necessary caveats; remove internal wiring details and repeated information.
 
-- [ ] Is there a LSP server for markdown to use instead of nvim-lint?
+- [x] Use rumdl's Markdown LSP instead of nvim-lint.

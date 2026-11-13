@@ -6,10 +6,10 @@ BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$BASEDIR/../lib/links.sh"
 
 config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
-mkdir -p -- "$config_home/bat" "$config_home/opencode"
+mkdir -p -- "$config_home/bat" "$config_home/rumdl" "$config_home/opencode"
 link_files \
     "$BASEDIR/bat/config" "$config_home/bat/config" \
-    "$BASEDIR/markdownlint/markdownlintrc" "$HOME/.markdownlintrc" \
+    "$BASEDIR/rumdl/rumdl.toml" "$config_home/rumdl/rumdl.toml" \
     "$BASEDIR/opencode/AGENTS.md" "$config_home/opencode/AGENTS.md"
 
 # Use the existing JSON format when JSONC is absent, rather than adding a second config.

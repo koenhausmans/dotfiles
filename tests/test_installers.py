@@ -136,7 +136,7 @@ class InstallerTests(unittest.TestCase):
         config_home = self.root / ".config"
         for source, destination in (
             ("bat/config", config_home / "bat" / "config"),
-            ("markdownlint/markdownlintrc", self.root / ".markdownlintrc"),
+            ("rumdl/rumdl.toml", config_home / "rumdl" / "rumdl.toml"),
             ("opencode/AGENTS.md", config_home / "opencode" / "AGENTS.md"),
         ):
             self.assertTrue(destination.is_symlink())
@@ -159,7 +159,8 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual((config_home / "bat" / "config").resolve(),
                          self.root / "tool-configs" / "bat" / "config")
-        self.assertTrue((self.root / ".markdownlintrc").is_symlink())
+        self.assertEqual((config_home / "rumdl" / "rumdl.toml").resolve(),
+                         self.root / "tool-configs" / "rumdl" / "rumdl.toml")
         self.assertTrue((opencode / "AGENTS.md").is_symlink())
         self.assertTrue((opencode / "cli.json").is_file())
         self.assertFalse((opencode / "opencode.jsonc").exists())
@@ -169,7 +170,7 @@ class InstallerTests(unittest.TestCase):
         config_home = self.root / ".config"
         destinations = (
             config_home / "bat" / "config",
-            self.root / ".markdownlintrc",
+            config_home / "rumdl" / "rumdl.toml",
             config_home / "opencode" / "AGENTS.md",
             config_home / "opencode" / "opencode.jsonc",
             config_home / "opencode" / "cli.json",

@@ -31,7 +31,7 @@ Choose `D` to view an existing → incoming diff, then choose an action.
 | zoxide | one-time `z.sh` history import |
 | vim | full configuration; minimal (`vimrc.minimal`) with `server` |
 | nvim | Neovim configuration |
-| tool-configs | bat defaults, global Markdownlint rules, and OpenCode configuration |
+| tool-configs | bat defaults, global rumdl rules, and OpenCode configuration |
 | themes | Claude Code and OpenCode themes |
 
 Prompts use Powerline glyphs; use a Nerd Font such as Pragmasevka ([setup](themes/windows-terminal/README.md#font-and-appearance)).
@@ -49,7 +49,7 @@ OpenCode settings stay local in `~/.config/opencode/opencode.json(c)` (or under
 
 ## More
 
-- [Tool configuration](tool-configs/README.md): bat, Markdownlint, and OpenCode
+- [Tool configuration](tool-configs/README.md): bat, rumdl, and OpenCode
 - [Bash](bash/README.md) and [Zsh](zsh/README.md): shell setup and managed dependencies
 - [mise](mise/README.md): managed tools
 - [zoxide](zoxide/README.md): directory navigation and history migration

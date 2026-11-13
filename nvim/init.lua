@@ -689,6 +689,7 @@ do
         },
     })
     vim.lsp.enable('jsonls')
+    vim.lsp.enable('rumdl')
 
 end
 
@@ -765,7 +766,6 @@ do
         javascriptreact = { 'eslint' },
         typescript      = { 'eslint' },
         typescriptreact = { 'eslint' },
-        markdown = { 'markdownlint' },
         python   = { 'ruff' },
         sh       = { 'shellcheck' },
     }

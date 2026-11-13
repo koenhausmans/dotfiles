@@ -74,7 +74,7 @@ bufremove (layout-preserving buffer deletion), and splitjoin (argument layouts).
 | Shell (sh/bash) | | shfmt | ShellCheck | `mise install`. |
 | JavaScript / JSX / TypeScript / TSX | typescript-language-server | Prettier | ESLint | `mise install`. Install project tools with `npm install --save-dev eslint prettier`. |
 | JSON / JSONC | JSON Language Server | Prettier | Server syntax/schema diagnostics | `mise install`. |
-| Markdown | | | Markdownlint | `mise install`. |
+| Markdown | rumdl | rumdl (through LSP) | rumdl (through LSP) | `mise install`. |
 
 Open a matching file and use `:LspInfo` to check that its server attached. `:checkhealth vim.lsp` can help diagnose problems.
 
@@ -122,9 +122,11 @@ Missing tools are skipped with one warning per executable per session. Check
   Strict JSON validation with jsonlint is optional: install with
   `npm install -g jsonlint` and run `jsonlint file.json` manually. It is not run
   automatically and does not support JSONC.
-- **Markdown:** the editor uses the `markdownlint` executable from `markdownlint-cli`.
-  See [Markdownlint configuration](../tool-configs/markdownlint/README.md) for global
-  defaults and project overrides.
+- **Markdown:** rumdl provides live lint diagnostics and quick fixes through LSP,
+  without nvim-lint. Use `gra` for code actions and `,lf` for formatting; Markdown
+  does not format automatically on save.
+  See [rumdl configuration](../tool-configs/rumdl/README.md) for global defaults
+  and project overrides.
 - **Shell:** ShellCheck reports shell-script issues. shfmt uses `.editorconfig`
   when present, otherwise the buffer's indentation settings.
 
