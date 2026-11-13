@@ -137,7 +137,6 @@ do
     -- Non-blinking: steady block in normal/visual, bar in insert, underline in replace.
     -- Blinking in insert mode (700 ms delay before first blink, 400 ms on, 250 ms off).
     vim.o.guicursor = 'n-v-c:block,i-ci-ve:ver40-blinkwait700-blinkon400-blinkoff250,r-cr:hor20,o:hor50'
-    vim.opt.display:append('truncate')
     vim.o.termguicolors = true
 
 end
