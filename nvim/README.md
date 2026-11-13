@@ -93,14 +93,9 @@ LSP formatting is the fallback when the external formatter is unavailable.
 Bypass format-on-save once with `:noautocmd w`. Use `:ConformInfo` to inspect
 formatter availability.
 
-nvim-lint runs Ruff, ShellCheck, clang-tidy, Markdownlint, and ESLint for their
-configured filetypes when buffers are opened, saved, or after leaving insert
-mode. Missing executables are skipped with one warning per executable per session.
-Availability is rechecked on each lint attempt; installed tools are picked up if
-their directory is already on Neovim's `PATH`. Failures from available tools remain
-visible in `:messages`.
-LSP diagnostics run independently; Rust, Typst, Lua, and JSON need no separate
-nvim-lint integration.
+Linting runs automatically when opening files, saving, and leaving insert mode.
+Missing tools are skipped with one warning per executable per session. Check
+`:messages` for linter failures. LSP diagnostics run independently.
 
 ### Project configuration
 

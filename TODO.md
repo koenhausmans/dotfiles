@@ -55,24 +55,7 @@ Neovim ToDo
 - [ ] Consider `grD` for LSP go-to-declaration.
 - [ ] Consider `,ld` for diagnostics at the cursor; native Ctrl-w d is available.
 - [ ] Evaluate replacing vim-illuminate with Kickstart's LSP document-highlight setup; assess the loss of fallback providers and reference navigation.
-- [ ] On open of a new buffer, LSP linting does not seem to be loaded? If I open TODO.md with :e TODO.md, I see no hints until I execute :w
-```
-     In nvim/init.lua:774, the BufReadPost callback sees an empty filetype, so it selects no linter. After :w, the filetype is markdown and Markdownlint runs.
-
-     Read-only checks:
-
-     - Current configuration: 0 diagnostics on open, 2 after the save event.
-     - With the proposed change applied only in memory: 2 diagnostics on open.
-
-     Proposed fix
-
-     1. Replace BufReadPost with FileType in the lint autocommand. Keep BufWritePost and InsertLeave.
-     2. Update the lint-trigger explanation in nvim/README.md.
-     3. Verify opening buffers and run the existing tests.
-
-     Markdown diagnostics come from nvim-lint, not LSP. Inline text is also intentionally off for Markdown; ,td toggles it.
-
-     No files changed. Switch to an implementation agent to apply the fix.
-```
+- [x] Run linting when opening a buffer without requiring a save.
+- [ ] Simplify `nvim/README.md`: keep setup, user-visible behavior, shortcuts, customization, and necessary caveats; remove internal wiring details and repeated information.
 
 - [ ] Is there a LSP server for markdown to use instead of nvim-lint?
