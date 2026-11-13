@@ -37,7 +37,8 @@ Neovim ToDo
 - [ ] FZF-Lua:
   - Search tags `<leader>st`
   - Search
-- [ ] Investigate [https://github.com/hifanx/dotfiles/blob/main/.config/nvim/init.lua]
+- [x] Add `,th` to toggle buffer-local LSP inlay hints, based on
+      [hifanx's LspAttach mappings](https://github.com/hifanx/dotfiles/blob/29c0500958005d4477cb92f1cfb9797edbf6330c/.config/nvim/init.lua).
 - [ ] Add keymap for vim.diagnostic.setloclist
 - [ ] Consider adding a shortcut for :TodoFzfLua `<leader>st`?
 - [ ]  14 — Display additions: yours adds:

@@ -670,6 +670,14 @@ do
             local fzf = require('fzf-lua')
             vim.bo[event.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
 
+            local client = vim.lsp.get_client_by_id(event.data.client_id)
+            if client and client:supports_method('textDocument/inlayHint', event.buf) then
+                vim.keymap.set('n', '<leader>th', function()
+                    local filter = { bufnr = event.buf }
+                    vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(filter), filter)
+                end, { buffer = event.buf, desc = '[T]oggle inlay [H]ints' })
+            end
+
             -- Find references for the word under your cursor
             vim.keymap.set('n', 'grr', function() fzf.lsp_references({ jump1 = false }) end, { buffer = event.buf, silent = true, desc = '[G]oto [R]eferences' })
 
@@ -698,6 +706,17 @@ do
 
             -- vim.keymap.set('n', '<leader>ld', vim.diagnostic.open_float, { buffer = event.buf, silent = true, desc = '[L]SP: [D]iagnostics at cursor' })
             -- vim.keymap.set('n', '<leader>lq', vim.diagnostic.setloclist, { buffer = event.buf, silent = true, desc = '[L]SP: Diagnostics to location list' })
+        end,
+    })
+
+    vim.api.nvim_create_autocmd('LspDetach', {
+        group = 'UserLspMappings',
+        callback = function(event)
+            local clients = vim.lsp.get_clients({ bufnr = event.buf, method = 'textDocument/inlayHint' })
+            for _, client in ipairs(clients) do
+                if client.id ~= event.data.client_id then return end
+            end
+            pcall(vim.keymap.del, 'n', '<leader>th', { buffer = event.buf })
         end,
     })
 

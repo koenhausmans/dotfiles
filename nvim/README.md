@@ -288,6 +288,7 @@ LSP navigation and action bindings require an attached server. Formatting with `
 | `gra` (normal / visual) | Select a code action with fzf-lua. |
 | `Ctrl-w d` | Show diagnostics at the cursor (built-in). |
 | `,td` | Toggle inline diagnostic text in the current buffer (LSP and linters). Defaults off for Markdown, on for other filetypes. Signs, underlines, navigation, and diagnostic floats remain available. |
+| `,th` | Toggle inlay hints in the current buffer. Available when an attached server supports hints; initially off. Hints show inferred types or parameter names without changing the file. |
 | `,lf` (normal / visual) | Format the buffer / selection. See [Language servers and formatters](#language-servers-and-formatters) for installation and format-on-save behavior. |
 | `Ctrl-p` / `Ctrl-n` or `Up` / `Down` (insert) | Select the previous / next completion item. |
 | `Ctrl-y` (insert) | Select and accept a completion item. |
