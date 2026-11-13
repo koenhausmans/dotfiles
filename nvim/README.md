@@ -260,6 +260,7 @@ All suffixes below work in normal mode. The last column lists additional modes.
 | `l` | Location-list items | |
 | `o` | Recently visited files | |
 | `q` | Quickfix items | |
+| `r` | Illuminate references in the current buffer | |
 | `t` | Treesitter nodes | Visual, operator-pending |
 | `u` | Undo states | |
 | `w` | Windows | |
@@ -267,6 +268,8 @@ All suffixes below work in normal mode. The last column lists additional modes.
 | `y` | Yank history, replacing the latest pasted region | |
 
 See `:help MiniBracketed` for details. Treesitter navigation requires a parser.
+Illuminate's `[r` / `]r` follow `wrapscan` and have no uppercase variants.
+They retain the default `Alt-p` / `Alt-n` bindings and use LSP, Treesitter, or regex matches.
 On Neovim 0.13+, suffix `m` also navigates multicursor positions in normal mode.
 
 ### LSP and completion

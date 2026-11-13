@@ -476,7 +476,14 @@ do
     -- Automatic highlight of word under cursor
     --
     vim.pack.add { gh 'RRethy/vim-illuminate' }
-    require('illuminate').configure()
+    local illuminate = require('illuminate')
+    illuminate.configure()
+    vim.keymap.set('n', ']r', function()
+        illuminate.goto_next_reference()
+    end, { desc = 'Next reference' })
+    vim.keymap.set('n', '[r', function()
+        illuminate.goto_prev_reference()
+    end, { desc = 'Previous reference' })
 
     --
     -- Diffview:
