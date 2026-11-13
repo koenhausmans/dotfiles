@@ -318,6 +318,11 @@ do
     -- Toggle bracketed arguments between single-line and multiline layouts.
     require('mini.splitjoin').setup()
 
+    -- Highlight trailing whitespace and trim it on demand.
+    local trailspace = require('mini.trailspace')
+    trailspace.setup()
+    vim.keymap.set('n', '<leader>lt', trailspace.trim, { desc = '[T]rim trailing whitespace' })
+
     -- Support for icons
     require('mini.icons').setup()
     require('mini.icons').mock_nvim_web_devicons()
@@ -545,7 +550,7 @@ do
         { '<leader>g', group = '[G]it' },
         { '<leader>gc', group = 'Git [C]onflicts' },
         { '<leader>h', group = 'Git [H]unks', mode = { 'n', 'x' } },
-        { '<leader>l', group = '[L]SP', mode = { 'n', 'x' } },
+        { '<leader>l', group = '[L]ocal editing', mode = { 'n', 'x' } },
         { '<leader>s', group = '[S]earch', mode = { 'n', 'x' } },
         { '<leader>t', group = '[T]oggle' },
         { 'g', group = 'Go to / actions', mode = { 'n', 'x', 'o' } },

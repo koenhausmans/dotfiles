@@ -25,7 +25,7 @@ Neovim ToDo
       the function, class and parameter objects in nvim-treesitter-textobjects.
 - [ ] snacks.nvim -> All-or-nothing migration to its picker, indent, words and bufdelete
       modules. Would replace fzf-lua, indent-blankline.nvim, vim-illuminate and vim-bbye.
-- [ ] Consider using mini.trailspace (Highlight and remove trailing spaces)
+- [x] Consider using mini.trailspace (Highlight and remove trailing spaces)
 - [ ] Consider using mini.hipatterns instead of todo-comments.nvim
 - [ ] NMAC427/guess-indent.nvim : Auto-recognize indentation of file
   - Is there another alternative from mini.nvim?

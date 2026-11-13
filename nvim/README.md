@@ -119,8 +119,8 @@ Press `,` to see the which-key popup with shortcuts for the current buffer and m
 Press `g`, `gr`, `[`, or `]` to explore other groups.
 Insert-mode completion and fzf picker shortcuts use their own interfaces.
 
-Leader groups: `,g` Git, `,h` Git hunks, `,l` LSP, `,s` Search, and `,t` Toggle.
-Git hunks, LSP, and Search also have visual-mode actions.
+Leader groups: `,g` Git, `,h` Git hunks, `,l` Local editing, `,s` Search, and `,t` Toggle.
+Git hunks, Local editing, and Search also have visual-mode actions.
 
 ### Files, buffers, and search
 
@@ -210,6 +210,7 @@ These shortcuts apply inside Diffview. Press `g?` for the full list in the curre
 | --- | --- |
 | `<` / `>` / `=` (visual) | Change indentation or reindent, then keep the selection. |
 | `,tw` / `,ts` | Toggle wrapping / spell checking in the current window. |
+| `,lt` (normal) | Trim trailing whitespace throughout the current buffer (mini.trailspace). |
 | `gcc` / `gc{motion}` / `gc` (visual) | Toggle comments. |
 | `ds{char}` / `cs{old}{new}` | Delete or change surrounding characters or tags (nvim-surround). |
 | `ys{motion}{char}` / `yss{char}` | Add surrounding characters or tags around a motion / the current line. |
@@ -226,6 +227,9 @@ These shortcuts apply inside Diffview. Press `g?` for the full list in the curre
 
 Yanks, deletes, and puts use the system clipboard when a clipboard provider is available.
 Matching brackets and quotes appear automatically. Type a closing character to skip an existing one.
+
+Trailing whitespace is highlighted in the active window in Normal mode, not Insert mode.
+Trimming is manual and keeps trailing blank lines. In Markdown, trailing spaces can encode hard line breaks.
 
 `gS` can misidentify arguments. In visual mode, select the
 surrounding brackets too (for example, `va)` then `gS`). Format-on-save may reformat the result.
