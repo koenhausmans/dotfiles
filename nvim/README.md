@@ -222,13 +222,12 @@ These shortcuts apply inside Diffview. Press `g?` for the full list in the curre
 | `al{object}` / `il{object}` (visual / operator-pending) | Select around / inside the previous text object. |
 | `g[{object}` / `g]{object}` (normal / visual / operator-pending) | Move to the left / right edge of a text object. |
 | `Alt-i` (visual / operator-pending) | Select a reference to the symbol under the cursor. |
-| `.` | Repeat the last change, including surround and split/join operations. |
 | `Backspace` / `Enter` (insert) | Delete an empty pair / add an indented line inside one (mini.pairs). |
 
 Yanks, deletes, and puts use the system clipboard when a clipboard provider is available.
 Matching brackets and quotes appear automatically. Type a closing character to skip an existing one.
 
-`gS` supports dot-repeat but can misidentify arguments. In visual mode, select the
+`gS` can misidentify arguments. In visual mode, select the
 surrounding brackets too (for example, `va)` then `gS`). Format-on-save may reformat the result.
 
 ### Navigation
