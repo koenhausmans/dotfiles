@@ -115,10 +115,12 @@ Missing tools are skipped with one warning per executable per session. Check
 These bindings use normal mode unless marked otherwise.
 fzf-lua pickers require fzf. Text searches also require ripgrep.
 
-Press `,` and pause to see the which-key popup with labeled completions for all leader bindings.
+Press `,` to see the which-key popup with shortcuts for the current buffer and mode.
+Press `g`, `gr`, `[`, or `]` to explore other groups.
+Insert-mode completion and fzf picker shortcuts use their own interfaces.
 
 Leader groups: `,g` Git, `,h` Git hunks, `,l` LSP, `,s` Search, and `,t` Toggle.
-Press `gr` and pause to see the LSP Actions group.
+Git hunks, LSP, and Search also have visual-mode actions.
 
 ### Files, buffers, and search
 
@@ -128,35 +130,41 @@ Press `gr` and pause to see the LSP Actions group.
 | `,f` | Find a file. |
 | `,gf` | Find a Git-tracked file. |
 | `,b` | Select a buffer. |
-| `,st` | Search tags. |
+| `,s.` | Search recently opened files. |
+| `,sc` | Search command history. |
+| `,st` / `,sT` | Search TODO comments / tags. |
 | `,c` | Delete the buffer without closing its window (mini.bufremove). |
 | `,z` | Switch to the alternate buffer. |
-| `[b` / `]b` | Go to the previous / next buffer (mini.bracketed). |
-| `[f` / `]f` | Open the previous / next file in the current file's directory (mini.bracketed). |
 | `,q` / `,w` | Quit the current window / write the current buffer. |
 | `,/` | Live grep with ripgrep. |
 | `,sb` / `,so` | Search lines in the current buffer / all open buffers. |
 | `,sd` | Search workspace diagnostics. |
 | `,sw` (normal / visual) | Search the word under the cursor / selected text. |
 | `Ctrl-t` / `Ctrl-s` / `Ctrl-v` (fzf picker) | Open the result in a tab / split / vertical split. |
+| `F1` / `F4` (fzf picker) | Show shortcut help / toggle the preview. |
+| `Alt-h` / `Alt-i` (file picker) | Toggle hidden / ignored files. |
 
-`,f`, `,b`, and `,st` open fzf-lua pickers with previews.
+`,f`, `,b`, and `,sT` open fzf-lua pickers with previews.
 File pickers include hidden files except `.git`.
 Run `:FzfLua` to list all pickers, such as LSP symbols, diagnostics, and keymaps.
-`:TodoFzfLua` searches project TODO comments. TODO quickfix and location-list commands are unavailable.
+TODO quickfix and location-list commands are unavailable.
 
 #### Directory buffers (oil.nvim)
 
 | Keys | Action |
 | --- | --- |
 | `Enter` | Open the file or directory under the cursor. |
+| `Ctrl-x` / `Ctrl-s` / `Ctrl-t` | Open in a horizontal split / vertical split / tab. |
+| `Ctrl-p` | Preview the selected file. |
 | `-` | Go up to the parent directory. |
 | `_` | Open the current working directory. |
 | `g.` | Toggle hidden files. |
+| `gR` | Refresh the directory. |
 | `g?` | Show the full list of oil keybindings. |
 
 Edit filenames directly in the buffer and save with `:w` to rename or move files.
 Delete a line to delete the file. Open oil with `:e .`.
+`Ctrl-h/j/k/l` still navigate splits and tmux panes in directory buffers.
 
 ### Git
 
@@ -178,6 +186,21 @@ diff toggles change settings for the whole session, not only the current buffer.
 `[c` / `]c` navigate comments. To execute native diff
 navigation without mappings, use `:normal! [c` or `:normal! ]c` in a diff window.
 
+#### History and diffs (Diffview)
+
+Use `:DiffviewOpen` for repository changes, `:DiffviewFileHistory` for history, and `:DiffviewClose` to close the view.
+These shortcuts apply inside Diffview. Press `g?` for the full list in the current panel.
+
+| Keys | Action |
+| --- | --- |
+| `,gb` / `,e` | Toggle / focus the file panel. |
+| `Tab` / `Shift-Tab` | Open the next / previous file's diff. |
+| `,gco` / `,gct` / `,gcb` / `,gca` | Choose ours / theirs / base / all for the current conflict in a diff buffer. |
+| `,gcO` / `,gcT` / `,gcB` / `,gcA` | Apply that choice to every conflict in the file. Available in diff buffers and the file panel. |
+| `dx` / `dX` | Delete the current conflict region / all conflict regions in the file. |
+
+`,b` still opens the buffer picker. `,c` still closes the buffer without closing its window.
+
 ### Editing
 
 | Keys | Action |
@@ -186,10 +209,17 @@ navigation without mappings, use `:normal! [c` or `:normal! ]c` in a diff window
 | `,tw` / `,ts` | Toggle wrapping / spell checking in the current window. |
 | `gcc` / `gc{motion}` / `gc` (visual) | Toggle comments. |
 | `ds{char}` / `cs{old}{new}` | Delete or change surrounding characters or tags (nvim-surround). |
-| `ys{motion}{char}` / `yss{char}` / `S` (visual) | Add surrounding characters or tags (nvim-surround). |
+| `ys{motion}{char}` / `yss{char}` | Add surrounding characters or tags around a motion / the current line. |
+| `S` (visual) | Add surrounding characters or tags around the selection. |
+| `yS{motion}{char}` / `ySS{char}` / `cS{old}{new}` | Add / change surrounding characters or tags on separate lines. |
+| `Ctrl-g s` / `Ctrl-g S` (insert) | Add surrounding characters at the cursor / on separate lines. |
 | `gS` (normal / visual) | Toggle bracketed arguments between single-line and multiline layouts (mini.splitjoin). |
 | `a{object}` / `i{object}` (visual / operator-pending) | Select around / inside a text object, such as `va)` or `ci'` (mini.ai). |
-| `.` | Repeat the last surround operation (nvim-surround). |
+| `aa{object}` / `ii{object}` (visual / operator-pending) | Select around / inside the next text object. |
+| `al{object}` / `il{object}` (visual / operator-pending) | Select around / inside the previous text object. |
+| `g[{object}` / `g]{object}` (normal / visual / operator-pending) | Move to the left / right edge of a text object. |
+| `Alt-i` (visual / operator-pending) | Select a reference to the symbol under the cursor. |
+| `.` | Repeat the last change, including surround and split/join operations. |
 | `Backspace` / `Enter` (insert) | Delete an empty pair / add an indented line inside one (mini.pairs). |
 
 Yanks, deletes, and puts use the system clipboard when a clipboard provider is available.
@@ -204,13 +234,37 @@ surrounding brackets too (for example, `va)` then `gS`). Format-on-save may refo
 | --- | --- |
 | `s` | Flash jump: type a search string, then the label shown. Works in normal, visual, and operator-pending mode. |
 | `S` | Flash Treesitter selection in normal and operator-pending modes. For visual `S`, see Editing. |
-| `f` / `F` / `t` / `T` | Flash single-character motions. The default configuration does not add jump labels to these motions. |
-| `;` / `,,` | Repeat the last character motion forward / backward; comma alone is the leader. |
+| `f` / `F` / `t` / `T` (normal / visual / operator-pending) | Flash single-character motions without jump labels. |
+| `;` (normal / visual / operator-pending) | Repeat the last character motion forward. |
+| `,,` | Repeat the last character motion backward. Comma alone is the leader. |
 | `Alt-p` / `Alt-n` | Go to the previous / next reference to the symbol under the cursor (Illuminate defaults). |
-| `[q` / `]q` | Go to the previous / next quickfix item (mini.bracketed). |
-| `[l` / `]l` | Go to the previous / next location-list item (mini.bracketed). |
-| `[x` / `]x` | Go to the previous / next Git conflict marker (mini.bracketed). |
 | `Ctrl-h/j/k/l` | Move between splits and tmux panes with smart-splits. |
+
+#### Bracket navigation
+
+Use `[` / `]` plus a lowercase suffix for the previous / next item.
+Use an uppercase suffix for the first / last item, such as `[B` / `]B` for buffers.
+All suffixes below work in normal mode. The last column lists additional modes.
+
+| Suffix | Target | Additional modes |
+| --- | --- | --- |
+| `b` | Listed buffers | |
+| `c` | Comments | Visual, operator-pending |
+| `d` | Diagnostics | Visual, operator-pending |
+| `f` | Files in the current file's directory | |
+| `i` | Indentation changes | Visual, operator-pending |
+| `j` | Jumps within the current buffer | Operator-pending |
+| `l` | Location-list items | |
+| `o` | Recently visited files | |
+| `q` | Quickfix items | |
+| `t` | Treesitter nodes | Visual, operator-pending |
+| `u` | Undo states | |
+| `w` | Windows | |
+| `x` | Git conflict markers | Visual, operator-pending |
+| `y` | Yank history, replacing the latest pasted region | |
+
+See `:help MiniBracketed` for details. Treesitter navigation requires a parser.
+On Neovim 0.13+, suffix `m` also navigates multicursor positions in normal mode.
 
 ### LSP and completion
 
@@ -228,18 +282,24 @@ LSP navigation and action bindings require an attached server. Formatting with `
 | `gra` (normal / visual) | Select a code action with Neovim's native interface. |
 | `Ctrl-w d` | Show diagnostics at the cursor (built-in). |
 | `,td` | Toggle inline diagnostic text in the current buffer (LSP and linters). Defaults off for Markdown, on for other filetypes. Signs, underlines, navigation, and diagnostic floats remain available. |
-| `[d` / `]d` | Go to the previous / next diagnostic. |
-| `,lf` | Format the buffer. See [Language servers and formatters](#language-servers-and-formatters) for installation and format-on-save behavior. |
-| `Ctrl-p` / `Ctrl-n` (insert) | Select the previous / next completion item. |
+| `,lf` (normal / visual) | Format the buffer / selection. See [Language servers and formatters](#language-servers-and-formatters) for installation and format-on-save behavior. |
+| `Ctrl-p` / `Ctrl-n` or `Up` / `Down` (insert) | Select the previous / next completion item. |
 | `Ctrl-y` (insert) | Select and accept a completion item. |
 | `Tab` / `Shift-Tab` (insert) | Jump forward / backward through snippet placeholders. |
-| `Ctrl-e` (insert) | Dismiss the completion menu. |
+| `Ctrl-e` (insert) | Cancel completion. |
+| `Ctrl-Space` (insert) | Open completion, then show / hide its documentation. |
+| `Ctrl-b` / `Ctrl-f` (insert) | Scroll completion documentation up / down. |
+| `Ctrl-k` (insert) | Show / hide signature help. |
 
 Definitions, implementations, and type definitions jump directly when the server
 returns one result; multiple results open an fzf-lua picker. References and symbol
 searches always open a picker when results exist. Visual code actions use the
 selected range. `gW` results depend on the server's workspace-symbol support.
 Use `Ctrl-t` to return after a navigation jump.
+
+In command-line mode, `Tab` opens completion or selects the next item. `Shift-Tab` selects the previous item.
+`Ctrl-n` / `Ctrl-p` and `Right` / `Left` also select items.
+`Ctrl-y` accepts, `Ctrl-e` cancels, and `End` hides the menu. `Ctrl-Space` also opens the menu.
 
 ## Commands
 

@@ -225,7 +225,7 @@ do
 
     vim.keymap.set('n', '<leader>,', ',', { desc = 'Repeat character motion backward' })
 
-    vim.keymap.set('n', '<leader>q', '<cmd>quit<cr>', { silent = true, desc = '[Q]uit this buffer' })
+    vim.keymap.set('n', '<leader>q', '<cmd>quit<cr>', { silent = true, desc = '[Q]uit this window' })
     vim.keymap.set('n', '<leader>z', '<cmd>b#<cr>',      { silent = true, desc = 'Switch to alternate buffer' })
     vim.keymap.set('n', '<leader>w', '<cmd>write<cr>', { silent = true, desc = '[W]rite this buffer' })
 
@@ -461,6 +461,12 @@ do
     require('oil').setup {
         default_file_explorer = true,
         view_options = { show_hidden = true },
+        keymaps = {
+            ['<C-h>'] = false,
+            ['<C-l>'] = false,
+            ['<C-x>'] = { 'actions.select', opts = { horizontal = true } },
+            ['gR'] = { 'actions.refresh', mode = 'n' },
+        },
     }
     vim.keymap.set('n', '-', '<cmd>Oil<cr>', { desc = 'Open parent directory' })
 
@@ -474,7 +480,33 @@ do
     -- Diffview:
     --
     vim.pack.add { gh 'sindrets/diffview.nvim' }
-    require('diffview').setup { use_icons = true }
+    local diffview_actions = require('diffview.actions')
+    local function diffview_keymaps(conflict_keys)
+        local mappings = {
+            { 'n', '<leader>b', false },
+            { 'n', '<leader>gb', diffview_actions.toggle_files, { desc = 'Toggle [G]it file panel' } },
+        }
+        local versions = { o = 'ours', t = 'theirs', b = 'base', a = 'all' }
+        for suffix in conflict_keys:gmatch('.') do
+            local version = versions[suffix:lower()]
+            local whole_file = suffix ~= suffix:lower()
+            local action = whole_file and diffview_actions.conflict_choose_all or diffview_actions.conflict_choose
+            table.insert(mappings, { 'n', '<leader>c' .. suffix, false })
+            table.insert(mappings, {
+                'n', '<leader>gc' .. suffix, action(version),
+                { desc = 'Choose ' .. version:upper() .. (whole_file and ' for whole file' or ' for current conflict') },
+            })
+        end
+        return mappings
+    end
+    require('diffview').setup {
+        use_icons = true,
+        keymaps = {
+            view = diffview_keymaps('otbaOTBA'),
+            file_panel = diffview_keymaps('OTBA'),
+            file_history_panel = diffview_keymaps(''),
+        },
+    }
 
     --
     -- Markview:
@@ -502,14 +534,24 @@ do
     }
     require('which-key').add({
         { '<leader>g', group = '[G]it' },
+        { '<leader>gc', group = 'Git [C]onflicts' },
         { '<leader>h', group = 'Git [H]unks', mode = { 'n', 'x' } },
-        { '<leader>l', group = '[L]SP' },
-        { '<leader>s', group = '[S]earch' },
+        { '<leader>l', group = '[L]SP', mode = { 'n', 'x' } },
+        { '<leader>s', group = '[S]earch', mode = { 'n', 'x' } },
         { '<leader>t', group = '[T]oggle' },
         { 'g', group = 'Go to / actions', mode = { 'n', 'x', 'o' } },
         { 'gr', group = 'LSP Actions', mode = { 'n', 'x' } },
         { '[', group = 'Previous', mode = { 'n', 'x', 'o' } },
         { ']', group = 'Next', mode = { 'n', 'x', 'o' } },
+        {
+            mode = { 'n', 'x', 'o' }, preset = true,
+            { 'f', desc = 'Find character forward', real = true },
+            { 'F', desc = 'Find character backward', real = true },
+            { 't', desc = 'Move before character forward', real = true },
+            { 'T', desc = 'Move after character backward', real = true },
+            { ';', desc = 'Repeat character motion forward', real = true },
+        },
+        { '<A-i>', desc = 'Select reference', mode = { 'x', 'o' }, preset = true, real = true },
     })
 
 end
@@ -575,10 +617,13 @@ do
     vim.keymap.set('n', '<leader>gf', '<cmd>FzfLua git_files<cr>', { silent = true, desc = 'Find [G]it [F]iles' })
 
     vim.keymap.set('n', '<leader>/',  '<cmd>FzfLua live_grep<cr>', { silent = true, desc = 'Live grep' })
+    vim.keymap.set('n', '<leader>s.', '<cmd>FzfLua oldfiles<cr>', { silent = true, desc = '[S]earch recent files' })
     vim.keymap.set('n', '<leader>sb', '<cmd>FzfLua blines<cr>', { silent = true, desc = '[S]earch [B]uffer' })
+    vim.keymap.set('n', '<leader>sc', '<cmd>FzfLua command_history<cr>', { silent = true, desc = '[S]earch [C]ommand history' })
     vim.keymap.set('n', '<leader>so', '<cmd>FzfLua lines<cr>', { silent = true, desc = '[S]earch [O]pen Buffers' })
     vim.keymap.set('n', '<leader>sd', '<cmd>FzfLua diagnostics_workspace<cr>', { silent = true, desc = '[S]earch [D]iagnostics' })
-    vim.keymap.set('n', '<leader>st', '<cmd>FzfLua tags<cr>', { silent = true, desc = '[S]earch [T]ags' })
+    vim.keymap.set('n', '<leader>st', '<cmd>TodoFzfLua<cr>', { silent = true, desc = '[S]earch [T]ODO comments' })
+    vim.keymap.set('n', '<leader>sT', '<cmd>FzfLua tags<cr>', { silent = true, desc = '[S]earch [T]ags' })
     vim.keymap.set('n', '<leader>sw', '<cmd>FzfLua grep_cword<cr>', { silent = true, desc = '[S]earch [W]ord under cursor' })
     vim.keymap.set('x', '<leader>sw', '<cmd>FzfLua grep_visual<cr>', { silent = true, desc = '[S]earch selected [W]ords' })
 
