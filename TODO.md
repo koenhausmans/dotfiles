@@ -15,12 +15,8 @@ Neovim ToDo
 - [ ] dropbar.nvim -> Replacement for nvim-treesitter-context
 - [ ] snacks.nvim -> All-or-nothing migration to its picker, indent, words and bufdelete
       modules. Would replace fzf-lua, indent-blankline.nvim, vim-illuminate and vim-bbye.
+- [ ] Consider using mini.hipatterns instead of todo-comments.nvim
+- [ ] Auto resize the vim buffers on window resize.
+
 - [ ] NMAC427/guess-indent.nvim : Auto-recognize indentation of file
   - Is there another alternative from mini.nvim?
-
-
-- [ ] mini.ai -> Adds textobjects for function calls, arguments and quotes, plus next/last
-      variants such as `cin(`. Would replace none of the current plugins; it overlaps with
-      the function, class and parameter objects in nvim-treesitter-textobjects.
-- [x] Consider using mini.trailspace (Highlight and remove trailing spaces)
-- [ ] Consider using mini.hipatterns instead of todo-comments.nvim
