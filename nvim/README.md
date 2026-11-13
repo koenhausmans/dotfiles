@@ -132,6 +132,8 @@ Git hunks, LSP, and Search also have visual-mode actions.
 | `,b` | Select a buffer. |
 | `,s.` | Search recently opened files. |
 | `,sc` | Search command history. |
+| `,ss` | Search available fzf-lua pickers. |
+| `,sr` | Resume the last picker and its query. |
 | `,st` / `,sT` | Search TODO comments / tags. |
 | `,c` | Delete the buffer without closing its window (mini.bufremove). |
 | `,z` | Switch to the alternate buffer. |
@@ -146,7 +148,8 @@ Git hunks, LSP, and Search also have visual-mode actions.
 
 `,f`, `,b`, and `,sT` open fzf-lua pickers with previews.
 File pickers include hidden files except `.git`.
-Run `:FzfLua` to list all pickers, such as LSP symbols, diagnostics, and keymaps.
+Use `,ss` or `:FzfLua` to list built-in pickers, such as LSP symbols, diagnostics, and keymaps.
+Opening another picker can replace the resume target for `,sr`.
 TODO quickfix and location-list commands are unavailable.
 
 #### Directory buffers (oil.nvim)

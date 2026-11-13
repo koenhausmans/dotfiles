@@ -624,6 +624,8 @@ do
     vim.keymap.set('n', '<leader>sc', '<cmd>FzfLua command_history<cr>', { silent = true, desc = '[S]earch [C]ommand history' })
     vim.keymap.set('n', '<leader>so', '<cmd>FzfLua lines<cr>', { silent = true, desc = '[S]earch [O]pen Buffers' })
     vim.keymap.set('n', '<leader>sd', '<cmd>FzfLua diagnostics_workspace<cr>', { silent = true, desc = '[S]earch [D]iagnostics' })
+    vim.keymap.set('n', '<leader>ss', '<cmd>FzfLua builtin<cr>', { silent = true, desc = '[S]earch [S]elect picker' })
+    vim.keymap.set('n', '<leader>sr', '<cmd>FzfLua resume<cr>', { silent = true, desc = '[S]earch [R]esume last picker' })
     vim.keymap.set('n', '<leader>st', '<cmd>TodoFzfLua<cr>', { silent = true, desc = '[S]earch [T]ODO comments' })
     vim.keymap.set('n', '<leader>sT', '<cmd>FzfLua tags<cr>', { silent = true, desc = '[S]earch [T]ags' })
     vim.keymap.set('n', '<leader>sw', '<cmd>FzfLua grep_cword<cr>', { silent = true, desc = '[S]earch [W]ord under cursor' })
