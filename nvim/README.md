@@ -9,8 +9,7 @@ Language servers and formatters must be on the Linux `PATH` used to start Neovim
 The leader key is `,`.
 
 On first start, plugins are downloaded automatically. Restart Neovim once after
-the initial install to pick up all settings. The lockfile `nvim-pack-lock.json`
-in the config directory pins revisions and stays local, outside this repository.
+the initial install to apply all settings.
 
 On non-Windows systems with `make` and a C compiler, LuaSnip's optional `jsregexp`
 module is built after LuaSnip installation or updates. It supports regex
@@ -45,10 +44,10 @@ Buffers without parsers keep their normal syntax and indentation.
 
 ## Overview
 
-- Language support: built-in LSP, blink.cmp completion, snippets, signature help, nvim-lint linting, and automatic formatting.
-- Files and navigation: oil.nvim, fzf-lua, ripgrep, and Flash jumps.
-- Git: history and diff views through Diffview; change markers, blame, and hunk actions through Gitsigns.
-- Appearance: Lualine statusline, TODO highlights, reference highlights, rendered documents, indent guides, and highlighted split borders.
+- Language support: completion, snippets, signature help, diagnostics, and formatting.
+- Files and navigation: editable directory buffers, fuzzy search, and labeled jumps.
+- Git: history, diffs, change markers, blame, and hunk actions.
+- Appearance: statusline, TODO and reference highlights, rendered documents, indent guides, and highlighted split borders.
 - Editing: four-space indentation, persistent undo, smart-case search, marker folds, and splits that open below or to the right.
 - Defaults: line numbers, visible whitespace, a fixed sign column, and a cursor line in the active window.
 
@@ -57,10 +56,6 @@ windows keep absolute line numbers. Switching away from Neovim also disables
 both features when the terminal forwards focus events.
 
 Spelling is enabled for Markdown, Git commit messages, and todo files.
-
-Enabled mini.nvim modules: pairs (automatic brackets and quotes), icons (with
-web-devicons compatibility), ai (extended text objects), bracketed (navigation),
-bufremove (layout-preserving buffer deletion), and splitjoin (argument layouts).
 
 ## Language servers and formatters
 
@@ -81,15 +76,11 @@ Open a matching file and use `:LspInfo` to check that its server attached. `:che
 Tools are installed and activated by `./install.sh`. Restart your shell and any
 existing Neovim session afterwards to pick up the updated `PATH`.
 
-rust-analyzer runs `cargo clippy` on save in Cargo projects and publishes its
-diagnostics through LSP. No separate nvim-lint integration is needed. To add
-Clippy to an existing Rust installation, run `rustup component add clippy`.
-Restart Neovim after changing the configuration. Run `cargo clippy` from the
-project directory to check the tool independently.
+rust-analyzer runs `cargo clippy` on save in Cargo projects.
+If Clippy is missing, run `rustup component add clippy`.
 
-conform.nvim selects the configured formatter for `,lf`, independently of LSP.
-Only Python formats automatically on save; Lua and other languages use `,lf`.
-LSP formatting is the fallback when the external formatter is unavailable.
+Use `,lf` to format the buffer. Only Python formats automatically on save.
+Formatting uses the language server when the external formatter is unavailable.
 Bypass format-on-save once with `:noautocmd w`. Use `:ConformInfo` to inspect
 formatter availability.
 
@@ -100,9 +91,8 @@ Missing tools are skipped with one warning per executable per session. Check
 ### Project configuration
 
 - **C/C++:** provide `compile_commands.json` for compiler flags and include paths.
-  Configure checks in `.clang-tidy` and formatting in `.clang-format`. clang-tidy
-  runs through nvim-lint; clangd starts with `--clang-tidy=false` to avoid
-  duplicate checks. Checks on large projects can be costly.
+  Configure checks in `.clang-tidy` and formatting in `.clang-format`.
+  clang-tidy checks can be slow on large projects.
 - **Lua:** without a root `.luarc.json` or `.luarc.jsonc`, LuaLS uses LuaJIT,
   recognizes the `vim` global, and loads Neovim API types. A project LuaLS config
   takes precedence over these Neovim defaults.
@@ -111,35 +101,22 @@ Missing tools are skipped with one warning per executable per session. Check
   requires a project `eslint.config.*`; run `npm init @eslint/config@latest` in
   the project to create one and select TypeScript/React support when needed.
   Prettier uses the project's configuration, such as `.prettierrc`.
-  ESLint and Prettier search the buffer's ancestors for `node_modules/.bin`
-  executables before falling back to `PATH`. Neither integration downloads tools.
-  ESLint runs only through nvim-lint, not an additional ESLint LSP client.
-- **JSON/JSONC:** jsonls supplies completion, syntax checks, and schema validation.
-  Package manifests and JS/TS configuration files use SchemaStore schemas, which
-  require network access. Other files can declare a `$schema` URL. Prettier
-  formats both filetypes; jsonls supplies fallback formatting. For JSON with
-  comments in a `.json` file, select `:set filetype=jsonc`.
-  Strict JSON validation with jsonlint is optional: install with
-  `npm install -g jsonlint` and run `jsonlint file.json` manually. It is not run
-  automatically and does not support JSONC.
-- **Markdown:** rumdl provides live lint diagnostics and quick fixes through LSP,
-  without nvim-lint. Use `gra` for code actions and `,lf` for formatting; Markdown
-  does not format automatically on save.
-  See [rumdl configuration](../tool-configs/rumdl/README.md) for global defaults
+  ESLint and Prettier prefer project-local tools in `node_modules/.bin` over `PATH`.
+  Neither integration downloads tools.
+- **JSON/JSONC:** package manifests and JS/TS configuration files use SchemaStore
+  schemas, which require network access. Other files can declare a `$schema` URL.
+  For JSON with comments in a `.json` file, select `:set filetype=jsonc`.
+- **Markdown:** see [rumdl configuration](../tool-configs/rumdl/README.md) for global defaults
   and project overrides.
-- **Shell:** ShellCheck reports shell-script issues. shfmt uses `.editorconfig`
-  when present, otherwise the buffer's indentation settings.
+- **Shell:** shfmt uses `.editorconfig` when present, otherwise the buffer's indentation settings.
 
 ## Keybindings
 
-These bindings use normal mode unless marked otherwise. Plugin bindings require the corresponding plugin.
+These bindings use normal mode unless marked otherwise.
+fzf-lua pickers require fzf. Text searches also require ripgrep.
 
 Press `,` and pause to see the which-key popup with labeled completions for all leader bindings.
 
-Action labels come from each mapping's `desc`; which-key registers only groups.
-Custom mappings use bracketed mnemonics where natural. mini.ai, mini.bracketed,
-and mini.splitjoin retain their own labels. mini.icons supplies which-key icons;
-a Nerd Font is required. Set `icons.mappings = false` in which-key setup to hide them.
 Leader groups: `,g` Git, `,h` Git hunks, `,l` LSP, `,s` Search, and `,t` Toggle.
 Press `gr` and pause to see the LSP Actions group.
 
@@ -149,7 +126,7 @@ Press `gr` and pause to see the LSP Actions group.
 | --- | --- |
 | `-` | Open the current file's parent directory in oil. |
 | `,f` | Find a file. |
-| `,gf` | Find a Git-tracked file (fzf only). |
+| `,gf` | Find a Git-tracked file. |
 | `,b` | Select a buffer. |
 | `,st` | Search tags. |
 | `,c` | Delete the buffer without closing its window (mini.bufremove). |
@@ -160,14 +137,13 @@ Press `gr` and pause to see the LSP Actions group.
 | `,/` | Live grep with ripgrep. |
 | `,sb` / `,so` | Search lines in the current buffer / all open buffers. |
 | `,sd` | Search workspace diagnostics. |
-| `,sw` (normal / visual) | Search the word under the cursor / selected text with ripgrep (requires fzf and ripgrep). |
+| `,sw` (normal / visual) | Search the word under the cursor / selected text. |
 | `Ctrl-t` / `Ctrl-s` / `Ctrl-v` (fzf picker) | Open the result in a tab / split / vertical split. |
 
-`,f`, `,b`, and `,st` open fzf-lua pickers with previews; fzf is required.
-File pickers prefer `fd`, then `fdfind`, then `rg --files`, then `find`, and include hidden files except `.git`.
+`,f`, `,b`, and `,st` open fzf-lua pickers with previews.
+File pickers include hidden files except `.git`.
 Run `:FzfLua` to list all pickers, such as LSP symbols, diagnostics, and keymaps.
-`:TodoFzfLua` searches project TODO comments. TODO quickfix/location-list commands
-need plenary.nvim, which this configuration does not install.
+`:TodoFzfLua` searches project TODO comments. TODO quickfix and location-list commands are unavailable.
 
 #### Directory buffers (oil.nvim)
 
@@ -180,7 +156,7 @@ need plenary.nvim, which this configuration does not install.
 | `g?` | Show the full list of oil keybindings. |
 
 Edit filenames directly in the buffer and save with `:w` to rename or move files.
-Delete a line to delete the file. Open oil with `:e .` or press `-` from any buffer.
+Delete a line to delete the file. Open oil with `:e .`.
 
 ### Git
 
@@ -199,7 +175,7 @@ Delete a line to delete the file. Open oil with `:e .` or press `-` from any buf
 
 Gitsigns adds these bindings only to attached buffers. Its blame and intra-line
 diff toggles change settings for the whole session, not only the current buffer.
-mini.bracketed uses `[c` / `]c` for comment navigation. To execute native diff
+`[c` / `]c` navigate comments. To execute native diff
 navigation without mappings, use `:normal! [c` or `:normal! ]c` in a diff window.
 
 ### Editing
@@ -208,7 +184,7 @@ navigation without mappings, use `:normal! [c` or `:normal! ]c` in a diff window
 | --- | --- |
 | `<` / `>` / `=` (visual) | Change indentation or reindent, then keep the selection. |
 | `,tw` / `,ts` | Toggle wrapping / spell checking in the current window. |
-| `gcc` / `gc{motion}` / `gc` (visual) | Toggle comments (built-in, uses `commentstring`). |
+| `gcc` / `gc{motion}` / `gc` (visual) | Toggle comments. |
 | `ds{char}` / `cs{old}{new}` | Delete or change surrounding characters or tags (nvim-surround). |
 | `ys{motion}{char}` / `yss{char}` / `S` (visual) | Add surrounding characters or tags (nvim-surround). |
 | `gS` (normal / visual) | Toggle bracketed arguments between single-line and multiline layouts (mini.splitjoin). |
@@ -216,14 +192,11 @@ navigation without mappings, use `:normal! [c` or `:normal! ]c` in a diff window
 | `.` | Repeat the last surround operation (nvim-surround). |
 | `Backspace` / `Enter` (insert) | Delete an empty pair / add an indented line inside one (mini.pairs). |
 
-The `unnamedplus` clipboard setting makes ordinary yanks, deletes, and puts use
-the system clipboard when a clipboard provider is available. There are no
-custom clipboard leader bindings.
-mini.pairs inserts matching brackets and quotes automatically; typing a closing character skips over an existing one.
+Yanks, deletes, and puts use the system clipboard when a clipboard provider is available.
+Matching brackets and quotes appear automatically. Type a closing character to skip an existing one.
 
-mini.splitjoin supports dot-repeat and needs no Treesitter parser. Detection uses
-Lua patterns and can misidentify arguments. In visual mode, select the surrounding
-brackets too (for example, `va)` then `gS`). Format-on-save may reformat the result.
+`gS` supports dot-repeat but can misidentify arguments. In visual mode, select the
+surrounding brackets too (for example, `va)` then `gS`). Format-on-save may reformat the result.
 
 ### Navigation
 
@@ -239,11 +212,9 @@ brackets too (for example, `va)` then `gS`). Format-on-save may reformat the res
 | `[x` / `]x` | Go to the previous / next Git conflict marker (mini.bracketed). |
 | `Ctrl-h/j/k/l` | Move between splits and tmux panes with smart-splits. |
 
-Outside tmux, `Ctrl-h/j/k/l` moves between Neovim splits.
-
 ### LSP and completion
 
-LSP navigation and action bindings require an attached server. The formatting binding `,lf` uses conform.nvim independently.
+LSP navigation and action bindings require an attached server. Formatting with `,lf` does not.
 
 | Keys | Action |
 | --- | --- |
@@ -267,11 +238,8 @@ LSP navigation and action bindings require an attached server. The formatting bi
 Definitions, implementations, and type definitions jump directly when the server
 returns one result; multiple results open an fzf-lua picker. References and symbol
 searches always open a picker when results exist. Visual code actions use the
-selected range. `gW` queries the language
-server as you type, so results depend on the server's workspace-symbol support.
-Use `Ctrl-t` to return after a navigation jump. Rename, code actions, and hover use
-Neovim's native LSP interface. The search pickers require fzf. No custom declaration,
-diagnostic location-list, or inlay-hint toggle shortcut is configured.
+selected range. `gW` results depend on the server's workspace-symbol support.
+Use `Ctrl-t` to return after a navigation jump.
 
 ## Commands
 
@@ -281,20 +249,21 @@ diagnostic location-list, or inlay-hint toggle shortcut is configured.
 | `:SudoWrite` / `:w!!` | Save the whole file with root permissions. Needs a named file buffer, marks it saved only after a successful write, and overwrites directly without a backup or atomic replacement. |
 | `:Markview` / `:Markview enable` / `:Markview disable` | Toggle or set inline rendering of headings, tables, code blocks, and checkboxes. Raw syntax returns when the cursor enters an element. On by default for Markdown and Typst. |
 
-In command-line mode, `%%` inserts the current file's directory. `:bd` keeps its
-native behavior; use `,c` for layout-preserving buffer deletion.
+In command-line mode, `%%` inserts the current file's directory.
 
 ## Themes and appearance
 
 Use `:colorscheme` to change themes.
 Available themes: `kanagawa-wave`, `gruvbox-material`, `tokyonight-night`, and `sonokai` (shusia variant).
-`:FzfLua colorschemes` opens a picker when fzf is available. Each session starts
+`:FzfLua colorschemes` opens a theme picker. Each session starts
 with Kanagawa Wave; theme changes are not saved.
 
-Split borders use heavy lines. colorful-winsep highlights borders around the
-active split without animation, using its default highlight settings.
+Split borders use heavy lines, with highlights around the active split and no animation.
 
 ## Plugin updates and rollback
+
+The local `nvim-pack-lock.json` in the config directory pins plugin revisions.
+It stays outside this repository.
 
 Run `:lua vim.pack.update()` to update all plugins. A confirmation buffer shows
 the changes; write it to confirm or quit to discard, then restart Neovim. Back up
