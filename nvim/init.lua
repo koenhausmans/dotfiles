@@ -201,7 +201,10 @@ do
         float = { border = 'rounded', source = 'if_many' },
         underline = { severity = { min = vim.diagnostic.severity.WARN } },
 
-        virtual_text = function(_, bufnr) return diagnostic_text_enabled(bufnr) end,
+        virtual_text = function(_, bufnr)
+            -- Neovim accepts boolean results, but its annotation requires an options table.
+            return diagnostic_text_enabled(bufnr) --[[@as vim.diagnostic.Opts.VirtualText]]
+        end,
 
         -- Auto open the float, so you can easily read the errors when jumping with `[d` and `]d`
         jump = {
