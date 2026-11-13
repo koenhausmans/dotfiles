@@ -6,7 +6,6 @@ do
     vim.loader.enable()
 
     -- Set comma as the leader key
-    --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
     vim.g.mapleader = ','
     vim.g.maplocalleader = ','
 
@@ -41,8 +40,6 @@ do
 
     -- Sets how neovim will display certain whitespace characters in the editor.
     vim.o.list = true
-    -- TODO: Change?
-    -- vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
     vim.opt.listchars = { tab = '» ', trail = '•', nbsp = '␣', precedes = '⟨', extends = '⟩' }
 
     -- Preview substitutions live, as you type!
@@ -383,13 +380,13 @@ do
     --
     -- Smarter split pane management
     --
-    -- TODO: Consider Alt+h/j/k/l for resizing
     vim.pack.add {
         gh 'smart-splits-nvim/smart-splits.nvim',
         gh 'smart-splits-nvim/backend-tmux',
     }
 
     require('smart-splits').setup {
+        default_amount = 3,
         mux = {
             backend = 'smart-splits-backend-tmux'
         }
@@ -400,6 +397,14 @@ do
     vim.keymap.set('n', '<C-j>', ss.move_cursor_down, { desc = 'Move to lower split or tmux pane' })
     vim.keymap.set('n', '<C-k>', ss.move_cursor_up, { desc = 'Move to upper split or tmux pane' })
     vim.keymap.set('n', '<C-l>', ss.move_cursor_right, { desc = 'Move to right split or tmux pane' })
+    vim.keymap.set('n', '<A-h>', ss.resize_left, { desc = 'Resize split or tmux pane left' })
+    vim.keymap.set('n', '<A-j>', ss.resize_down, { desc = 'Resize split or tmux pane down' })
+    vim.keymap.set('n', '<A-k>', ss.resize_up, { desc = 'Resize split or tmux pane up' })
+    vim.keymap.set('n', '<A-l>', ss.resize_right, { desc = 'Resize split or tmux pane right' })
+    vim.keymap.set('n', '<A-H>', function() ss.resize_left(6) end, { desc = 'Resize split or tmux pane left (large)' })
+    vim.keymap.set('n', '<A-J>', function() ss.resize_down(6) end, { desc = 'Resize split or tmux pane down (large)' })
+    vim.keymap.set('n', '<A-K>', function() ss.resize_up(6) end, { desc = 'Resize split or tmux pane up (large)' })
+    vim.keymap.set('n', '<A-L>', function() ss.resize_right(6) end, { desc = 'Resize split or tmux pane right (large)' })
 
     --
     -- gitsigns: Adds git related signs to the gutter
@@ -786,6 +791,7 @@ do
     --
     vim.pack.add { gh 'stevearc/conform.nvim' }
 
+    -- TODO: Consider having a shortcut to enable auto formatting
     require('conform').setup {
         format_on_save = function(bufnr)
             -- Filetypes that will be autoformatted

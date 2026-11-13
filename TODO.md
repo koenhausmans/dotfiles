@@ -16,7 +16,10 @@ Neovim ToDo
 - [ ] snacks.nvim -> All-or-nothing migration to its picker, indent, words and bufdelete
       modules. Would replace fzf-lua, indent-blankline.nvim, vim-illuminate and vim-bbye.
 - [ ] Consider using mini.hipatterns instead of todo-comments.nvim
-- [ ] Auto resize the vim buffers on window resize.
 
 - [ ] NMAC427/guess-indent.nvim : Auto-recognize indentation of file
   - Is there another alternative from mini.nvim?
+- [x] Add nvim/tmux shortcuts for Alt+h/j/k/l to resize the window. Take the idea from kickstart.nvim
+
+- [ ] Auto resize the vim buffers on window resize.
+  - Is it possible to only do this when the buffer is already auto-resized?

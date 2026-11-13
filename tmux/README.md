@@ -18,6 +18,8 @@ Machine-specific overrides go in `~/.tmux.conf.local`.
 | `Ctrl-a H/J/K/L` | Resize left / down / up / right by 5 cells. |
 | `Ctrl-a =` | Evenly size the current pane and adjacent panes without rearranging splits. |
 | `Ctrl-h/j/k/l` (no prefix) | Navigate left / down / up / right between panes or Vim/Neovim splits. |
+| `Alt-h/j/k/l` (no prefix) | Resize the pane by 3 cells, or pass through to Neovim splits. |
+| `Alt-Shift-h/j/k/l` (no prefix) | Resize the pane by 6 cells, or pass through to Neovim splits. |
 | `Ctrl-\` (no prefix) | Return to the previous pane or Vim/Neovim split. |
 
 New splits start in the current pane's directory. Resize bindings repeat while

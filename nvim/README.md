@@ -245,6 +245,8 @@ surrounding brackets too (for example, `va)` then `gS`). Format-on-save may refo
 | `,,` | Repeat the last character motion backward. Comma alone is the leader. |
 | `Alt-p` / `Alt-n` | Go to the previous / next reference to the symbol under the cursor (Illuminate defaults). |
 | `Ctrl-h/j/k/l` | Move between splits and tmux panes with smart-splits. |
+| `Alt-h/j/k/l` | Resize splits and tmux panes by 3 cells with smart-splits. |
+| `Alt-Shift-h/j/k/l` | Resize splits and tmux panes by 6 cells with smart-splits. |
 
 #### Bracket navigation
 
