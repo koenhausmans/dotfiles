@@ -279,7 +279,7 @@ LSP navigation and action bindings require an attached server. Formatting with `
 | `gW` | Search workspace symbols with live server queries. |
 | `K` | Show hover information. |
 | `grn` | Rename a symbol. |
-| `gra` (normal / visual) | Select a code action with Neovim's native interface. |
+| `gra` (normal / visual) | Select a code action with fzf-lua. |
 | `Ctrl-w d` | Show diagnostics at the cursor (built-in). |
 | `,td` | Toggle inline diagnostic text in the current buffer (LSP and linters). Defaults off for Markdown, on for other filetypes. Signs, underlines, navigation, and diagnostic floats remain available. |
 | `,lf` (normal / visual) | Format the buffer / selection. See [Language servers and formatters](#language-servers-and-formatters) for installation and format-on-save behavior. |
@@ -296,6 +296,9 @@ returns one result; multiple results open an fzf-lua picker. References and symb
 searches always open a picker when results exist. Visual code actions use the
 selected range. `gW` results depend on the server's workspace-symbol support.
 Use `Ctrl-t` to return after a navigation jump.
+
+Selection menus that use `vim.ui.select`, including code actions, use fzf-lua
+and require fzf. Input prompts, such as symbol renaming, are unchanged.
 
 In command-line mode, `Tab` opens completion or selects the next item. `Shift-Tab` selects the previous item.
 `Ctrl-n` / `Ctrl-p` and `Right` / `Left` also select items.

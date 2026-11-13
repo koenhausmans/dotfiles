@@ -612,6 +612,8 @@ do
         },
     }
 
+    require('fzf-lua').register_ui_select()
+
     vim.keymap.set('n', '<leader>b',  '<cmd>FzfLua buffers<cr>', { silent = true, desc = 'Find [B]uffers' })
     vim.keymap.set('n', '<leader>f',  '<cmd>FzfLua files<cr>', { silent = true, desc = '[F]ind file' })
     vim.keymap.set('n', '<leader>gf', '<cmd>FzfLua git_files<cr>', { silent = true, desc = 'Find [G]it [F]iles' })
