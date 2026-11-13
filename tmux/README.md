@@ -16,6 +16,7 @@ Machine-specific overrides go in `~/.tmux.conf.local`.
 | `Ctrl-a s` / `Ctrl-a Ctrl-s` / `Ctrl-a -` / `Ctrl-a _` | Split into stacked panes. |
 | `Ctrl-a h/j/k/l` | Resize left / down / up / right by 1 cell. |
 | `Ctrl-a H/J/K/L` | Resize left / down / up / right by 5 cells. |
+| `Ctrl-a =` | Evenly size the current pane and adjacent panes without rearranging splits. |
 | `Ctrl-h/j/k/l` (no prefix) | Navigate left / down / up / right between panes or Vim/Neovim splits. |
 | `Ctrl-\` (no prefix) | Return to the previous pane or Vim/Neovim split. |
 
@@ -23,6 +24,8 @@ New splits start in the current pane's directory. Resize bindings repeat while
 the repeat timer is active, without pressing the prefix again. Navigation keys
 are passed through to Vim, Neovim, and fzf; the supplied editor configurations
 integrate split and tmux navigation.
+
+In nested layouts, `Ctrl-a =` balances adjacent panes, not every split in the window.
 
 Pane borders use double lines (`║`, `═`) to distinguish them from Neovim's heavy lines.
 
