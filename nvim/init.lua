@@ -222,6 +222,16 @@ do
         callback = function() vim.hl.on_yank() end,
     })
 
+    vim.api.nvim_create_autocmd('VimResized', {
+        desc = 'Equalize splits when the terminal is resized',
+        group = vim.api.nvim_create_augroup('equalize-on-resize', { clear = true }),
+        callback = function()
+            local tab = vim.api.nvim_get_current_tabpage()
+            vim.cmd('tabdo wincmd =')
+            vim.api.nvim_set_current_tabpage(tab)
+        end,
+    })
+
     vim.keymap.set('n', '<leader>,', ',', { desc = 'Repeat character motion backward' })
 
     vim.keymap.set('n', '<leader>q', '<cmd>quit<cr>', { silent = true, desc = '[Q]uit this window' })

@@ -21,5 +21,5 @@ Neovim ToDo
   - Is there another alternative from mini.nvim?
 - [x] Add nvim/tmux shortcuts for Alt+h/j/k/l to resize the window. Take the idea from kickstart.nvim
 
-- [ ] Auto resize the vim buffers on window resize.
+- [x] Auto resize the vim buffers on window resize.
   - Is it possible to only do this when the buffer is already auto-resized?

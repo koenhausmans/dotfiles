@@ -248,6 +248,8 @@ surrounding brackets too (for example, `va)` then `gS`). Format-on-save may refo
 | `Alt-h/j/k/l` | Resize splits and tmux panes by 3 cells with smart-splits. |
 | `Alt-Shift-h/j/k/l` | Resize splits and tmux panes by 6 cells with smart-splits. |
 
+Splits in all tabs are equalized when the terminal or tmux pane is resized.
+
 #### Bracket navigation
 
 Use `[` / `]` plus a lowercase suffix for the previous / next item.
