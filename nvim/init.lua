@@ -396,7 +396,7 @@ do
     }
 
     require('smart-splits').setup {
-        default_amount = 3,
+        resize = { amount = 3 },
         mux = {
             backend = 'smart-splits-backend-tmux'
         }
