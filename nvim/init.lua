@@ -788,6 +788,20 @@ do
         },
     })
     vim.lsp.enable('jsonls')
+
+    vim.lsp.config('yamlls', {
+        settings = {
+            yaml = {
+                validate = true,
+                hover = true,
+                completion = true,
+                keyOrdering = false,
+                schemaStore = { enable = true, url = 'https://www.schemastore.org/api/json/catalog.json' },
+            },
+            redhat = { telemetry = { enabled = false } },
+        },
+    })
+    vim.lsp.enable('yamlls')
     vim.lsp.enable('rumdl')
 
 end
@@ -831,6 +845,7 @@ do
             typescriptreact = { 'prettier' },
             json   = { 'prettier' },
             jsonc  = { 'prettier' },
+            yaml   = { 'prettier' },
         },
     }
 
@@ -868,6 +883,7 @@ do
         typescriptreact = { 'eslint' },
         python   = { 'ruff' },
         sh       = { 'shellcheck' },
+        yaml     = { 'yamllint' },
     }
 
     local lint_augroup = vim.api.nvim_create_augroup('lint', { clear = true })
@@ -977,7 +993,7 @@ do
         -- gh 'nvim-treesitter/nvim-treesitter-textobjects',
         -- gh 'nvim-treesitter/nvim-treesitter-context',
 
-    local parsers = { 'bash', 'c', 'cpp', 'diff', 'html', 'javascript', 'json', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'python', 'query', 'rust', 'toml', 'tsx', 'typescript', 'typst', 'vim', 'vimdoc', }
+    local parsers = { 'bash', 'c', 'cpp', 'diff', 'html', 'javascript', 'json', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'python', 'query', 'rust', 'toml', 'tsx', 'typescript', 'typst', 'vim', 'vimdoc', 'yaml', }
     require('nvim-treesitter').install(parsers)
 
     ---@param buf integer

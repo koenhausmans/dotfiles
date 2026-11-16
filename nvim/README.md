@@ -69,6 +69,7 @@ Spelling is enabled for Markdown, Git commit messages, and todo files.
 | Shell (sh/bash) | | shfmt | ShellCheck | `mise install`. |
 | JavaScript / JSX / TypeScript / TSX | typescript-language-server | Prettier | ESLint | `mise install`. Install project tools with `npm install --save-dev eslint prettier`. |
 | JSON / JSONC | JSON Language Server | Prettier | Server syntax/schema diagnostics | `mise install`. |
+| YAML | YAML Language Server | Prettier | yamllint | `mise install`. |
 | Markdown | rumdl | rumdl (through LSP) | rumdl (through LSP) | `mise install`. |
 
 Open a matching file and use `:LspInfo` to check that its server attached. `:checkhealth vim.lsp` can help diagnose problems.
@@ -106,6 +107,9 @@ Missing tools are skipped with one warning per executable per session. Check
 - **JSON/JSONC:** package manifests and JS/TS configuration files use SchemaStore
   schemas, which require network access. Other files can declare a `$schema` URL.
   For JSON with comments in a `.json` file, select `:set filetype=jsonc`.
+- **YAML:** SchemaStore schemas are matched by filename (GitHub Actions,
+  docker-compose, and more) and require network access. Override per file with
+  `# yaml-language-server: $schema=<url>`. yamllint reads `.yamllint` from the project.
 - **Markdown:** see [rumdl configuration](../tool-configs/rumdl/README.md) for global defaults
   and project overrides.
 - **Shell:** shfmt uses `.editorconfig` when present, otherwise the buffer's indentation settings.
