@@ -13,13 +13,12 @@ Neovim ToDo
       or nvim-dap-view for a usable UI; replaces no current plugins.
       Look at kickstart.nvim `kickstart/plugins/debug.lua`
 - [ ] dropbar.nvim -> Replacement for nvim-treesitter-context
-- [ ] snacks.nvim -> All-or-nothing migration to its picker, indent, words and bufdelete
-      modules. Would replace fzf-lua, indent-blankline.nvim, vim-illuminate and vim-bbye.
-- [ ] Consider using mini.hipatterns instead of todo-comments.nvim
-
+- [ ] mini.nvim considerations:
+  - [ ] Consider mini.hipatterns instead of todo-comments.nvim
+  - [ ] Consider mini.cursorword instead of vim-illuminate, no more shortcuts for navigating (Is `]r/[r` useful?)
+  - [ ] Consider mini.indentscope plus leadmultispace instead of indent-blankline
+  - [ ] Consider mini.notify for vim.notify overridng
 - [ ] NMAC427/guess-indent.nvim : Auto-recognize indentation of file
   - Is there another alternative from mini.nvim?
-- [x] Add nvim/tmux shortcuts for Alt+h/j/k/l to resize the window. Take the idea from kickstart.nvim
+- [ ] Research more useful leader keys to add, especially for the `<leader>l` group. Or give me a full list of default LSP actions. E.g. how to rename a keyword? How to rename a function? How to rename a variable?
 
-- [x] Auto resize the vim buffers on window resize.
-  - Is it possible to only do this when the buffer is already auto-resized?
