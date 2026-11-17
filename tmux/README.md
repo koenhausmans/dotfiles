@@ -35,6 +35,7 @@ use clock mode, set `clock-mode-colour` there to the same color. Reload with
 | `Ctrl-a H/J/K/L` | Resize left / down / up / right by 5 cells. |
 | `Ctrl-a =` | Evenly size the current pane and adjacent panes without rearranging splits. |
 | `Ctrl-h/j/k/l` (no prefix) | Navigate left / down / up / right between panes or Vim/Neovim splits. |
+| `Ctrl-a Ctrl-h/j/k/l` | Forward navigation left / down / up / right to nested tmux. |
 | `Alt-h/j/k/l` (no prefix) | Resize the pane by 3 cells, or pass through to Neovim splits. |
 | `Alt-Shift-h/j/k/l` (no prefix) | Resize the pane by 6 cells, or pass through to Neovim splits. |
 | `Ctrl-\` (no prefix) | Return to the previous pane or Vim/Neovim split. |
@@ -43,6 +44,10 @@ New splits start in the current pane's directory. Resize bindings repeat while
 the repeat timer is active, without pressing the prefix again. Navigation keys
 are passed through to Vim, Neovim, and fzf; the supplied editor configurations
 integrate split and tmux navigation.
+
+For inner-pane navigation, use `Ctrl-a Ctrl-h/j/k/l` instead of sending
+`Ctrl-a Ctrl-a` first. The inner tmux must have the unprefixed navigation bindings.
+Use [suspend mode](#suspend) to pass keys through for repeated inner navigation.
 
 In nested layouts, `Ctrl-a =` balances adjacent panes, not every split in the window.
 
