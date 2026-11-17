@@ -18,7 +18,10 @@ index locks.
 ## Prompt colors
 
 Uncomment one `prompt_palette` in `zshrc` to select a theme. The directory segment
-uses the palette's `path` color locally and its `purple` color when
-`SSH_CONNECTION` is set. Git and command-status colors do not change over SSH.
+uses the palette's `path` color locally and its brighter `ssh_path` purple when
+`SSH_CONNECTION` is set. The username and hostname appear in a separate `purple`
+segment over SSH or when `USER` differs from `DEFAULT_USER`. A Powerline separator
+divides this segment from the directory; the ASCII prompt uses ` | ` instead.
+Git and command-status colors do not change over SSH.
 Override palette entries in `~/.zshrc.local` to customize colors. Start a new Zsh
 shell after changing the configuration.

@@ -40,24 +40,28 @@ typeset -gA prompt_palette
 # Sonokai (shusia)
 # prompt_palette=(
 #     base '#2c2e34'
+#     ssh_path '#c9b8ff'
 #     path '#76cce0' green '#9ed072' yellow '#e7c664' red '#f85e84' purple '#b39df3'
 # )
 
 # Gruvbox Material (hard background, original foreground)
 # prompt_palette=(
 #     base '#1d2021'
+#     ssh_path '#e5a5b5'
 #     path '#83a598' green '#b8bb26' yellow '#fabd2f' red '#fb4934' purple '#d3869b'
 # )
 
 # Kanagawa (wave) — active
 prompt_palette=(
     base '#1f1f28'
+    ssh_path '#b49ad4'
     path '#7e9cd8' green '#76946a' yellow '#c0a36e' red '#c34043' purple '#957fb8'
 )
 
 # Tokyo Night (night)
 # prompt_palette=(
 #     base '#1a1b26'
+#     ssh_path '#cdb4ff'
 #     path '#7aa2f7' green '#9ece6a' yellow '#e0af68' red '#f7768e' purple '#bb9af7'
 # )
 
@@ -75,7 +79,7 @@ precmd() {
     local exit_code=$?
     local branch git_dirty stash ahead=0 behind=0 host is_detached=0 ascii=0
     local git_lines line oid plus minus
-    local path_color=$prompt_palette[path]
+    local path_color=$prompt_palette[path] first_color
     local sep=$'\ue0b0' lsep=$'\ue0b6' br=$'\ue0a0'
 
     if (( prompt_ascii )) || [[ $TERM == linux || $TERM == dumb || $TTY == /dev/tty[0-9]* ]]; then
@@ -83,9 +87,11 @@ precmd() {
     fi
 
     if [[ -n $SSH_CONNECTION ]] || [[ $USER != ${DEFAULT_USER:-$USER} ]]; then
-        host='%n@%m '
+        host='%n@%m'
     fi
-    [[ -n $SSH_CONNECTION ]] && path_color=$prompt_palette[purple]
+    [[ -n $SSH_CONNECTION ]] && path_color=$prompt_palette[ssh_path]
+    first_color=$path_color
+    [[ -n $host ]] && first_color=$prompt_palette[purple]
 
     if git_lines=$(command git --no-optional-locks status --porcelain=v2 --branch --show-stash 2>/dev/null); then
         for line in ${(f)git_lines}; do
@@ -117,7 +123,7 @@ precmd() {
     branch=${branch//\%/%%}
     RPROMPT=''
     if (( ascii )); then
-        PROMPT="${host}%~"
+        PROMPT="${host:+${host} | }%~"
         if [[ -n $branch ]]; then
             RPROMPT="[git:${branch}"
             [[ -n $git_dirty ]] && RPROMPT+=' *'
@@ -129,17 +135,21 @@ precmd() {
         return
     fi
 
-    # Left prompt: optional status segment → path segment → end cap
+    # Left prompt: optional status and user@host segments, then path and end cap.
     PROMPT=''
     if (( exit_code != 0 || UID == 0 )); then
         PROMPT+="%K{$prompt_palette[base]} "
         (( exit_code != 0 )) && PROMPT+="%F{$prompt_palette[red]}✘"
         (( UID == 0 )) && PROMPT+="%F{$prompt_palette[yellow]}⚡"
-        PROMPT+=" %K{$path_color}%F{$prompt_palette[base]}${sep}"
+        PROMPT+=" %K{$first_color}%F{$prompt_palette[base]}${sep}"
     else
-        PROMPT+="%K{$path_color}"
+        PROMPT+="%K{$first_color}"
     fi
-    PROMPT+="%F{$prompt_palette[base]}%B ${host}%~%b%(1j. ↓%j.) "
+    if [[ -n $host ]]; then
+        PROMPT+="%F{$prompt_palette[base]}%B ${host} %b"
+        PROMPT+="%K{$path_color}%F{$prompt_palette[purple]}${sep}"
+    fi
+    PROMPT+="%F{$prompt_palette[base]}%B %~%b%(1j. ↓%j.) "
     PROMPT+="%k%F{$path_color}${sep}%f "
 
     # Right prompt: yellow if dirty, purple if ahead/behind, else green
