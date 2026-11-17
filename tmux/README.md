@@ -3,6 +3,22 @@
 The prefix is `Ctrl-a`, not `Ctrl-b`. This reference covers custom behavior only.
 Machine-specific overrides go in `~/.tmux.conf.local`.
 
+## Status and colors
+
+The bottom-left status shows the short hostname followed by the session name,
+such as `build01 · 0`, with Powerline separators between segments.
+
+Uncomment exactly one theme block in `tmux.conf` to select a theme. Each block
+defines `@accent-local` (blue, aqua, or cyan) and `@accent-remote` (purple).
+When `SSH_CONNECTION` is set, tmux selects the remote accent for active windows,
+active-pane borders, messages, the prefix indicator, and the clock. Warning,
+error, and neutral colors stay unchanged. This detects tmux running on the
+server after SSH, not SSH running inside a local tmux pane.
+
+Set `@accent` in `~/.tmux.conf.local` to override the selected accent. If you also
+use clock mode, set `clock-mode-colour` there to the same color. Reload with
+`tmux source-file ~/.tmux.conf`; local overrides are applied last.
+
 ## Windows and panes
 
 | Keys | Action |

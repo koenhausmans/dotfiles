@@ -14,3 +14,11 @@ The prompt shows the current directory, command status, and Git branch/state.
 It uses an ASCII form for `TERM=dumb`, Linux virtual consoles, or when
 `prompt_ascii=1` is set in `~/.zshrc.local`. Prompt Git reads skip optional
 index locks.
+
+## Prompt colors
+
+Uncomment one `prompt_palette` in `zshrc` to select a theme. The directory segment
+uses the palette's `path` color locally and its `purple` color when
+`SSH_CONNECTION` is set. Git and command-status colors do not change over SSH.
+Override palette entries in `~/.zshrc.local` to customize colors. Start a new Zsh
+shell after changing the configuration.
