@@ -6,7 +6,8 @@ Machine-specific overrides go in `~/.tmux.conf.local`.
 ## Status and colors
 
 The bottom-left status shows the short hostname followed by the session name,
-such as `build01 · 0`, with Powerline separators between segments.
+with a Powerline separator and no dot between them. The active Kanagawa theme
+uses a lighter gray background for the session block.
 
 Uncomment exactly one theme block in `tmux.conf` to select a theme. Each block
 defines `@accent-local` (blue, aqua, or cyan) and `@accent-remote` (purple).
