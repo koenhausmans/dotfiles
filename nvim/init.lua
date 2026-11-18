@@ -136,6 +136,9 @@ do
     vim.o.guicursor = 'n-v-c:block,i-ci-ve:ver40-blinkwait700-blinkon400-blinkoff250,r-cr:hor20,o:hor50'
     vim.o.termguicolors = true
 
+    -- Load trusted project-local configuration from .nvim.lua.
+    vim.o.exrc = true
+
 end
 
 --- END OPTIONS }}}

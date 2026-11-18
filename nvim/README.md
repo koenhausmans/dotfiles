@@ -91,6 +91,9 @@ Missing tools are skipped with one warning per executable per session. Check
 
 ### Project configuration
 
+`exrc` is enabled to load project-local configuration such as `.nvim.lua`.
+Neovim asks for trust before executing an untrusted file. Review it before approving.
+
 - **C/C++:** provide `compile_commands.json` for compiler flags and include paths.
   Configure checks in `.clang-tidy` and formatting in `.clang-format`.
   clang-tidy checks can be slow on large projects.
